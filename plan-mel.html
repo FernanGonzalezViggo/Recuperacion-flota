@@ -181,13 +181,13 @@
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Buses detenidos</div>
-        <div class="big tnum">29<span class="u">/ 131 asig.</span></div>
+        <div class="big tnum">29<span class="u">/ 143 asig.</span></div>
         <div class="foot">Plan de acción · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
       </div>
-      <div class="kpi"><div class="stripe s-crit"></div>
+      <div class="kpi"><div class="stripe s-warn"></div>
         <div class="cap">Disponibilidad global buses</div>
-        <div class="big tnum">79<span class="u">%</span></div>
-        <div class="foot">103 operativos vs. 131 requeridos · déficit <b>28</b></div>
+        <div class="big tnum">80<span class="u">%</span></div>
+        <div class="foot">114 operativos vs. 143 asignados (maestro)</div>
       </div>
       <div class="kpi"><div class="stripe s-accent"></div>
         <div class="cap">En faena — decisión 3.5</div>
@@ -204,13 +204,33 @@
 
   <section>
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
-      <span class="hint">Buses operativos vs. lo que necesita la operación</span></div>
+      <span class="hint">Operativos vs. flota asignada por maestro (Opción A)</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note">Análisis enfocado en <b>buses</b> (minibuses fuera de alcance por ahora). El <b>asignado</b> es la flota que necesita la operación: <b>Sube y Baja 56</b> (maestro de flota) · <b>Mina 40</b> y <b>Planta 35</b> (Report de turno, hoja Disponibilidad). Los <b>operativos</b> son los buses en estado OPERATIVA del Report al 28-ago (Mina 25 · Planta 27); Sube y Baja no está en el Report, se estima como maestro − detenidos (51). El <b>backup</b> es la holgura del maestro sobre lo asignado. El objetivo es alcanzar el número de buses que declara el Report de disponibilidad.</div>
+    <div class="note">Disponibilidad medida sobre el <b>maestro de activos</b> (universo que Viggo entrega a MEL): <b>disponibilidad = operativos / asignado</b>, con <b>operativos = asignado − detenidos</b>. El <b>objetivo operación</b> es la flota que necesita el servicio (Sube y Baja 56 · Mina 40 · Planta 35, del Report); el <b>backup</b> es la holgura del maestro sobre ese objetivo. Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">02</span><h2>Destino de atención</h2>
+    <div class="sec-h"><span class="n">02</span><h2>Proyección de disponibilidad — Gantt</h2>
+      <span class="hint">Según fechas de entrega · disponibilidad = operativos / maestro</span></div>
+    <div class="scard">
+      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Curva de disponibilidad proyectada</h3>
+      <div style="overflow-x:auto"><div id="projChart"></div></div>
+      <div class="legend" style="margin-top:8px">
+        <span><i style="background:var(--good)"></i>Sube y Baja</span>
+        <span><i style="background:var(--crit)"></i>Mina</span>
+        <span><i style="background:var(--info)"></i>Planta</span>
+        <span style="color:var(--faint)">— línea punteada = objetivo operación (req. / maestro)</span>
+      </div>
+    </div>
+    <div class="scard" style="margin-top:14px">
+      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (fecha de entrega)</h3>
+      <div style="overflow-x:auto"><div id="ganttChart"></div></div>
+    </div>
+    <div class="note">La proyección suma cada bus a la flota operativa en su <b>fecha de entrega</b> (hoja Base detenidas). <b>10 equipos sin fecha</b> quedan como pendientes y no se proyectan (limitan el techo de disponibilidad). Las barras rayadas indican equipos sin fecha comprometida.</div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
     <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Los equipos cuya <b>Ubicación = «Taller MEL»</b> (14 buses en faena) son los que se analizan: <b>bajar en cama baja</b> a Antofagasta o <b>mantener para atender en el taller 3.5</b>. Los que ya figuran en ubicaciones de Antofagasta están fuera de esta decisión (ya descendidos).</div>
     <div class="split3">
@@ -239,7 +259,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">03</span><h2>Costo cama baja</h2>
+    <div class="sec-h"><span class="n">04</span><h2>Costo cama baja</h2>
       <span class="hint">Ajusta el destino de las unidades en faena y el monto se recalcula</span></div>
     <div class="cb">
       <div class="cbcost">
@@ -273,7 +293,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">04</span><h2>Carga de trabajo por taller</h2>
+    <div class="sec-h"><span class="n">05</span><h2>Carga de trabajo por taller</h2>
       <span class="hint">Carga = equipos × dificultad (Alta 3 · Media 2 · Baja 1)</span></div>
     <div class="scard">
       <div id="cargaChart"></div>
@@ -288,7 +308,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">05</span><h2>Detalle de equipos detenidos MEL</h2>
+    <div class="sec-h"><span class="n">06</span><h2>Detalle de equipos detenidos MEL</h2>
       <span class="hint">Filtra por ubicación, decisión o taller destino</span></div>
     <div class="filters">
       <label>Ubicación</label>
@@ -317,15 +337,15 @@
 const TRIP=1785000, TRIP_NET=1500000;
 const fmt=n=>'$'+n.toLocaleString('es-CL');
 
-// req = buses que necesita la operación: SyB desde maestro; Mina/Planta desde Report de turno (hoja DISPONIBILIDAD)
-// oper = buses OPERATIVA al 28-ago (Report, hoja Disponibilidad); SyB sin dato en Report → maestro - detenidos
-// det = buses F/S; busM = buses en maestro; backup = busM - req
+// Opción A — disponibilidad sobre el MAESTRO (universo que Viggo entrega a MEL)
+// maestro = buses asignados por maestro; det = detenidos (plan); oper = maestro - det
+// reqop = buses que necesita la operación (SyB maestro; Mina/Planta Report); backup = maestro - reqop
 const svc=[
-  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:56, reqSrc:'maestro', busM:56, det:5,  oper:51, operSrc:'maestro'},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:40, reqSrc:'report',  busM:47, det:16, oper:25, operSrc:'report'},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:35, reqSrc:'report',  busM:40, det:8,  oper:27, operSrc:'report'},
+  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', maestro:56, det:5,  reqop:56},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   maestro:47, det:16, reqop:40},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  maestro:40, det:8,  reqop:35},
 ];
-svc.forEach(s=>{s.disp=s.oper/s.req; s.def=s.req-s.oper; s.backup=Math.max(0,s.busM-s.req)});
+svc.forEach(s=>{s.oper=s.maestro-s.det; s.disp=s.oper/s.maestro; s.backup=Math.max(0,s.maestro-s.reqop); s.faltan=Math.max(0,s.reqop-s.oper);});
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
@@ -369,20 +389,75 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     <h3>${s.name}<span class="loc">${s.loc}</span></h3>
     <div class="gauge">
       <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-        <span class="req">${s.oper} operativos / ${s.req} asignados</span></div>
+        <span class="req">${s.oper} operativos / ${s.maestro} asignados (maestro)</span></div>
       <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
     </div>
     <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
-      <div><div class="lbl">Asignado</div><div class="val">${s.req}</div></div>
+      <div><div class="lbl">Asignado</div><div class="val">${s.maestro}</div></div>
       <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
       <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
       <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">+${s.backup}</div></div>
     </div>
-    <div class="deficit">${s.def>0
-      ? `<span class="pill p-crit">Déficit ${s.def}</span> bajo lo asignado`
-      : `<span class="pill p-good">Cubierto</span> +${-s.def} sobre lo asignado`}</div>
+    <div class="deficit">${s.faltan>0
+      ? `<span class="pill p-crit">Faltan ${s.faltan}</span> para el objetivo op. (${s.reqop})`
+      : `<span class="pill p-good">Cubre objetivo</span> op. (${s.reqop})`}</div>
   </div>`;
 }).join('');
+
+// ---- Proyección de disponibilidad (Gantt) ----
+(function(){
+  const START=new Date('2026-08-28T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
+  const fentMap={4436:'2026-08-28',6282:'2026-08-29',5136:'2026-08-30',6277:'2026-08-30',6321:'2026-08-31',6266:'2026-09-04',4472:'2026-09-15',6295:'2026-09-16',6293:'2026-09-30',4473:'2026-09-30',6324:'2026-09-30',4872:'2026-08-31',4828:'2026-09-01',4844:'2026-09-01',4846:'2026-09-04',4885:'2026-10-30',4926:'2026-08-27',4914:'2026-08-30',6311:'2026-09-05'};
+  const maestroN={syb:56,mina:47,plan:40}, reqopN={syb:56,mina:40,plan:35};
+  const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
+  const gOrder=['syb','mina','plan'];
+  const units=det.map(d=>{
+    const f=fentMap[+d.i]||null; let rec=null;
+    if(f){const fd=new Date(f+'T00:00:00'); rec=fd>START?fd:new Date(START.getTime()+DAY);}
+    return {i:d.i,s:d.s,f,rec};
+  });
+  const detainedAt=(sk,t)=>units.filter(u=>u.s===sk&&(!u.rec||u.rec>t)).length;
+  const W=920,padL=78,padR=16,xW=W-padL-padR;
+  const xOf=t=>padL+(t-START)/(END-START)*xW;
+  const weeks=[]; for(let d=new Date(START);d<=END;d=new Date(d.getTime()+7*DAY)) weeks.push(new Date(d));
+  const md=d=>d.getDate()+'/'+(d.getMonth()+1);
+  // --- curva ---
+  const H=210,padT=14,padB=30,yH=H-padT-padB, yOf=p=>padT+(1-p)*yH;
+  const days=Math.round((END-START)/DAY);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${W}px;font-family:Inter">`;
+  [0,.25,.5,.75,1].forEach(p=>{const y=yOf(p);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="10" fill="var(--muted)">${p*100|0}%</text>`;});
+  weeks.forEach(d=>{const x=xOf(d);s+=`<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="var(--line)" stroke-dasharray="2 3" opacity=".5"/><text x="${x}" y="${H-padB+14}" text-anchor="middle" font-size="9.5" fill="var(--muted)">${md(d)}</text>`;});
+  gOrder.forEach(sk=>{
+    const tgt=reqopN[sk]/maestroN[sk], yt=yOf(tgt);
+    s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="4 4" opacity=".5"/>`;
+    let pts='';
+    for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY); const p=(maestroN[sk]-detainedAt(sk,t))/maestroN[sk]; pts+=`${xOf(t).toFixed(1)},${yOf(p).toFixed(1)} `;}
+    s+=`<polyline points="${pts}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
+    const pend=(maestroN[sk]-detainedAt(sk,END))/maestroN[sk];
+    s+=`<text x="${W-padR-2}" y="${yOf(pend)-4}" text-anchor="end" font-size="11" font-weight="700" fill="${col[sk]}">${Math.round(pend*100)}%</text>`;
+  });
+  s+='</svg>';
+  document.getElementById('projChart').innerHTML=s;
+  // --- gantt ---
+  let y=6,body='';
+  gOrder.forEach(sk=>{
+    body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
+    units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
+      const x1=xOf(START), x2=u.rec?xOf(u.rec):xOf(END);
+      body+=`<text x="6" y="${y+10}" font-size="10" fill="var(--ink)">${u.i}</text>`;
+      body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${u.rec?col[sk]:'url(#hatch)'}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
+      body+= u.f?`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha comprometida</text>`;
+      y+=15;
+    });
+    y+=6;
+  });
+  const gH=y+6;
+  let g=`<svg viewBox="0 0 ${W} ${gH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
+  g+=`<defs><pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--surface-2)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--faint)" stroke-width="1.6"/></pattern></defs>`;
+  weeks.forEach(d=>{const x=xOf(d);g+=`<line x1="${x}" y1="0" x2="${x}" y2="${gH}" stroke="var(--line)" stroke-dasharray="2 3" opacity=".5"/><text x="${x}" y="${gH-1}" text-anchor="middle" font-size="9" fill="var(--muted)">${md(d)}</text>`;});
+  g+=body+'</svg>';
+  document.getElementById('ganttChart').innerHTML=g;
+})();
 
 // Detalle por contrato y taller (destino de atención)
 const talleres=['Taller MEL','Kaufmann MEL','Taller Antofagasta','Kaufmann Viggo','Kaufmann K1','Kaufmann K6','Scania','Fabian Baeza'];
