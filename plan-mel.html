@@ -180,9 +180,9 @@
   <section>
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
-        <div class="cap">Buses F/S (no operativos)</div>
-        <div class="big tnum">28<span class="u">/ 131 req.</span></div>
-        <div class="foot">Report 28-ago · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
+        <div class="cap">Buses detenidos</div>
+        <div class="big tnum">29<span class="u">/ 131 asig.</span></div>
+        <div class="foot">Plan de acción · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
       </div>
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Disponibilidad global buses</div>
@@ -322,7 +322,7 @@ const fmt=n=>'$'+n.toLocaleString('es-CL');
 // det = buses F/S; busM = buses en maestro; backup = busM - req
 const svc=[
   {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:56, reqSrc:'maestro', busM:56, det:5,  oper:51, operSrc:'maestro'},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:40, reqSrc:'report',  busM:47, det:15, oper:25, operSrc:'report'},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:40, reqSrc:'report',  busM:47, det:16, oper:25, operSrc:'report'},
   {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:35, reqSrc:'report',  busM:40, det:8,  oper:27, operSrc:'report'},
 ];
 svc.forEach(s=>{s.disp=s.oper/s.req; s.def=s.req-s.oper; s.backup=Math.max(0,s.busM-s.req)});
@@ -375,7 +375,7 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
       <div><div class="lbl">Asignado</div><div class="val">${s.req}</div></div>
       <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
-      <div><div class="lbl">F/S detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
+      <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
       <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">+${s.backup}</div></div>
     </div>
     <div class="deficit">${s.def>0
