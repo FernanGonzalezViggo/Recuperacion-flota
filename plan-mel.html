@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Plan de Acción MEL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root{
+    --bg:#EEF0F3; --surface:#FFFFFF; --surface-2:#F6F7F9; --line:#DCE0E6;
+    --ink:#161B22; --muted:#5C6675; --faint:#8A93A1;
+    --accent:#B5651D; --accent-soft:#F2E4D4;
+    --good:#2E7D5B; --good-bg:#E2F0E9;
+    --warn:#B5851A; --warn-bg:#F5ECD4;
+    --crit:#C0392B; --crit-bg:#F6DFDC;
+    --info:#2B6CB0; --info-bg:#DEEAF6;
+    --shadow:0 1px 2px rgba(20,27,34,.06),0 4px 14px rgba(20,27,34,.05);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E1319; --surface:#171E27; --surface-2:#1E2731; --line:#2C3742;
+      --ink:#E7ECF2; --muted:#9AA6B4; --faint:#6B7684;
+      --accent:#E08A3C; --accent-soft:#3A2C1C;
+      --good:#4FBF8B; --good-bg:#183329;
+      --warn:#E0B94A; --warn-bg:#332B14;
+      --crit:#E4695B; --crit-bg:#37201D;
+      --info:#5F9BE0; --info-bg:#152836;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E1319; --surface:#171E27; --surface-2:#1E2731; --line:#2C3742;
+    --ink:#E7ECF2; --muted:#9AA6B4; --faint:#6B7684;
+    --accent:#E08A3C; --accent-soft:#3A2C1C;
+    --good:#4FBF8B; --good-bg:#183329;
+    --warn:#E0B94A; --warn-bg:#332B14;
+    --crit:#E4695B; --crit-bg:#37201D;
+    --info:#5F9BE0; --info-bg:#152836;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;
+    margin:0;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1160px;margin:0 auto;padding:28px 20px 64px}
+  h1,h2,h3{font-family:"Barlow Semi Condensed",sans-serif;margin:0;line-height:1.1}
+  .mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;
+    border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:24px}
+  .eyebrow{font-family:"Barlow Semi Condensed",sans-serif;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;font-size:12px;color:var(--accent)}
+  header.top h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.01em;margin-top:2px}
+  .sub{color:var(--muted);font-size:14px;margin-top:6px;max-width:62ch}
+  .meta{text-align:right;font-size:12.5px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:600}
+
+  section{margin-top:34px}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .sec-h h2{font-size:21px;font-weight:600;letter-spacing:.01em}
+  .sec-h .n{font-family:"IBM Plex Mono",monospace;color:var(--accent);font-size:13px}
+  .sec-h .hint{color:var(--faint);font-size:12.5px;margin-left:auto}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .kpi .cap{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kpi .big{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:38px;line-height:1;
+    margin-top:10px;letter-spacing:-.01em}
+  .kpi .u{font-size:14px;color:var(--muted);font-weight:600;margin-left:4px}
+  .kpi .foot{font-size:12px;color:var(--muted);margin-top:8px}
+  .kpi .stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
+  .s-accent{background:var(--accent)} .s-crit{background:var(--crit)}
+  .s-warn{background:var(--warn)} .s-info{background:var(--info)}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+    padding:2px 8px;border-radius:999px;letter-spacing:.02em}
+  .p-crit{background:var(--crit-bg);color:var(--crit)}
+  .p-warn{background:var(--warn-bg);color:var(--warn)}
+  .p-good{background:var(--good-bg);color:var(--good)}
+  .p-info{background:var(--info-bg);color:var(--info)}
+
+  .svc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .scard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+  .scard h3{font-size:18px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  .scard .loc{font-size:12px;color:var(--faint);font-weight:500;font-family:Inter}
+  .gauge{margin:16px 0 4px}
+  .gauge .track{height:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden;position:relative}
+  .gauge .fill{height:100%;border-radius:999px}
+  .gauge .pct{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:30px;line-height:1}
+  .gauge .row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px}
+  .gauge .req{font-size:12.5px;color:var(--muted)}
+  .grid4{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:16px;
+    border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .grid4 div{background:var(--surface-2);padding:9px 10px}
+  .grid4 .lbl{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .grid4 .val{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:22px;margin-top:2px}
+  .deficit{margin-top:12px;font-size:13px;display:flex;align-items:center;gap:7px}
+
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;background:var(--surface);font-size:13px;min-width:680px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th{background:var(--surface-2);font-family:"Barlow Semi Condensed",sans-serif;font-weight:600;
+    font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);position:sticky;top:0}
+  tbody tr:hover{background:var(--surface-2)}
+  td.num{font-family:"IBM Plex Mono",monospace;font-weight:500}
+  .tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;white-space:nowrap}
+  .t-mel{background:var(--accent-soft);color:var(--accent)}
+  .t-ant{background:var(--info-bg);color:var(--info)}
+  .t-larga{background:var(--crit-bg);color:var(--crit)}
+  .t-cb{background:var(--crit-bg);color:var(--crit)}
+  .t-si{background:var(--good-bg);color:var(--good)}
+  .dif{font-weight:600;font-size:11px;padding:2px 7px;border-radius:6px}
+  .d-alta{background:var(--crit-bg);color:var(--crit)}
+  .d-media{background:var(--warn-bg);color:var(--warn)}
+  .d-baja{background:var(--good-bg);color:var(--good)}
+
+  .split3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .dcard .stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
+  .dcard .cap{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .dcard .big{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:40px;line-height:1;margin:8px 0 4px}
+  .dcard .desc{font-size:12.5px;color:var(--muted)}
+
+  .cb{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+  .cbcost{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
+  .cbcost .tot{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:40px;line-height:1;color:var(--accent);letter-spacing:-.01em}
+  .cbcost .line{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .cbcost .line:last-child{border-bottom:0}
+  .cbcost .line b{font-family:"IBM Plex Mono",monospace}
+  .toggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;cursor:pointer}
+  .toggle span{padding:4px 9px;font-size:11.5px;font-weight:600;user-select:none}
+  .toggle .on-mel{background:var(--accent);color:#fff}
+  .toggle .on-ant{background:var(--info);color:#fff}
+  .btnrow{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
+  .btn{font-size:12px;font-weight:600;padding:6px 11px;border-radius:7px;border:1px solid var(--line);
+    background:var(--surface);color:var(--ink);cursor:pointer;font-family:Inter}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .note{font-size:12px;color:var(--muted);background:var(--surface-2);border-left:3px solid var(--accent);
+    padding:10px 13px;border-radius:0 8px 8px 0;margin-top:12px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+  .bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+  .barrow{display:grid;grid-template-columns:150px 1fr 34px;align-items:center;gap:10px;font-size:12.5px}
+  .barrow .bt{height:20px;border-radius:5px;background:var(--accent);min-width:3px}
+  .barrow .cnt{text-align:right;font-family:"IBM Plex Mono",monospace;font-weight:600}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
+  @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Operación Buses · Minera Escondida</div>
+      <h1>Plan de Acción MEL</h1>
+      <div class="sub">Priorización de atención en taller de faena (3.5) vs. bajada a Antofagasta, disponibilidad de flota por servicio y control de costo de cama baja.</div>
+    </div>
+    <div class="meta">
+      Corte de datos <b>27–28 ago 2026</b><br>
+      Fuente: BBDD Flota · Plan de acción MEL<br>
+      Decisión de atención <b>definida</b>
+    </div>
+  </header>
+
+  <section>
+    <div class="kpis">
+      <div class="kpi"><div class="stripe s-crit"></div>
+        <div class="cap">Buses detenidos</div>
+        <div class="big tnum">29<span class="u">/ 127 req.</span></div>
+        <div class="foot">0 minibuses detenidos · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
+      </div>
+      <div class="kpi"><div class="stripe s-warn"></div>
+        <div class="cap">Disponibilidad global</div>
+        <div class="big tnum">90<span class="u">%</span></div>
+        <div class="foot">114 operativos vs. 127 requeridos · déficit <b>13</b></div>
+      </div>
+      <div class="kpi"><div class="stripe s-accent"></div>
+        <div class="cap">Atención en faena / externo</div>
+        <div class="big tnum">7<span class="u">/ 22</span></div>
+        <div class="foot">7 se atienden en taller 3.5 MEL · 22 fuera de faena</div>
+      </div>
+      <div class="kpi"><div class="stripe s-info"></div>
+        <div class="cap">Costo cama baja</div>
+        <div class="big tnum" id="kpiCB">$12,5<span class="u">MM</span></div>
+        <div class="foot" id="kpiCBfoot">7 viajes × $1.785.000 (c/IVA)</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">01</span><h2>Disponibilidad por servicio</h2>
+      <span class="hint">Operativos vs. requerimiento contractual (no vs. maestro)</span></div>
+    <div class="svc" id="svc"></div>
+    <div class="note">La disponibilidad se mide contra el <b>requerimiento operativo</b> (Sube y Baja 59 · Mina 34 · Planta 34), no contra el maestro de activos. Los equipos por sobre el requerimiento son <b>backup</b> y no penalizan ni suman disponibilidad.</div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">02</span><h2>Flota asignada: buses vs. minibuses</h2>
+      <span class="hint">Maestro de activos · las detenciones actuales son 100% buses</span></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Servicio</th><th>Buses maestro</th><th>Minibuses maestro</th><th>Requerido (bus)</th><th>Buses detenidos</th><th>Buses operativos</th><th>Backup</th></tr></thead>
+        <tbody id="bmTable"></tbody>
+        <tfoot id="bmFoot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
+      <span class="hint">Según decisión cargada en columna «Atención 3.5»</span></div>
+    <div class="split3">
+      <div class="dcard"><div class="stripe s-accent"></div>
+        <div class="cap">Atender en faena — Taller 3.5</div>
+        <div class="big" style="color:var(--accent)">7</div>
+        <div class="desc">Se resuelven con capacidad propia en MEL (Taller MEL 5 · Kaufmann MEL 2). No generan costo de traslado.</div>
+      </div>
+      <div class="dcard"><div class="stripe s-crit"></div>
+        <div class="cap">Bajar en cama baja</div>
+        <div class="big" style="color:var(--crit)">7</div>
+        <div class="desc">Se descienden a Antofagasta para atención externa. Cada viaje $1.785.000 c/IVA.</div>
+      </div>
+      <div class="dcard"><div class="stripe s-info"></div>
+        <div class="cap">Ya en Antofagasta</div>
+        <div class="big" style="color:var(--info)">15</div>
+        <div class="desc">Descendidos por medios propios o previamente. En talleres externos (Kaufmann, Scania, F. Baeza).</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">04</span><h2>Costo cama baja</h2>
+      <span class="hint">Ajusta el destino de las unidades en faena y el monto se recalcula</span></div>
+    <div class="cb">
+      <div class="cbcost">
+        <div class="cap" style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600">Total cama baja</div>
+        <div class="tot mono" id="cbTotal">$12.495.000</div>
+        <div style="margin:14px 0 6px">
+          <div class="line"><span>Viajes cama baja</span><b id="cbTrips">7</b></div>
+          <div class="line"><span>Valor neto unitario</span><b>$1.500.000</b></div>
+          <div class="line"><span>IVA (19%)</span><b>$285.000</b></div>
+          <div class="line"><span>Valor c/IVA por viaje</span><b>$1.785.000</b></div>
+          <div class="line"><span>Neto total</span><b id="cbNeto">$10.500.000</b></div>
+        </div>
+        <div class="btnrow">
+          <button class="btn" onclick="setAll('ant')">Todos → bajar</button>
+          <button class="btn" onclick="setAll('mel')">Todos → atender 3.5</button>
+          <button class="btn" onclick="setAll('reset')">Restaurar plan</button>
+        </div>
+        <div class="note" style="margin-top:4px">Escenario base: <b>7 unidades en cama baja</b> según el plan cargado. Los botones permiten simular cambios de decisión sobre las 14 unidades que hoy están en faena MEL.</div>
+      </div>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Interno</th><th>Servicio</th><th>Sistema</th><th>Dificultad</th><th>Taller destino</th><th>Decisión</th></tr></thead>
+          <tbody id="cbTable"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>Bajar en cama baja → atención Antofagasta</span>
+      <span><i style="background:var(--info)"></i>Atender en taller de faena 3.5</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">05</span><h2>Carga por taller y dificultad</h2>
+      <span class="hint">Ponderación: Alta 3 · Media 2 · Baja 1</span></div>
+    <div class="split3" style="grid-template-columns:1.3fr 1fr;display:grid">
+      <div class="scard">
+        <h3 style="margin-bottom:14px">Equipos por taller de atención</h3>
+        <div class="bars" id="tallerBars"></div>
+      </div>
+      <div class="scard">
+        <h3 style="margin-bottom:14px">Dificultad de intervención</h3>
+        <div class="bars" id="difBars"></div>
+        <div class="note" style="margin-top:16px">Carga ponderada total: <b id="pondTot"></b> puntos sobre 29 equipos. Concentración en dificultad <b>Alta</b> tensiona la capacidad de HH y repuestos.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">06</span><h2>Detalle de equipos detenidos MEL</h2>
+      <span class="hint">29 buses · ordenados por servicio y antigüedad de detención</span></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Interno</th><th>Servicio</th><th>Sistema</th><th>Motivo</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>Detención</th><th>Clasif.</th></tr></thead>
+        <tbody id="detTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Reporte generado a partir de <b>BBDD Flota 27-08-2026</b> y <b>Plan de acción MEL</b> (hoja Equipos MEL con columna Atención 3.5, taller de atención y ponderación de dificultad). Costo referencial cama baja: $1.500.000 + IVA por viaje.
+  </footer>
+</div>
+
+<script>
+const TRIP=1785000, TRIP_NET=1500000;
+const fmt=n=>'$'+n.toLocaleString('es-CL');
+
+const svc=[
+  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:59, busM:56, miniM:2, det:5},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:34, busM:47, miniM:7, det:16},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:34, busM:40, miniM:3, det:8},
+];
+svc.forEach(s=>{s.oper=s.busM-s.det; s.disp=s.oper/s.req; s.def=s.req-s.oper; s.backup=Math.max(0,s.busM-s.req)});
+
+// a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
+// atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
+const det=[
+ {i:'4436',s:'mina',sys:'Transmisión',mot:'Certificación',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-03-17',lg:1,fa:0},
+ {i:'4437',s:'mina',sys:'—',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-08-26',lg:0,fa:1},
+ {i:'4472',s:'mina',sys:'Dirección',mot:'Corr. Espera HH Int.',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-08-19',lg:0,fa:0},
+ {i:'4473',s:'mina',sys:'Motor',mot:'Incidente - Evaluación',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-08-14',lg:0,fa:0},
+ {i:'5136',s:'mina',sys:'Sist. Neumático',mot:'Correctivo - Repuesto',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-08-05',lg:0,fa:1},
+ {i:'5137',s:'mina',sys:'Eléctrico',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-08-23',lg:0,fa:1},
+ {i:'6266',s:'mina',sys:'Eléctrico',mot:'Correctivo - Externo',a35:'mel',taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-08-20',lg:0,fa:1},
+ {i:'6272',s:'mina',sys:'Frenos',mot:'Corr. Espera HH Ext.',a35:'cb',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-08-23',lg:0,fa:1},
+ {i:'6277',s:'mina',sys:'Mantenimiento',mot:'Preventivo - Externo',a35:'ant',taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-08-26',lg:0,fa:0},
+ {i:'6279',s:'mina',sys:'—',mot:'Corr. Espera Traslado',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-08-27',lg:0,fa:1},
+ {i:'6281',s:'mina',sys:'Motor',mot:'Incidente - Rep. Ext.',a35:'ant',taller:'Kaufmann K1',dif:'Media',p:2,f:'2026-05-25',lg:1,fa:0},
+ {i:'6282',s:'mina',sys:'Mantenimiento',mot:'Preventivo - En Trabajo',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-08-24',lg:0,fa:0},
+ {i:'6293',s:'mina',sys:'Sist. Neumático',mot:'Correctivo - Externo',a35:'ant',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-08-06',lg:0,fa:0},
+ {i:'6295',s:'mina',sys:'Transmisión',mot:'Correctivo - Externo',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-08-01',lg:0,fa:0},
+ {i:'6321',s:'mina',sys:'Eléctrico',mot:'Corr. Espera HH Int.',a35:'cb',taller:'Scania',dif:'Media',p:2,f:'2026-08-20',lg:0,fa:1},
+ {i:'6324',s:'mina',sys:'Motor',mot:'Incidente - Evaluación',a35:'cb',taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-08-21',lg:0,fa:1},
+ {i:'4826',s:'plan',sys:'Suspensión',mot:'Correctivo - Repuesto',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-07-14',lg:1,fa:1},
+ {i:'4828',s:'plan',sys:'Motor',mot:'Certificación',a35:'ant',taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2025-10-28',lg:1,fa:0},
+ {i:'4844',s:'plan',sys:'Mantenimiento',mot:'Certificación',a35:'ant',taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-07-01',lg:1,fa:0},
+ {i:'4846',s:'plan',sys:'Transmisión',mot:'Corr. Espera HH Int.',a35:'cb',taller:'Fabian Baeza',dif:'Media',p:2,f:'2026-07-06',lg:1,fa:1},
+ {i:'4870',s:'plan',sys:'Transmisión',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-08-21',lg:0,fa:1},
+ {i:'4872',s:'plan',sys:'Mantenimiento',mot:'Certificación',a35:'ant',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-08-01',lg:0,fa:0},
+ {i:'4885',s:'plan',sys:'Motor',mot:'Corr. Espera HH Ext.',a35:'ant',taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-06-28',lg:1,fa:0},
+ {i:'4914',s:'syb',sys:'Sist. Neumático',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Kaufmann MEL',dif:'Baja',p:1,f:'2026-08-26',lg:0,fa:1},
+ {i:'4926',s:'syb',sys:'Sist. Neumático',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Baja',p:1,f:'2026-08-26',lg:0,fa:1},
+ {i:'4927',s:'syb',sys:'Frenos',mot:'Correctivo - En Trabajo',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-08-24',lg:0,fa:0},
+ {i:'6273',s:'syb',sys:'Transmisión',mot:'Corr. Espera Traslado',a35:'ant',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-08-20',lg:0,fa:0},
+ {i:'6311',s:'syb',sys:'Transmisión',mot:'Correctivo - En Trabajo',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-08-14',lg:0,fa:0},
+];
+const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
+const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
+
+document.getElementById('svc').innerHTML=svc.map(s=>{
+  const c=dispColor(s.disp),pct=Math.round(s.disp*100);
+  return `<div class="scard">
+    <h3>${s.name}<span class="loc">${s.loc}</span></h3>
+    <div class="gauge">
+      <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
+        <span class="req">${s.oper} operativos / ${s.req} requeridos</span></div>
+      <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
+    </div>
+    <div class="grid4">
+      <div><div class="lbl">Requerido</div><div class="val">${s.req}</div></div>
+      <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
+      <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">${s.backup}</div></div>
+    </div>
+    <div class="deficit">${s.def>0
+      ? `<span class="pill p-crit">Déficit ${s.def}</span> bajo requerimiento`
+      : `<span class="pill p-good">Cubierto</span> +${-s.def} sobre requerimiento`}</div>
+  </div>`;
+}).join('');
+
+let tB=0,tM=0,tR=0,tD=0,tO=0,tBk=0;
+document.getElementById('bmTable').innerHTML=svc.map(s=>{
+  tB+=s.busM;tM+=s.miniM;tR+=s.req;tD+=s.det;tO+=s.oper;tBk+=s.backup;
+  const c=dispColor(s.disp);
+  return `<tr><td><b>${s.name}</b></td><td class="num">${s.busM}</td><td class="num">${s.miniM}</td>
+    <td class="num">${s.req}</td><td class="num" style="color:var(--crit)">${s.det}</td>
+    <td class="num" style="color:var(--${c});font-weight:600">${s.oper}</td>
+    <td class="num" style="color:var(--muted)">${s.backup}</td></tr>`;
+}).join('');
+document.getElementById('bmFoot').innerHTML=
+  `<tr style="font-weight:700"><td>TOTAL</td><td class="num">${tB}</td><td class="num">${tM}</td>
+   <td class="num">${tR}</td><td class="num" style="color:var(--crit)">${tD}</td>
+   <td class="num">${tO}</td><td class="num">${tBk}</td></tr>`;
+
+// Cama baja: unidades en faena (fa=1) son editables. Base = a35.
+const faUnits=det.filter(d=>d.fa);
+const base={}; faUnits.forEach(d=>base[d.i]= d.a35==='cb'?'ant':'mel');
+let state={};
+try{const raw=localStorage.getItem('mel_cb2'); if(raw) state=JSON.parse(raw);}catch(e){}
+faUnits.forEach(d=>{ if(!(d.i in state)) state[d.i]=base[d.i]; });
+
+function renderCB(){
+  document.getElementById('cbTable').innerHTML=faUnits.map(d=>{
+    const dest=state[d.i];
+    const tg=`<span class="toggle" onclick="toggle('${d.i}')">
+        <span class="${dest==='mel'?'on-ant':''}">3.5</span>
+        <span class="${dest==='ant'?'on-mel':''}">Bajar</span></span>`;
+    const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
+    return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td>
+      <td><span class="dif ${dc}">${d.dif}</span></td><td>${d.taller}</td><td>${tg}</td></tr>`;
+  }).join('');
+  const trips=faUnits.filter(d=>state[d.i]==='ant').length;
+  document.getElementById('cbTrips').textContent=trips;
+  document.getElementById('cbTotal').textContent=fmt(trips*TRIP);
+  document.getElementById('cbNeto').textContent=fmt(trips*TRIP_NET);
+  document.getElementById('kpiCB').innerHTML='$'+(trips*TRIP/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}).replace('.',',')+'<span class="u">MM</span>';
+  document.getElementById('kpiCBfoot').innerHTML=`${trips} viaje${trips!=1?'s':''} × $1.785.000 (c/IVA)`;
+  try{localStorage.setItem('mel_cb2',JSON.stringify(state));}catch(e){}
+}
+function toggle(i){state[i]=state[i]==='mel'?'ant':'mel';renderCB();}
+function setAll(v){
+  if(v==='reset'){faUnits.forEach(d=>state[d.i]=base[d.i]);}
+  else{faUnits.forEach(d=>state[d.i]=v);}
+  renderCB();
+}
+renderCB();
+
+// Carga por taller
+const tallerCount={};
+det.forEach(d=>{tallerCount[d.taller]=(tallerCount[d.taller]||0)+1;});
+const tEntries=Object.entries(tallerCount).sort((a,b)=>b[1]-a[1]);
+const tMax=Math.max(...tEntries.map(e=>e[1]));
+const isMel=t=>t==='Taller MEL'||t==='Kaufmann MEL';
+document.getElementById('tallerBars').innerHTML=tEntries.map(([t,c])=>
+  `<div class="barrow"><span>${t}</span>
+   <div class="bt" style="width:${c/tMax*100}%;background:${isMel(t)?'var(--accent)':'var(--info)'}"></div>
+   <span class="cnt">${c}</span></div>`).join('');
+
+// Dificultad
+const difs=[['Alta','d-alta','var(--crit)'],['Media','d-media','var(--warn)'],['Baja','d-baja','var(--good)']];
+const difCount={Alta:0,Media:0,Baja:0}; let pond=0;
+det.forEach(d=>{difCount[d.dif]++;pond+=d.p;});
+const dMax=Math.max(...Object.values(difCount));
+document.getElementById('difBars').innerHTML=difs.map(([n,cl,col])=>
+  `<div class="barrow"><span><span class="dif ${cl}">${n}</span></span>
+   <div class="bt" style="width:${difCount[n]/dMax*100}%;background:${col}"></div>
+   <span class="cnt">${difCount[n]}</span></div>`).join('');
+document.getElementById('pondTot').textContent=pond;
+
+// Detalle completo
+const order={syb:0,mina:1,plan:2};
+const a35tag={cb:'<span class="tag t-cb">Cama baja</span>',mel:'<span class="tag t-si">Taller 3.5</span>',ant:'<span class="tag t-ant">En Antofa</span>'};
+const sorted=[...det].sort((a,b)=>order[a.s]-order[b.s]||a.f.localeCompare(b.f));
+document.getElementById('detTable').innerHTML=sorted.map(d=>{
+  const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
+  return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td><td>${d.mot}</td>
+   <td>${d.fa?'<span class="tag t-mel">Faena MEL</span>':'<span class="tag t-ant">Antofagasta</span>'}</td>
+   <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td><span class="dif ${dc}">${d.dif}</span></td>
+   <td class="num">${d.f}</td><td>${d.lg?'<span class="tag t-larga">Larga data</span>':'Detenida'}</td></tr>`;
+}).join('');
+</script>
+</body>
+</html>
