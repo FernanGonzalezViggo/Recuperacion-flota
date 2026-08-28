@@ -213,13 +213,10 @@
     <div class="sec-h"><span class="n">02</span><h2>Proyección de disponibilidad — Gantt</h2>
       <span class="hint">Según fechas de entrega · disponibilidad = operativos / maestro</span></div>
     <div class="scard">
-      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Curva de disponibilidad proyectada</h3>
-      <div style="overflow-x:auto"><div id="projChart"></div></div>
-      <div class="legend" style="margin-top:8px">
-        <span><i style="background:var(--good)"></i>Sube y Baja</span>
-        <span><i style="background:var(--crit)"></i>Mina</span>
-        <span><i style="background:var(--info)"></i>Planta</span>
-        <span style="color:var(--faint)">— línea punteada = objetivo operación (req. / maestro)</span>
+      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Proyección de flota operativa por contrato</h3>
+      <div id="projChart"></div>
+      <div class="legend" style="margin-top:4px">
+        <span style="color:var(--faint)">Eje Y = cantidad de buses operativos · línea punteada = objetivo operación · tope = flota maestro</span>
       </div>
     </div>
     <div class="scard" style="margin-top:14px">
@@ -421,23 +418,33 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
   const xOf=t=>padL+(t-START)/(END-START)*xW;
   const weeks=[]; for(let d=new Date(START);d<=END;d=new Date(d.getTime()+7*DAY)) weeks.push(new Date(d));
   const md=d=>d.getDate()+'/'+(d.getMonth()+1);
-  // --- curva ---
-  const H=210,padT=14,padB=30,yH=H-padT-padB, yOf=p=>padT+(1-p)*yH;
   const days=Math.round((END-START)/DAY);
-  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${W}px;font-family:Inter">`;
-  [0,.25,.5,.75,1].forEach(p=>{const y=yOf(p);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="10" fill="var(--muted)">${p*100|0}%</text>`;});
-  weeks.forEach(d=>{const x=xOf(d);s+=`<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="var(--line)" stroke-dasharray="2 3" opacity=".5"/><text x="${x}" y="${H-padB+14}" text-anchor="middle" font-size="9.5" fill="var(--muted)">${md(d)}</text>`;});
-  gOrder.forEach(sk=>{
-    const tgt=reqopN[sk]/maestroN[sk], yt=yOf(tgt);
-    s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="4 4" opacity=".5"/>`;
-    let pts='';
-    for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY); const p=(maestroN[sk]-detainedAt(sk,t))/maestroN[sk]; pts+=`${xOf(t).toFixed(1)},${yOf(p).toFixed(1)} `;}
-    s+=`<polyline points="${pts}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
-    const pend=(maestroN[sk]-detainedAt(sk,END))/maestroN[sk];
-    s+=`<text x="${W-padR-2}" y="${yOf(pend)-4}" text-anchor="end" font-size="11" font-weight="700" fill="${col[sk]}">${Math.round(pend*100)}%</text>`;
-  });
-  s+='</svg>';
-  document.getElementById('projChart').innerHTML=s;
+  // --- 3 curvas por contrato (cantidad de equipos operativos) ---
+  const cH=170,cpadT=14,cpadB=26,cyH=cH-cpadT-cpadB;
+  function drawC(sk){
+    const M=maestroN[sk],TG=reqopN[sk];
+    const yv=n=>cpadT+(1-n/M)*cyH;
+    let s=`<svg viewBox="0 0 ${W} ${cH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
+    // y ticks: 0, objetivo, maestro
+    [[0,'0'],[TG,'obj '+TG],[M,'maestro '+M]].forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
+    const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".8"/>`;
+    weeks.forEach(d=>{const x=xOf(d);s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="var(--line)" stroke-dasharray="2 3" opacity=".45"/><text x="${x}" y="${cH-cpadB+13}" text-anchor="middle" font-size="9" fill="var(--muted)">${md(d)}</text>`;});
+    let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `;
+    for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=M-detainedAt(sk,t);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
+    area+=`${xOf(END).toFixed(1)},${yv(0).toFixed(1)}`;
+    s+=`<polygon points="${area}" fill="${col[sk]}" opacity=".10"/>`;
+    s+=`<polyline points="${line}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
+    const opEnd=M-detainedAt(sk,END);
+    s+=`<circle cx="${xOf(END)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/>`;
+    s+=`<text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${opEnd} buses</text>`;
+    s+='</svg>';
+    const opNow=M-detainedAt(sk,START);
+    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px">
+      <span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span>
+      <span style="font-size:11.5px;color:var(--muted)">hoy <b>${opNow}/${M}</b> (${Math.round(opNow/M*100)}%) → proyecta <b>${opEnd}/${M}</b> (${Math.round(opEnd/M*100)}%) · objetivo op. <b>${TG}</b></span>
+     </div><div style="overflow-x:auto">${s}</div></div>`;
+  }
+  document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
   // --- gantt ---
   let y=6,body='';
   gOrder.forEach(sk=>{
