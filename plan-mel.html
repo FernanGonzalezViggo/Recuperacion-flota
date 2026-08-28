@@ -190,14 +190,21 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">01</span><h2>Disponibilidad por servicio</h2>
-      <span class="hint">Operativos vs. requerimiento contractual (no vs. maestro)</span></div>
+    <div class="sec-h"><span class="n">01</span><h2>Disponibilidad por servicio — visión Viggo (taller)</h2>
+      <span class="hint">Buses operativos vs. requerimiento · solo buses detenidos por taller</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note">La disponibilidad se mide contra el <b>requerimiento operativo</b> (Sube y Baja 59 · Mina 34 · Planta 34), no contra el maestro de activos. Los equipos por sobre el requerimiento son <b>backup</b> y no penalizan ni suman disponibilidad.</div>
+    <div class="note">Mirada <b>interna de gestión de taller</b>: cuenta solo <b>buses</b> y los mide contra el requerimiento (Sube y Baja 59 · Mina 34 · Planta 34). Los equipos por sobre el requerimiento son <b>backup</b>. No incluye sprinters ni afectaciones del cliente — por eso difiere del KPI de Operaciones (sección 02).</div>
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">02</span><h2>Flota asignada: buses vs. minibuses</h2>
+    <div class="sec-h"><span class="n">02</span><h2>Disponibilidad — visión Operaciones (KPI cliente)</h2>
+      <span class="hint">Report Viggo · corte 28-ago-2026</span></div>
+    <div class="svc" id="svcOps"></div>
+    <div class="note">Métrica oficial que ve Operaciones: <b>Operatividad % = (Flota Operativa + Afectación infraestructura cliente) / Flota Requerida</b>, más el <b>Impacto taller faena %</b> = <b>Operatividad Final %</b>. Incluye <b>sprinters</b> además de buses y usa la requerida del cliente (Mina 41 · Planta 40), por eso los % no coinciden con la sección 01. <b>Sube y Baja no está incluido</b> en este KPI de Operaciones.</div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">03</span><h2>Flota asignada: buses vs. minibuses</h2>
       <span class="hint">Maestro de activos · las detenciones actuales son 100% buses</span></div>
     <div class="tblwrap">
       <table>
@@ -209,7 +216,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
+    <div class="sec-h"><span class="n">04</span><h2>Destino de atención</h2>
       <span class="hint">Según decisión cargada en columna «Atención 3.5»</span></div>
     <div class="split3">
       <div class="dcard"><div class="stripe s-accent"></div>
@@ -231,7 +238,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">04</span><h2>Costo cama baja</h2>
+    <div class="sec-h"><span class="n">05</span><h2>Costo cama baja</h2>
       <span class="hint">Ajusta el destino de las unidades en faena y el monto se recalcula</span></div>
     <div class="cb">
       <div class="cbcost">
@@ -265,7 +272,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">05</span><h2>Carga por taller y dificultad</h2>
+    <div class="sec-h"><span class="n">06</span><h2>Carga por taller y dificultad</h2>
       <span class="hint">Ponderación: Alta 3 · Media 2 · Baja 1</span></div>
     <div class="split3" style="grid-template-columns:1.3fr 1fr;display:grid">
       <div class="scard">
@@ -281,7 +288,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">06</span><h2>Detalle de equipos detenidos MEL</h2>
+    <div class="sec-h"><span class="n">07</span><h2>Detalle de equipos detenidos MEL</h2>
       <span class="hint">29 buses · ordenados por servicio y antigüedad de detención</span></div>
     <div class="tblwrap">
       <table>
@@ -292,7 +299,7 @@
   </section>
 
   <footer>
-    Reporte generado a partir de <b>BBDD Flota 27-08-2026</b> y <b>Plan de acción MEL</b> (hoja Equipos MEL con columna Atención 3.5, taller de atención y ponderación de dificultad). Costo referencial cama baja: $1.500.000 + IVA por viaje.
+    Reporte generado a partir de <b>BBDD Flota 27-08-2026</b>, <b>Plan de acción MEL</b> (hoja Equipos MEL: Atención 3.5, taller de atención, ponderación) y <b>Report Viggo Agosto 2026</b> (hoja KPI Disponibilidad, corte 28-ago) para la visión Operaciones. Costo referencial cama baja: $1.500.000 + IVA por viaje.
   </footer>
 </div>
 
@@ -359,6 +366,32 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     <div class="deficit">${s.def>0
       ? `<span class="pill p-crit">Déficit ${s.def}</span> bajo requerimiento`
       : `<span class="pill p-good">Cubierto</span> +${-s.def} sobre requerimiento`}</div>
+  </div>`;
+}).join('');
+
+// Visión Operaciones (KPI cliente) — corte 28-ago-2026
+const ops=[
+  {name:'Mina',loc:'Mel Intermina',buses:25,sprinter:5,oper:30,afect:3,req:41,base:0.805,impacto:0.04,final:0.845,prom:0.916},
+  {name:'Planta',loc:'Mel Interfaena',buses:27,sprinter:4,oper:31,afect:3,req:40,base:0.85,impacto:0,final:0.85,prom:0.840,sinergia:6},
+];
+document.getElementById('svcOps').innerHTML=ops.map(o=>{
+  const pct=Math.round(o.final*100),c=dispColor(o.final);
+  return `<div class="scard">
+    <h3>${o.name}<span class="loc">${o.loc}</span></h3>
+    <div class="gauge">
+      <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
+        <span class="req">Operatividad Final · prom. mes ${Math.round(o.prom*100)}%</span></div>
+      <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
+    </div>
+    <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
+      <div><div class="lbl">Operativa</div><div class="val">${o.oper}</div></div>
+      <div><div class="lbl">Requerida</div><div class="val">${o.req}</div></div>
+      <div><div class="lbl">Afect. cliente</div><div class="val" style="color:var(--info)">+${o.afect}</div></div>
+      <div><div class="lbl">Impacto taller</div><div class="val" style="color:var(--good)">+${Math.round(o.impacto*100)}%</div></div>
+    </div>
+    <div class="deficit"><span class="pill p-info">Base ${Math.round(o.base*100)}%</span>
+      ${o.impacto>0?`+ ${Math.round(o.impacto*100)}% taller faena → <b style="margin-left:4px">${pct}% final</b>`:`sin bonus taller`}
+      ${o.sinergia?` · <span style="color:var(--muted)">${o.sinergia} buses sinergia</span>`:''}</div>
   </div>`;
 }).join('');
 
