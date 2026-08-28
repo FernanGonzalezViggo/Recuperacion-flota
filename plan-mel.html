@@ -167,14 +167,14 @@
   <section>
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
-        <div class="cap">Buses detenidos</div>
-        <div class="big tnum">29<span class="u">/ 131 req.</span></div>
-        <div class="foot">Análisis solo buses · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
+        <div class="cap">Buses F/S (no operativos)</div>
+        <div class="big tnum">28<span class="u">/ 131 req.</span></div>
+        <div class="foot">Report 28-ago · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
       </div>
-      <div class="kpi"><div class="stripe s-warn"></div>
+      <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Disponibilidad global buses</div>
-        <div class="big tnum">87<span class="u">%</span></div>
-        <div class="foot">114 operativos vs. 131 requeridos · déficit <b>17</b></div>
+        <div class="big tnum">79<span class="u">%</span></div>
+        <div class="foot">103 operativos vs. 131 requeridos · déficit <b>28</b></div>
       </div>
       <div class="kpi"><div class="stripe s-accent"></div>
         <div class="cap">En faena — decisión 3.5</div>
@@ -193,7 +193,7 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Buses operativos vs. lo que necesita la operación</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note">Análisis enfocado en <b>buses</b> (minibuses fuera de alcance por ahora). El <b>requerido</b> es la cantidad que necesita la operación: <b>Sube y Baja 56</b> (maestro de flota) · <b>Mina 40</b> y <b>Planta 35</b> (Report de turno, hoja Disponibilidad). <b>Operativos = maestro − detenidos</b>; el <b>backup</b> es la holgura del maestro sobre lo requerido. El objetivo es alcanzar el número de buses que declara el Report de disponibilidad.</div>
+    <div class="note">Análisis enfocado en <b>buses</b> (minibuses fuera de alcance por ahora). El <b>requerido</b> es la cantidad que necesita la operación: <b>Sube y Baja 56</b> (maestro de flota) · <b>Mina 40</b> y <b>Planta 35</b> (Report de turno, hoja Disponibilidad). Los <b>operativos</b> son los buses en estado OPERATIVA del Report al 28-ago (Mina 25 · Planta 27); Sube y Baja no está en el Report, se estima como maestro − detenidos (51). El <b>backup</b> es la holgura del maestro sobre lo requerido. El objetivo es alcanzar el número de buses que declara el Report de disponibilidad.</div>
   </section>
 
   <section>
@@ -238,7 +238,7 @@
       </div>
     </div>
     <div class="note" style="border-left-color:var(--crit);background:var(--crit-bg);color:var(--ink);margin-top:16px">
-      <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 14 equipos en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (78%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al número de buses que exige el Report de disponibilidad.
+      <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 14 equipos en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (63%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al número de buses que exige el Report de disponibilidad.
     </div>
   </section>
 
@@ -313,13 +313,14 @@ const TRIP=1785000, TRIP_NET=1500000;
 const fmt=n=>'$'+n.toLocaleString('es-CL');
 
 // req = buses que necesita la operación: SyB desde maestro; Mina/Planta desde Report de turno (hoja DISPONIBILIDAD)
-// busM = buses en maestro de activos; backup = busM - req
+// oper = buses OPERATIVA al 28-ago (Report, hoja Disponibilidad); SyB sin dato en Report → maestro - detenidos
+// det = buses F/S; busM = buses en maestro; backup = busM - req
 const svc=[
-  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:56, reqSrc:'maestro', busM:56, det:5},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:40, reqSrc:'report',  busM:47, det:16},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:35, reqSrc:'report',  busM:40, det:8},
+  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:56, reqSrc:'maestro', busM:56, det:5,  oper:51, operSrc:'maestro'},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:40, reqSrc:'report',  busM:47, det:15, oper:25, operSrc:'report'},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:35, reqSrc:'report',  busM:40, det:8,  oper:27, operSrc:'report'},
 ];
-svc.forEach(s=>{s.oper=s.busM-s.det; s.disp=s.oper/s.req; s.def=s.req-s.oper; s.backup=Math.max(0,s.busM-s.req)});
+svc.forEach(s=>{s.disp=s.oper/s.req; s.def=s.req-s.oper; s.backup=Math.max(0,s.busM-s.req)});
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
@@ -365,9 +366,10 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
         <span class="req">${s.oper} operativos / ${s.req} requeridos</span></div>
       <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
     </div>
-    <div class="grid4">
-      <div><div class="lbl">Requerido (${s.reqSrc})</div><div class="val">${s.req}</div></div>
-      <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
+    <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
+      <div><div class="lbl">Requerido</div><div class="val">${s.req}</div></div>
+      <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
+      <div><div class="lbl">F/S detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
       <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">+${s.backup}</div></div>
     </div>
     <div class="deficit">${s.def>0
