@@ -145,6 +145,19 @@
   .barrow{display:grid;grid-template-columns:150px 1fr 34px;align-items:center;gap:10px;font-size:12.5px}
   .barrow .bt{height:20px;border-radius:5px;background:var(--accent);min-width:3px}
   .barrow .cnt{text-align:right;font-family:"IBM Plex Mono",monospace;font-weight:600}
+  .cargarow{display:grid;grid-template-columns:180px 1fr 120px;align-items:center;gap:12px;margin:8px 0}
+  .cargarow .ct{font-size:12.5px}
+  .cargarow .cbadge{font-size:9.5px;font-weight:700;background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:4px;vertical-align:1px}
+  .stack{display:flex;height:22px;border-radius:5px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line)}
+  .stack span{display:block;height:100%}
+  .cargarow .cend{text-align:right;font-family:"IBM Plex Mono",monospace}
+  .cargarow .cend b{font-size:16px}
+  .cargarow .cn{display:block;font-family:Inter;font-size:10.5px;color:var(--muted)}
+  .filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;align-items:center}
+  .filters select{font-family:Inter;font-size:12.5px;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink)}
+  .filters label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-right:-4px}
+  .filters .clr{cursor:pointer;color:var(--accent);font-weight:600;font-size:12px;border:0;background:none}
+  #detCount{font-size:12.5px;color:var(--muted);margin-left:auto}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
   @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
 </style>
@@ -193,31 +206,11 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Buses operativos vs. lo que necesita la operación</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note">Análisis enfocado en <b>buses</b> (minibuses fuera de alcance por ahora). El <b>requerido</b> es la cantidad que necesita la operación: <b>Sube y Baja 56</b> (maestro de flota) · <b>Mina 40</b> y <b>Planta 35</b> (Report de turno, hoja Disponibilidad). Los <b>operativos</b> son los buses en estado OPERATIVA del Report al 28-ago (Mina 25 · Planta 27); Sube y Baja no está en el Report, se estima como maestro − detenidos (51). El <b>backup</b> es la holgura del maestro sobre lo requerido. El objetivo es alcanzar el número de buses que declara el Report de disponibilidad.</div>
+    <div class="note">Análisis enfocado en <b>buses</b> (minibuses fuera de alcance por ahora). El <b>asignado</b> es la flota que necesita la operación: <b>Sube y Baja 56</b> (maestro de flota) · <b>Mina 40</b> y <b>Planta 35</b> (Report de turno, hoja Disponibilidad). Los <b>operativos</b> son los buses en estado OPERATIVA del Report al 28-ago (Mina 25 · Planta 27); Sube y Baja no está en el Report, se estima como maestro − detenidos (51). El <b>backup</b> es la holgura del maestro sobre lo asignado. El objetivo es alcanzar el número de buses que declara el Report de disponibilidad.</div>
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">02</span><h2>Disponibilidad — visión Operaciones (KPI cliente)</h2>
-      <span class="hint">Report Viggo · corte 28-ago-2026</span></div>
-    <div class="svc" id="svcOps"></div>
-    <div class="note">Métrica oficial que ve Operaciones: <b>Operatividad % = (Flota Operativa + Afectación infraestructura cliente) / Flota Requerida</b>, más el <b>Impacto taller faena %</b> = <b>Operatividad Final %</b>. Incluye <b>sprinters</b> además de buses y usa la requerida del cliente (Mina 41 · Planta 40), por eso los % no coinciden con la sección 01. <b>Sube y Baja no está incluido</b> en este KPI de Operaciones.</div>
-  </section>
-
-  <section>
-    <div class="sec-h"><span class="n">03</span><h2>Requerido vs. maestro y backup</h2>
-      <span class="hint">Buses · el backup es la holgura del maestro sobre lo requerido</span></div>
-    <div class="tblwrap">
-      <table>
-        <thead><tr><th>Servicio</th><th>Requerido operación</th><th>Maestro (buses)</th><th>Backup</th><th>Detenidos</th><th>Operativos</th><th>Disponib.</th></tr></thead>
-        <tbody id="bmTable"></tbody>
-        <tfoot id="bmFoot"></tfoot>
-      </table>
-    </div>
-    <div class="note">Requerido: Sube y Baja desde el <b>maestro de flota</b> (56); Mina (40) y Planta (35) desde el <b>Report de turno</b>. El backup del maestro (Mina +7 · Planta +5) <b>no alcanza a cubrir</b> las detenciones actuales, por eso hay déficit operativo.</div>
-  </section>
-
-  <section>
-    <div class="sec-h"><span class="n">04</span><h2>Destino de atención</h2>
+    <div class="sec-h"><span class="n">02</span><h2>Destino de atención</h2>
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
     <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Los equipos cuya <b>Ubicación = «Taller MEL»</b> (14 buses en faena) son los que se analizan: <b>bajar en cama baja</b> a Antofagasta o <b>mantener para atender en el taller 3.5</b>. Los que ya figuran en ubicaciones de Antofagasta están fuera de esta decisión (ya descendidos).</div>
     <div class="split3">
@@ -237,13 +230,16 @@
         <div class="desc">Fuera de la decisión. En talleres externos (Kaufmann, Scania, F. Baeza).</div>
       </div>
     </div>
+    <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 10px">Equipos por contrato y taller de atención</h3>
+    <div class="tblwrap" id="contractDetail"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>Taller en faena MEL (3.5)</span><span><i style="background:var(--info)"></i>Taller en Antofagasta / externo</span></div>
     <div class="note" style="border-left-color:var(--crit);background:var(--crit-bg);color:var(--ink);margin-top:16px">
       <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 14 equipos en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (63%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al número de buses que exige el Report de disponibilidad.
     </div>
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">05</span><h2>Costo cama baja</h2>
+    <div class="sec-h"><span class="n">03</span><h2>Costo cama baja</h2>
       <span class="hint">Ajusta el destino de las unidades en faena y el monto se recalcula</span></div>
     <div class="cb">
       <div class="cbcost">
@@ -277,24 +273,33 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">06</span><h2>Carga por taller y dificultad</h2>
-      <span class="hint">Ponderación: Alta 3 · Media 2 · Baja 1</span></div>
-    <div class="split3" style="grid-template-columns:1.3fr 1fr;display:grid">
-      <div class="scard">
-        <h3 style="margin-bottom:14px">Equipos por taller de atención</h3>
-        <div class="bars" id="tallerBars"></div>
-      </div>
-      <div class="scard">
-        <h3 style="margin-bottom:14px">Dificultad de intervención</h3>
-        <div class="bars" id="difBars"></div>
-        <div class="note" style="margin-top:16px">Carga ponderada total: <b id="pondTot"></b> puntos sobre 29 equipos. Concentración en dificultad <b>Alta</b> tensiona la capacidad de HH y repuestos.</div>
+    <div class="sec-h"><span class="n">04</span><h2>Carga de trabajo por taller</h2>
+      <span class="hint">Carga = equipos × dificultad (Alta 3 · Media 2 · Baja 1)</span></div>
+    <div class="scard">
+      <div id="cargaChart"></div>
+      <div class="legend" style="margin-top:14px">
+        <span><i style="background:var(--crit)"></i>Alta (×3)</span>
+        <span><i style="background:var(--warn)"></i>Media (×2)</span>
+        <span><i style="background:var(--good)"></i>Baja (×1)</span>
+        <span style="margin-left:auto;color:var(--ink)">Carga total: <b id="pondTot"></b> pts · 29 equipos</span>
       </div>
     </div>
+    <div class="note">Cada barra mide la <b>carga de trabajo</b> del taller: nº de equipos ponderado por su dificultad. Ej.: 3 equipos de dificultad media = carga 6. Los talleres de <b>faena (Taller MEL · Kaufmann MEL)</b> concentran la carga que el 3.5 debe absorber con su capacidad actual.</div>
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">07</span><h2>Detalle de equipos detenidos MEL</h2>
-      <span class="hint">29 buses · ordenados por servicio y antigüedad de detención</span></div>
+    <div class="sec-h"><span class="n">05</span><h2>Detalle de equipos detenidos MEL</h2>
+      <span class="hint">Filtra por ubicación, decisión o taller destino</span></div>
+    <div class="filters">
+      <label>Ubicación</label>
+      <select id="fUbic"><option value="">Todas</option><option value="mel">Faena MEL</option><option value="ant">Antofagasta</option></select>
+      <label>Atención 3.5</label>
+      <select id="fA35"><option value="">Todas</option><option value="mel">Taller 3.5</option><option value="cb">Cama baja</option><option value="ant">En Antofa</option></select>
+      <label>Taller destino</label>
+      <select id="fTaller"><option value="">Todos</option></select>
+      <button class="clr" id="fClr">Limpiar</button>
+      <span id="detCount"></span>
+    </div>
     <div class="tblwrap">
       <table>
         <thead><tr><th>Interno</th><th>Servicio</th><th>Sistema</th><th>Motivo</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>Detención</th><th>Clasif.</th></tr></thead>
@@ -363,61 +368,37 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     <h3>${s.name}<span class="loc">${s.loc}</span></h3>
     <div class="gauge">
       <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-        <span class="req">${s.oper} operativos / ${s.req} requeridos</span></div>
+        <span class="req">${s.oper} operativos / ${s.req} asignados</span></div>
       <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
     </div>
     <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
-      <div><div class="lbl">Requerido</div><div class="val">${s.req}</div></div>
+      <div><div class="lbl">Asignado</div><div class="val">${s.req}</div></div>
       <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
       <div><div class="lbl">F/S detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
       <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">+${s.backup}</div></div>
     </div>
     <div class="deficit">${s.def>0
-      ? `<span class="pill p-crit">Déficit ${s.def}</span> bajo requerimiento`
-      : `<span class="pill p-good">Cubierto</span> +${-s.def} sobre requerimiento`}</div>
+      ? `<span class="pill p-crit">Déficit ${s.def}</span> bajo lo asignado`
+      : `<span class="pill p-good">Cubierto</span> +${-s.def} sobre lo asignado`}</div>
   </div>`;
 }).join('');
 
-// Visión Operaciones (KPI cliente) — corte 28-ago-2026
-const ops=[
-  {name:'Mina',loc:'Mel Intermina',buses:25,sprinter:5,oper:30,afect:3,req:41,base:0.805,impacto:0.04,final:0.845,prom:0.916},
-  {name:'Planta',loc:'Mel Interfaena',buses:27,sprinter:4,oper:31,afect:3,req:40,base:0.85,impacto:0,final:0.85,prom:0.840,sinergia:6},
-];
-document.getElementById('svcOps').innerHTML=ops.map(o=>{
-  const pct=Math.round(o.final*100),c=dispColor(o.final);
-  return `<div class="scard">
-    <h3>${o.name}<span class="loc">${o.loc}</span></h3>
-    <div class="gauge">
-      <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-        <span class="req">Operatividad Final · prom. mes ${Math.round(o.prom*100)}%</span></div>
-      <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
-    </div>
-    <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
-      <div><div class="lbl">Operativa</div><div class="val">${o.oper}</div></div>
-      <div><div class="lbl">Requerida</div><div class="val">${o.req}</div></div>
-      <div><div class="lbl">Afect. cliente</div><div class="val" style="color:var(--info)">+${o.afect}</div></div>
-      <div><div class="lbl">Impacto taller</div><div class="val" style="color:var(--good)">+${Math.round(o.impacto*100)}%</div></div>
-    </div>
-    <div class="deficit"><span class="pill p-info">Base ${Math.round(o.base*100)}%</span>
-      ${o.impacto>0?`+ ${Math.round(o.impacto*100)}% taller faena → <b style="margin-left:4px">${pct}% final</b>`:`sin bonus taller`}
-      ${o.sinergia?` · <span style="color:var(--muted)">${o.sinergia} buses sinergia</span>`:''}</div>
-  </div>`;
+// Detalle por contrato y taller (destino de atención)
+const talleres=['Taller MEL','Kaufmann MEL','Taller Antofagasta','Kaufmann Viggo','Kaufmann K1','Kaufmann K6','Scania','Fabian Baeza'];
+const svcOrder=['syb','mina','plan'];
+const dInMel=t=>t==='Taller MEL'||t==='Kaufmann MEL';
+let ctHead='<thead><tr><th>Contrato</th><th>Equipos</th>'+talleres.map(t=>`<th>${t}</th>`).join('')+'</tr></thead>';
+let ctBody=svcOrder.map(sk=>{
+  const rows=det.filter(d=>d.s===sk);
+  const cells=talleres.map(t=>{
+    const n=rows.filter(d=>d.taller===t).length;
+    return `<td class="num" style="${n?(dInMel(t)?'color:var(--accent);font-weight:700':'color:var(--ink)'):'color:var(--faint)'}">${n||'·'}</td>`;
+  }).join('');
+  return `<tr><td><b>${svcName(sk)}</b></td><td class="num" style="font-weight:700">${rows.length}</td>${cells}</tr>`;
 }).join('');
-
-let tR=0,tB=0,tBk=0,tD=0,tO=0;
-document.getElementById('bmTable').innerHTML=svc.map(s=>{
-  tR+=s.req;tB+=s.busM;tBk+=s.backup;tD+=s.det;tO+=s.oper;
-  const c=dispColor(s.disp);
-  return `<tr><td><b>${s.name}</b></td><td class="num">${s.req}</td><td class="num">${s.busM}</td>
-    <td class="num" style="color:var(--muted)">+${s.backup}</td><td class="num" style="color:var(--crit)">${s.det}</td>
-    <td class="num" style="color:var(--${c});font-weight:600">${s.oper}</td>
-    <td class="num" style="color:var(--${c});font-weight:600">${Math.round(s.disp*100)}%</td></tr>`;
-}).join('');
-const tDisp=Math.round(tO/tR*100);
-document.getElementById('bmFoot').innerHTML=
-  `<tr style="font-weight:700"><td>TOTAL</td><td class="num">${tR}</td><td class="num">${tB}</td>
-   <td class="num">+${tBk}</td><td class="num" style="color:var(--crit)">${tD}</td>
-   <td class="num">${tO}</td><td class="num">${tDisp}%</td></tr>`;
+const totCells=talleres.map(t=>{const n=det.filter(d=>d.taller===t).length;return `<td class="num" style="font-weight:700">${n||'·'}</td>`;}).join('');
+const ctFoot=`<tfoot><tr style="font-weight:700"><td>TOTAL</td><td class="num">${det.length}</td>${totCells}</tr></tfoot>`;
+document.getElementById('contractDetail').innerHTML='<table>'+ctHead+'<tbody>'+ctBody+'</tbody>'+ctFoot+'</table>';
 
 // Cama baja: unidades en faena (fa=1) son editables. Base = a35.
 const faUnits=det.filter(d=>d.fa);
@@ -453,38 +434,57 @@ function setAll(v){
 renderCB();
 
 // Carga por taller
-const tallerCount={};
-det.forEach(d=>{tallerCount[d.taller]=(tallerCount[d.taller]||0)+1;});
-const tEntries=Object.entries(tallerCount).sort((a,b)=>b[1]-a[1]);
-const tMax=Math.max(...tEntries.map(e=>e[1]));
+// Carga = equipos × dificultad, apilada por taller
 const isMel=t=>t==='Taller MEL'||t==='Kaufmann MEL';
-document.getElementById('tallerBars').innerHTML=tEntries.map(([t,c])=>
-  `<div class="barrow"><span>${t}</span>
-   <div class="bt" style="width:${c/tMax*100}%;background:${isMel(t)?'var(--accent)':'var(--info)'}"></div>
-   <span class="cnt">${c}</span></div>`).join('');
-
-// Dificultad
-const difs=[['Alta','d-alta','var(--crit)'],['Media','d-media','var(--warn)'],['Baja','d-baja','var(--good)']];
-const difCount={Alta:0,Media:0,Baja:0}; let pond=0;
-det.forEach(d=>{difCount[d.dif]++;pond+=d.p;});
-const dMax=Math.max(...Object.values(difCount));
-document.getElementById('difBars').innerHTML=difs.map(([n,cl,col])=>
-  `<div class="barrow"><span><span class="dif ${cl}">${n}</span></span>
-   <div class="bt" style="width:${difCount[n]/dMax*100}%;background:${col}"></div>
-   <span class="cnt">${difCount[n]}</span></div>`).join('');
+const cargaMap={};
+det.forEach(d=>{
+  const m=cargaMap[d.taller]||(cargaMap[d.taller]={A:0,M:0,B:0,n:0,carga:0});
+  if(d.dif==='Alta')m.A++; else if(d.dif==='Media')m.M++; else m.B++;
+  m.n++; m.carga+=d.p;
+});
+const cEntries=Object.entries(cargaMap).sort((a,b)=>b[1].carga-a[1].carga);
+const cMax=Math.max(...cEntries.map(e=>e[1].carga));
+let pond=0; det.forEach(d=>pond+=d.p);
+document.getElementById('cargaChart').innerHTML=cEntries.map(([t,m])=>{
+  const seg=(w,col)=>w?`<span style="width:${w/cMax*100}%;background:${col}"></span>`:'';
+  const parts=[];
+  if(m.A) parts.push(`${m.A}A`); if(m.M) parts.push(`${m.M}M`); if(m.B) parts.push(`${m.B}B`);
+  return `<div class="cargarow">
+    <span class="ct">${t}${isMel(t)?' <span class="cbadge">3.5</span>':''}</span>
+    <div class="stack">${seg(m.A*3,'var(--crit)')}${seg(m.M*2,'var(--warn)')}${seg(m.B*1,'var(--good)')}</div>
+    <span class="cend"><b>${m.carga}</b> <span class="cn">${m.n} eq · ${parts.join(' ')}</span></span>
+  </div>`;
+}).join('');
 document.getElementById('pondTot').textContent=pond;
 
-// Detalle completo
+// Detalle completo con filtros
 const order={syb:0,mina:1,plan:2};
 const a35tag={cb:'<span class="tag t-cb">Cama baja</span>',mel:'<span class="tag t-si">Taller 3.5</span>',ant:'<span class="tag t-ant">En Antofa</span>'};
 const sorted=[...det].sort((a,b)=>order[a.s]-order[b.s]||a.f.localeCompare(b.f));
-document.getElementById('detTable').innerHTML=sorted.map(d=>{
-  const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
-  return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td><td>${d.mot}</td>
-   <td>${d.fa?'<span class="tag t-mel">Faena MEL</span>':'<span class="tag t-ant">Antofagasta</span>'}</td>
-   <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td><span class="dif ${dc}">${d.dif}</span></td>
-   <td class="num">${d.f}</td><td>${d.lg?'<span class="tag t-larga">Larga data</span>':'Detenida'}</td></tr>`;
-}).join('');
+// poblar filtro de talleres
+const fTaller=document.getElementById('fTaller');
+[...new Set(sorted.map(d=>d.taller))].sort().forEach(t=>{
+  const o=document.createElement('option'); o.value=t; o.textContent=t; fTaller.appendChild(o);
+});
+const fUbic=document.getElementById('fUbic'), fA35=document.getElementById('fA35');
+function renderDet(){
+  const u=fUbic.value, a=fA35.value, t=fTaller.value;
+  const rows=sorted.filter(d=>
+    (!u || (u==='mel'? d.fa : !d.fa)) &&
+    (!a || d.a35===a) &&
+    (!t || d.taller===t));
+  document.getElementById('detTable').innerHTML=rows.map(d=>{
+    const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
+    return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td><td>${d.mot}</td>
+     <td>${d.fa?'<span class="tag t-mel">Faena MEL</span>':'<span class="tag t-ant">Antofagasta</span>'}</td>
+     <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td><span class="dif ${dc}">${d.dif}</span></td>
+     <td class="num">${d.f}</td><td>${d.lg?'<span class="tag t-larga">Larga data</span>':'Detenida'}</td></tr>`;
+  }).join('') || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
+  document.getElementById('detCount').textContent=`${rows.length} de ${sorted.length} equipos`;
+}
+[fUbic,fA35,fTaller].forEach(el=>el.addEventListener('change',renderDet));
+document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA35.value='';fTaller.value='';renderDet();});
+renderDet();
 </script>
 </body>
 </html>
