@@ -206,7 +206,7 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada por maestro (Opción A)</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note">Disponibilidad medida sobre el <b>maestro de activos</b> (universo que Viggo entrega a MEL): <b>disponibilidad = operativos / asignado</b>, con <b>operativos = asignado − detenidos</b>. El <b>objetivo operación</b> es la flota que necesita el servicio (Sube y Baja 56 · Mina 40 · Planta 35, del Report); el <b>backup</b> es la holgura del maestro sobre ese objetivo. Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note">Disponibilidad medida sobre el <b>maestro de activos</b> (universo que Viggo entrega a MEL): <b>disponibilidad = operativos / asignado</b>, con <b>operativos = asignado − detenidos</b>. El <b>objetivo operación</b> es la flota que necesita el servicio (Sube y Baja 56 · Mina 34 · Planta 34); el <b>backup</b> es la holgura del maestro sobre ese objetivo. Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
@@ -251,7 +251,7 @@
     <div class="tblwrap" id="contractDetail"></div>
     <div class="legend"><span><i style="background:var(--accent)"></i>Taller en faena MEL (3.5)</span><span><i style="background:var(--info)"></i>Taller en Antofagasta / externo</span></div>
     <div class="note" style="border-left-color:var(--crit);background:var(--crit-bg);color:var(--ink);margin-top:16px">
-      <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 14 equipos en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (63%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al número de buses que exige el Report de disponibilidad.
+      <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 14 equipos en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (66%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al objetivo de la operación.
     </div>
   </section>
 
@@ -339,8 +339,8 @@ const fmt=n=>'$'+n.toLocaleString('es-CL');
 // reqop = buses que necesita la operación (SyB maestro; Mina/Planta Report); backup = maestro - reqop
 const svc=[
   {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', maestro:56, det:5,  reqop:56},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   maestro:47, det:16, reqop:40},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  maestro:40, det:8,  reqop:35},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   maestro:47, det:16, reqop:34},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  maestro:40, det:8,  reqop:34},
 ];
 svc.forEach(s=>{s.oper=s.maestro-s.det; s.disp=s.oper/s.maestro; s.backup=Math.max(0,s.maestro-s.reqop); s.faltan=Math.max(0,s.reqop-s.oper);});
 
@@ -405,7 +405,7 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
 (function(){
   const START=new Date('2026-08-28T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
   const fentMap={4436:'2026-08-28',6282:'2026-08-29',5136:'2026-08-30',6277:'2026-08-30',6321:'2026-08-31',6266:'2026-09-04',4472:'2026-09-15',6295:'2026-09-16',6293:'2026-09-30',4473:'2026-09-30',6324:'2026-09-30',4872:'2026-08-31',4828:'2026-09-01',4844:'2026-09-01',4846:'2026-09-04',4885:'2026-10-30',4926:'2026-08-27',4914:'2026-08-30',6311:'2026-09-05'};
-  const maestroN={syb:56,mina:47,plan:40}, reqopN={syb:56,mina:40,plan:35};
+  const maestroN={syb:56,mina:47,plan:40}, reqopN={syb:56,mina:34,plan:34};
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
   const gOrder=['syb','mina','plan'];
   const units=det.map(d=>{
