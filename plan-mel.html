@@ -223,7 +223,7 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (fecha de entrega)</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Set del <b>Report</b> (Mina 15 F/S · Planta 8 · Sube y Baja 5). La proyección suma cada bus a la flota operativa en su <b>fecha de entrega</b>. <b>15 equipos sin fecha</b> quedan como pendientes (limitan el techo), de los cuales <b>7 no están en el plan de acción de Viggo</b> (4439, 6283, 6325, 4827, 4871, 4888, 4890) — detenidos según el cliente pero sin evaluación/taller aún. Barras rayadas = sin fecha comprometida.</div>
+    <div class="note">Set del <b>Report</b> (Mina 15 F/S · Planta 8 · Sube y Baja 5). La proyección suma cada bus a la flota operativa en su <b>fecha de entrega</b>. <b>11 equipos sin fecha</b> quedan como pendientes (limitan el techo), de los cuales <b>7 no están en el plan de acción de Viggo</b> (4439, 6283, 6325, 4827, 4871, 4888, 4890) — detenidos según el cliente pero sin evaluación/taller aún. Barras rayadas = sin fecha comprometida.</div>
   </section>
 
   <section>
@@ -411,11 +411,11 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     {i:'6295',s:'mina',f:'2026-09-16'},{i:'4473',s:'mina',f:'2026-09-30'},{i:'6324',s:'mina',f:'2026-09-30'},
     {i:'4437',s:'mina',f:null},{i:'6272',s:'mina',f:null},{i:'6279',s:'mina',f:null},
     {i:'4439',s:'mina',f:null},{i:'6283',s:'mina',f:null},{i:'6325',s:'mina',f:null},
-    {i:'4846',s:'plan',f:'2026-09-04'},
-    {i:'4826',s:'plan',f:null},{i:'4827',s:'plan',f:null},{i:'4853',s:'plan',f:null},{i:'4870',s:'plan',f:null},
+    {i:'4846',s:'plan',f:'2026-09-04'},{i:'4853',s:'plan',f:'2026-09-14'},{i:'4870',s:'plan',f:'2026-09-04'},
+    {i:'4826',s:'plan',f:null},{i:'4827',s:'plan',f:null},
     {i:'4871',s:'plan',f:null},{i:'4888',s:'plan',f:null},{i:'4890',s:'plan',f:null},
-    {i:'4926',s:'syb',f:'2026-08-27'},{i:'4914',s:'syb',f:'2026-08-30'},{i:'6311',s:'syb',f:'2026-09-05'},
-    {i:'4927',s:'syb',f:null},{i:'6273',s:'syb',f:null},
+    {i:'4926',s:'syb',f:'2026-09-04'},{i:'4914',s:'syb',f:'2026-08-30'},{i:'6311',s:'syb',f:'2026-09-05'},
+    {i:'4927',s:'syb',f:'2026-09-30'},{i:'6273',s:'syb',f:'2026-09-15'},
   ];
   const maestroN={syb:56,mina:40,plan:35}, reqopN={syb:56,mina:34,plan:34};
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
