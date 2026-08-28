@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Recuperación de Flota 2026</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#F3F1EC; --panel:#FFFFFF; --ink:#1A1A17; --ink2:#6B6B63; --line:#E4E0D7;
+    --navy:#173A5E; --navy2:#25547F; --gold:#B07A2B; --gold-bg:#F6ECD9;
+    --green:#1F6B45; --green-bg:#E7F2EB; --amber:#9A5B12; --amber-bg:#F8EEDD;
+    --soft:#FAF8F3; --on-navy:#FFFFFF;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#101319; --panel:#181C24; --ink:#ECEAE3; --ink2:#9AA0AC; --line:#28303C;
+    --navy:#7FB0DE; --navy2:#5B90C4; --gold:#D6A24E; --gold-bg:#2A2110;
+    --green:#4FB483; --green-bg:#13291F; --amber:#D69445; --amber-bg:#2A1E0C; --soft:#141821; --on-navy:#0F1319;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#101319; --panel:#181C24; --ink:#ECEAE3; --ink2:#9AA0AC; --line:#28303C;
+    --navy:#7FB0DE; --navy2:#5B90C4; --gold:#D6A24E; --gold-bg:#2A2110;
+    --green:#4FB483; --green-bg:#13291F; --amber:#D69445; --amber-bg:#2A1E0C; --soft:#141821; --on-navy:#0F1319;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;padding:2.5rem 1.25rem 5rem;-webkit-font-smoothing:antialiased}
+  .page{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:1.6rem}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .c{text-align:center}.r{text-align:right}.strong{font-weight:600}
+  .muted{color:var(--ink2)}
+
+  header{border-top:3px solid var(--navy);padding-top:1.1rem}
+  .brand{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);display:flex;align-items:center;gap:.5rem}
+  .brand .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block}
+  header h1{font-family:'Fraunces',Georgia,serif;font-size:2.1rem;font-weight:600;line-height:1.1;margin:.5rem 0 .4rem;letter-spacing:-.01em}
+  header .sub{color:var(--ink2);font-size:14.5px;max-width:60ch}
+  header .tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.9rem}
+  header .tags span{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink2);background:var(--soft);border:1px solid var(--line);border-radius:99px;padding:.2rem .65rem}
+
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+  .kpi-row.tight{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:680px){.kpi-row,.kpi-row.tight{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.25rem}
+  .kpi.accent{background:var(--gold-bg);border-color:var(--gold)}
+  .kpi-v{font-family:'Fraunces',serif;font-size:1.55rem;font-weight:600;line-height:1;color:var(--navy)}
+  .kpi.accent .kpi-v{color:var(--gold)}
+  .kpi-l{font-size:11.5px;color:var(--ink2);line-height:1.35}
+  .kpi.sm .kpi-v{font-size:1.3rem}
+
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
+  .s-head{display:flex;align-items:center;gap:.7rem;border-bottom:1px solid var(--line);padding-bottom:.7rem}
+  .s-num{width:1.7rem;height:1.7rem;border-radius:7px;background:var(--navy);color:var(--on-navy);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:1rem;flex-shrink:0}
+  .s-head h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600}
+  .lead{color:var(--ink);font-size:14px}.lead b{color:var(--navy)}
+  .foot{font-size:11.5px;color:var(--ink2);border-top:1px dashed var(--line);padding-top:.6rem}
+
+  /* plan cards */
+  .plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+  @media(max-width:640px){.plan-grid{grid-template-columns:1fr}}
+  .plan-card{border:1px solid var(--line);border-radius:10px;padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.6rem}
+  .plan-card.p1{background:var(--green-bg);border-color:var(--green)}
+  .plan-card.p2{background:var(--amber-bg);border-color:var(--amber)}
+  .plan-top{display:flex;align-items:center;justify-content:space-between}
+  .plan-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600}
+  .plan-card.p1 .plan-name{color:var(--green)}.plan-card.p2 .plan-name{color:var(--amber)}
+  .pill{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.2rem .55rem;border-radius:99px}
+  .pill.done{background:var(--green);color:#fff}.pill.prog{background:var(--amber);color:#fff}
+  .plan-cost{font-family:'IBM Plex Mono',monospace;font-size:2rem;font-weight:500;letter-spacing:-.02em}
+  .plan-stats{display:flex;gap:1.4rem;padding:.4rem 0;border-top:1px solid var(--line)}
+  .plan-stats div{display:flex;flex-direction:column}
+  .plan-stats b{font-size:1.15rem;font-family:'IBM Plex Mono',monospace}
+  .plan-stats span{font-size:11px;color:var(--ink2)}
+  .plan-note{font-size:12px;color:var(--ink2)}
+  .total-band{display:flex;align-items:center;justify-content:space-between;background:var(--navy);color:var(--on-navy);border-radius:10px;padding:.85rem 1.3rem}
+  .total-band span{font-size:13px;letter-spacing:.02em}
+  .total-band b{font-family:'IBM Plex Mono',monospace;font-size:1.5rem;font-weight:500}
+
+  /* tables */
+  .tbl-wrap{overflow-x:auto}
+  table.rec{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+  table.rec thead th{text-align:left;padding:.5rem .7rem;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);border-bottom:1.5px solid var(--line);white-space:nowrap}
+  table.rec thead th.r{text-align:right}table.rec thead th.c{text-align:center}
+  table.rec tbody td{padding:.45rem .7rem;border-bottom:1px solid var(--line)}
+  table.rec tr.grp td{background:var(--soft);font-weight:600;color:var(--navy);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;padding:.45rem .7rem}
+  .grp-n{font-weight:400;color:var(--ink2);text-transform:none;letter-spacing:0}
+  table.rec .tag{font-size:9px;background:var(--amber-bg);color:var(--amber);padding:.05rem .35rem;border-radius:4px;font-family:'Inter';letter-spacing:.03em;text-transform:uppercase;vertical-align:middle}
+  table.rec tr.tot td{border-top:2px solid var(--line);border-bottom:none;font-weight:600;padding:.6rem .7rem;background:var(--soft)}
+  .kpi-row.tight{margin-bottom:.2rem}
+
+  /* banner + split (larga detención) */
+  .banner{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--navy);border-radius:10px;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:.6rem}
+  .banner-row{display:flex;align-items:baseline;gap:.9rem}
+  .banner-row div:last-child{font-size:13.5px;color:var(--ink)}
+  .banner-big{font-family:'Fraunces',serif;font-size:2.1rem;font-weight:600;color:var(--navy);line-height:1;flex-shrink:0;min-width:2.6rem}
+  .banner-big.sm{font-size:1.5rem}
+  .banner b{color:var(--navy)}
+  .split3{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+  @media(max-width:560px){.split3{grid-template-columns:1fr}}
+  .sc{border:1px solid var(--line);border-radius:10px;padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:.1rem}
+  .sc b{font-family:'IBM Plex Mono',monospace;font-size:1.7rem;font-weight:500;line-height:1}
+  .sc span{font-size:11.5px;color:var(--ink2)}
+  .sc.g{background:var(--green-bg);border-color:var(--green)}.sc.g b{color:var(--green)}
+  .sc.a{background:var(--amber-bg);border-color:var(--amber)}.sc.a b{color:var(--amber)}
+  .sc.gr b{color:var(--ink2)}
+  .tag2{font-size:9.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:.1rem .45rem;border-radius:5px}
+  .tag2.g{background:var(--green-bg);color:var(--green)}
+  .tag2.gr{background:var(--soft);color:var(--ink2);border:1px solid var(--line)}
+  .tag2.a{background:var(--amber-bg);color:var(--amber)}
+  .tag2.b{background:var(--accent-lt,rgba(23,58,94,.1));color:var(--navy);border:1px solid var(--navy)}
+  .tag2.r{background:rgba(180,40,40,.12);color:#B42828}
+  :root[data-theme="dark"] .tag2.r,:root:not([data-theme="light"]) .tag2.r{color:#E88}
+  .callout{border-left:3px solid var(--gold);background:var(--gold-bg);border-radius:0 8px 8px 0;padding:.7rem 1rem;font-size:13px}
+  .callout b{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="page">
+<header><div class="brand"><span class="dot"></span>VIGGO &nbsp;·&nbsp; Gerencia de Ingeniería y Gestión de Activos</div><h1>Recuperación de Flota 2026</h1><p class="sub">Resumen ejecutivo: plan de recuperación de equipos, equipos restituidos al servicio, cartera de recuperables para operación y análisis del universo crítico de larga detención.</p><div class="tags"><span>Emisión 21-08-2026</span><span>Maestro flota 27-08-2026</span><span>Costos histórico (día 19)</span></div></header>
+<div class="kpi-row"><div class="kpi"><div class="kpi-v">$274 MM</div><div class="kpi-l">Plan de recuperación (Plan 1 + Plan 2)</div></div><div class="kpi"><div class="kpi-v">24</div><div class="kpi-l">Equipos recuperados al 21-08</div></div><div class="kpi"><div class="kpi-v">$197,5 MM</div><div class="kpi-l">Costo recuperación equipos recuperados</div></div><div class="kpi accent"><div class="kpi-v">$265,5 MM</div><div class="kpi-l">Monto necesario Plan 3 (para operación)</div></div></div>
+<section><div class="s-head"><span class="s-num">1</span><h2>Universo Crítico — Larga Detención</h2></div>
+<div class="banner"><div class="banner-row"><div class="banner-big">95</div><div>equipos detenidos al <b>01-01-2026</b> sobre un total de <b>726</b> en flota.</div></div><div class="banner-row"><div class="banner-big sm">35</div><div>de esos 95 llevaban <b>más de 90 días</b> detenidos — este es el universo crítico analizado a continuación.</div></div></div>
+<div class="split3"><div class="sc g"><b>8</b><span>Recuperados (23%)</span></div><div class="sc a"><b>20</b><span>Siguen detenidos (57%)</span></div><div class="sc gr"><b>7</b><span>Vendidos / baja (20%)</span></div></div>
+<p class="lead">De los 35 equipos de larga detención, <b>8 fueron recuperados</b> (costo total $90,6 MM), <b>20 siguen detenidos</b> y <b>7 fueron vendidos</b>. De los recuperados, solo <b>1 (4871)</b> pertenecía al plan formal; los demás se resolvieron por vías independientes.</p>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Contrato</th><th class="r">Días al 01-01</th><th class="c">Entrega</th><th class="r">Costo recuperación</th><th>En plan</th></tr></thead><tbody>
+<tr><td class="mono">4871</td><td>Mel Interfaena</td><td class="mono r">361</td><td class="mono c">09-03-2026</td><td class="mono r">$27,2 MM</td><td><span class="tag2 g">Plan 1</span></td></tr>
+<tr><td class="mono">4367</td><td>Custodia Flota</td><td class="mono r">93</td><td class="mono c">29-01-2026</td><td class="mono r">$20,2 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+<tr><td class="mono">4354</td><td>Vanni</td><td class="mono r">106</td><td class="mono c">08-04-2026</td><td class="mono r">$13,0 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+<tr><td class="mono">4775</td><td>Ofi. Regional Antofagastasta</td><td class="mono r">213</td><td class="mono c">29-05-2026</td><td class="mono r">$8,8 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+<tr><td class="mono">2938</td><td>Iansa</td><td class="mono r">135</td><td class="mono c">03-03-2026</td><td class="mono r">$6,5 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+<tr><td class="mono">4257</td><td>Custodia Venta</td><td class="mono r">101</td><td class="mono c">14-01-2026</td><td class="mono r">$5,4 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+<tr><td class="mono">5353</td><td>Custodia Flota</td><td class="mono r">203</td><td class="mono c">21-01-2026</td><td class="mono r">$5,1 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+<tr><td class="mono">4977</td><td>Grupo K</td><td class="mono r">188</td><td class="mono c">04-05-2026</td><td class="mono r">$4,5 MM</td><td><span class="tag2 gr">Sin plan</span></td></tr>
+
+<tr class="tot"><td colspan="4">Total costo recuperación (larga detención)</td><td class="mono r">$90,6 MM</td><td></td></tr>
+</tbody></table></div><p class="foot">Costo de recuperación acumulado (histórico, Costo Neto) desde la detención hasta 30 días posteriores a la entrega.</p></section>
+<section><div class="s-head"><span class="s-num">2</span><h2>Equipos que Siguen Detenidos</h2></div>
+<p class="lead"><b>20 equipos</b> del universo crítico permanecen fuera de servicio al 21-08-2026. El grupo más crítico son los buses de Antofagasta y Calama (Custodia Gestión Activos) con fallas de motor, varios con más de 600 días detenidos. <b>4867</b> y <b>4406</b> concentran cerca del 40% del costo acumulado del grupo.</p>
+<div class="callout"><b>3 ya están en el Plan 2</b> (en reparación). De los restantes, según su categoría en el archivo de recuperables: <b>9 Recuperable Operación</b> ingresan al Plan 3; <b>1 Recuperable Venta</b> y <b>7 No recuperable</b> se destinan a venta/baja, ya que por su año y costo asociado la recuperación no se justifica.</div>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Tipo</th><th>Base</th><th class="r">Días al 01-01</th><th class="r">Costo acum.</th><th>Propuesta</th></tr></thead><tbody>
+<tr><td class="mono">4867</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">966</td><td class="mono r">$42,1 MM</td><td><span class="tag2 b">Plan 2 · en reparación</span></td></tr>
+<tr><td class="mono">4406</td><td>Bus</td><td>Calama</td><td class="mono r">671</td><td class="mono r">$35,0 MM</td><td><span class="tag2 b">Plan 2 · en reparación</span></td></tr>
+<tr><td class="mono">4431</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">102</td><td class="mono r">$24,0 MM</td><td><span class="tag2 r">No recuperable</span></td></tr>
+<tr><td class="mono">4842</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">140</td><td class="mono r">$23,2 MM</td><td><span class="tag2 b">Plan 2 · en reparación</span></td></tr>
+<tr><td class="mono">4859</td><td>Bus 2P</td><td>Calama</td><td class="mono r">274</td><td class="mono r">$22,5 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4324</td><td>Bus</td><td>Santiago</td><td class="mono r">246</td><td class="mono r">$11,8 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4385</td><td>Bus</td><td>Santiago</td><td class="mono r">170</td><td class="mono r">$7,6 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4849</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">882</td><td class="mono r">$4,6 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4850</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">634</td><td class="mono r">$2,6 MM</td><td><span class="tag2 r">No recuperable</span></td></tr>
+<tr><td class="mono">4878</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">310</td><td class="mono r">$2,4 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4887</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">768</td><td class="mono r">$2,3 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4845</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">328</td><td class="mono r">$2,1 MM</td><td><span class="tag2 r">No recuperable</span></td></tr>
+<tr><td class="mono">4328</td><td>Bus</td><td>Calama</td><td class="mono r">287</td><td class="mono r">$1,8 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4360</td><td>Bus</td><td>Santiago</td><td class="mono r">94</td><td class="mono r">$1,6 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4831</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">454</td><td class="mono r">$0,8 MM</td><td><span class="tag2 g">Recuperable Operación · Plan 3</span></td></tr>
+<tr><td class="mono">4836</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">581</td><td class="mono r">$0,2 MM</td><td><span class="tag2 r">No recuperable</span></td></tr>
+<tr><td class="mono">4361</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">709</td><td class="mono r">$0,0 MM</td><td><span class="tag2 a">Recuperable Venta</span></td></tr>
+<tr><td class="mono">4839</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">767</td><td class="mono r"><span class="muted">—</span></td><td><span class="tag2 r">No recuperable</span></td></tr>
+<tr><td class="mono">4841</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">717</td><td class="mono r"><span class="muted">—</span></td><td><span class="tag2 r">No recuperable</span></td></tr>
+<tr><td class="mono">4847</td><td>Bus</td><td>Antofagastasta</td><td class="mono r">640</td><td class="mono r"><span class="muted">—</span></td><td><span class="tag2 r">No recuperable</span></td></tr>
+
+<tr class="tot"><td colspan="4">Total costo acumulado</td><td class="mono r">$184,5 MM</td><td></td></tr>
+</tbody></table></div>
+<p class="foot"><b>Observación:</b> hay más equipos en el archivo de recuperables que en el listado de detenidos, porque no existía una definición clara de cuáles equipos se venden y cuáles se recuperan. Este ejercicio se realiza precisamente para definir esa clasificación.</p>
+</section>
+<section><div class="s-head"><span class="s-num">3</span><h2>Plan de Recuperación de Flota</h2></div>
+<p class="lead">Plan formal de recuperación en dos etapas. <b>Actualización 27-08:</b> el Plan 2 no podrá ejecutarse por completo; <b>5 equipos (4879, 4869, 4878, 4887, 4403) se trasladan al Plan 3</b>, cuya ejecución queda diferida a <b>2027</b>.</p>
+<div class="plan-grid">
+<div class="plan-card p1"><div class="plan-top"><span class="plan-name">Plan 1</span><span class="pill done">100% ejecutado</span></div><div class="plan-cost">$142 MM</div><div class="plan-stats"><div><b>17</b><span>equipos</span></div><div><b>17</b><span>operativos</span></div></div><p class="plan-note">Recuperación ejecutada y cerrada dentro del período ene–jul 2026.</p></div>
+<div class="plan-card p2"><div class="plan-top"><span class="plan-name">Plan 2</span><span class="pill prog">No se ejecuta completo</span></div><div class="plan-cost">$132 MM</div><div class="plan-stats"><div><b>7</b><span>equipos</span></div><div><b>2</b><span>operativos</span></div><div><b>5</b><span>en reparación</span></div></div><div class="plan-stats"><div><b>$61,0 MM</b><span>costo reparación</span></div><div><b>$71,0 MM</b><span>diferencia vs presupuesto</span></div></div><p class="plan-note">Alcance reducido: 5 equipos pasan al Plan 3. De los $132 MM se ejecutan $61,0 MM en reparación; quedan $71,0 MM sin utilizar.</p></div>
+</div><div class="total-band"><span>Inversión total del plan de recuperación (Plan 1 + Plan 2)</span><b>$274 MM</b></div></section>
+<section><div class="s-head"><span class="s-num">4</span><h2>Equipos Recuperados</h2></div>
+<p class="lead">24 equipos restituidos al servicio: <b>17 del Plan 1</b>, <b>5 de larga data</b> sin plan formal y <b>2 del Plan 2</b> ya recuperados. El costo de recuperación acumula el gasto hasta 30 días posteriores a la entrega operativa.</p>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Contrato actual</th><th class="c">Fecha detención</th><th class="c">Fecha entrega</th><th class="r">Costo recuperación</th><th class="r">Km desde entrega</th></tr></thead><tbody>
+<tr class="grp"><td colspan="6">Plan 1 &nbsp;<span class="grp-n">17 equipos</span></td></tr>
+<tr><td class="mono">4823</td><td>Mel Interfaena</td><td class="mono c">02-02-2026</td><td class="mono c">13-03-2026</td><td class="mono r">$9,1 MM</td><td class="mono r">13.925</td></tr>
+<tr><td class="mono">4825</td><td>Mel Intermina</td><td class="mono c">02-04-2026</td><td class="mono c">12-06-2026</td><td class="mono r">$5,2 MM</td><td class="mono r">2.745</td></tr>
+<tr><td class="mono">4830</td><td>Mel Interfaena</td><td class="mono c">22-03-2026</td><td class="mono c">16-04-2026</td><td class="mono r">$2,2 MM</td><td class="mono r">15.249</td></tr>
+<tr><td class="mono">4843</td><td>Grupo K</td><td class="mono c">27-02-2026</td><td class="mono c">16-03-2026</td><td class="mono r">$1,3 MM</td><td class="mono r">10.172</td></tr>
+<tr><td class="mono">4853</td><td>Mel Interfaena</td><td class="mono c">13-12-2025</td><td class="mono c">06-05-2026</td><td class="mono r">$11,5 MM</td><td class="mono r">5.530</td></tr>
+<tr><td class="mono">4865</td><td>Mel Interfaena</td><td class="mono c">16-12-2025</td><td class="mono c">23-01-2026</td><td class="mono r">$0,2 MM</td><td class="mono r">17.222</td></tr>
+<tr><td class="mono">4871</td><td>Mel Interfaena</td><td class="mono c">05-01-2025</td><td class="mono c">17-03-2026</td><td class="mono r">$27,2 MM</td><td class="mono r">16.888</td></tr>
+<tr><td class="mono">4874</td><td>MEL Sube y Baja</td><td class="mono c">25-06-2026</td><td class="mono c">04-07-2026</td><td class="mono r">$1,7 MM</td><td class="mono r">5.260</td></tr>
+<tr><td class="mono">4875</td><td>MEL Sube y Baja</td><td class="mono c">28-05-2026</td><td class="mono c">12-06-2026</td><td class="mono r">$7,0 MM</td><td class="mono r">6.701</td></tr>
+<tr><td class="mono">4883</td><td>Mel Interfaena</td><td class="mono c">31-05-2026</td><td class="mono c">17-06-2026</td><td class="mono r">$3,2 MM</td><td class="mono r">3.878</td></tr>
+<tr><td class="mono">4884</td><td>Mel Interfaena</td><td class="mono c">12-05-2026</td><td class="mono c">15-05-2026</td><td class="mono r">$1,1 MM</td><td class="mono r">17.700</td></tr>
+<tr><td class="mono">4888</td><td>Mel Interfaena</td><td class="mono c">12-11-2025</td><td class="mono c">29-01-2026</td><td class="mono r">$12,6 MM</td><td class="mono r">12.885</td></tr>
+<tr><td class="mono">4891</td><td>Soquimich N. Victoria (Iq)</td><td class="mono c">23-12-2025</td><td class="mono c">14-01-2026</td><td class="mono r">$1,8 MM</td><td class="mono r">23.019</td></tr>
+<tr><td class="mono">4435</td><td>Mel Intermina</td><td class="mono c">15-01-2026</td><td class="mono c">30-03-2026</td><td class="mono r">$19,8 MM</td><td class="mono r">5.918</td></tr>
+<tr><td class="mono">4862</td><td>C&G</td><td class="mono c">26-11-2025</td><td class="mono c">05-06-2026</td><td class="mono r">$11,5 MM</td><td class="mono r">1.149</td></tr>
+<tr><td class="mono">4885</td><td>Mel Interfaena</td><td class="mono c">08-12-2025</td><td class="mono c">22-05-2026</td><td class="mono r">$8,6 MM</td><td class="mono r">3.447</td></tr>
+<tr><td class="mono">6327 <span class="tag">arrendado · devuelto</span></td><td>—</td><td class="mono c">25-03-2026</td><td class="mono c">06-05-2026</td><td class="mono r">$25,0 MM</td><td class="mono r">1.882</td></tr>
+<tr class="grp"><td colspan="6">Larga data (sin plan) &nbsp;<span class="grp-n">5 equipos</span></td></tr>
+<tr><td class="mono">4367</td><td>Custodia Flota</td><td class="mono c">30-09-2025</td><td class="mono c">02-03-2026</td><td class="mono r">$6,3 MM</td><td class="mono r">2.440</td></tr>
+<tr><td class="mono">4354</td><td>Vanni</td><td class="mono c">17-09-2025</td><td class="mono c">08-04-2026</td><td class="mono r">$7,0 MM</td><td class="mono r">6.800</td></tr>
+<tr><td class="mono">2938</td><td>Iansa</td><td class="mono c">19-08-2025</td><td class="mono c">03-03-2026</td><td class="mono r">$4,9 MM</td><td class="mono r">17.686</td></tr>
+<tr><td class="mono">5353</td><td>Custodia Flota</td><td class="mono c">12-06-2025</td><td class="mono c">14-07-2026</td><td class="mono r">$3,4 MM</td><td class="mono r">41</td></tr>
+<tr><td class="mono">4977</td><td>Grupo K</td><td class="mono c">27-06-2025</td><td class="mono c">04-05-2026</td><td class="mono r">$2,6 MM</td><td class="mono r">4.966</td></tr>
+<tr class="grp"><td colspan="6">Plan 2 (recuperados) &nbsp;<span class="grp-n">2 equipos</span></td></tr>
+<tr><td class="mono">4821</td><td>Custodia Gestión Activos</td><td class="mono c">03-11-2025</td><td class="mono c">15-08-2026</td><td class="mono r">$21,0 MM</td><td class="mono r"><span class="muted">—</span></td></tr>
+<tr><td class="mono">4866</td><td>Mel Interfaena</td><td class="mono c">13-07-2026</td><td class="mono c">19-07-2026</td><td class="mono r">$3,4 MM</td><td class="mono r">2.535</td></tr>
+
+<tr class="tot"><td colspan="4">Total costo de recuperación</td><td class="mono r">$197,5 MM</td><td class="mono r">198.038</td></tr>
+</tbody></table></div><p class="foot">Km recorridos sumados desde el mes de entrega. Los datos de kilometraje disponibles cubren ene–jul 2026; los equipos entregados en agosto aún no registran km (—). «prog.» indica fecha de entrega programada. El equipo <b>6327</b> era arrendado y fue devuelto.</p></section>
+<section><div class="s-head"><span class="s-num">5</span><h2>Plan 2 — Detalle de Recuperación</h2></div>
+<p class="lead">Tras la actualización del 27-08, el Plan 2 queda con <b>7 equipos</b> Scania (2017–2018): <b>2 ya operativos</b> (4821, 4866) y <b>5 en reparación</b>. Los equipos <b>4879, 4869, 4878, 4887 y 4403</b> se retiraron de este plan y pasaron al Plan 3. Se detalla el estatus al cierre de julio, la fecha de detención y el costo acumulado por equipo.</p>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Contrato</th><th class="c">Año</th><th>Marca</th><th>Modelo</th><th class="c">Fecha detención</th><th>Estatus julio</th><th class="r">Costo acum.</th><th class="r">Costo reparación</th></tr></thead><tbody>
+<tr><td class="mono">4821</td><td>Custodia Flota</td><td class="mono c">2017</td><td>Scania</td><td>K310</td><td class="mono c">—</td><td><span class="tag2 g">Operativo</span></td><td class="mono r">$31,3 MM</td><td class="mono r strong"><span class="muted">no requiere</span></td></tr>
+<tr><td class="mono">4866</td><td>Mel Interfaena</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">—</td><td><span class="tag2 g">Operativo</span></td><td class="mono r">$28,5 MM</td><td class="mono r strong"><span class="muted">no requiere</span></td></tr>
+<tr><td class="mono">4867</td><td>Custodia Gestión Activos</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">11-05-2023</td><td><span class="tag2 a">Reparar</span></td><td class="mono r">$42,1 MM</td><td class="mono r strong">$20,0 MM</td></tr>
+<tr><td class="mono">4406</td><td>Custodia Gestión Activos</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">01-03-2024</td><td><span class="tag2 a">Reparar</span></td><td class="mono r">$35,0 MM</td><td class="mono r strong">$20,0 MM</td></tr>
+<tr><td class="mono">4842</td><td>Custodia Gestión Activos</td><td class="mono c">2017</td><td>Scania</td><td>K310</td><td class="mono c">14-08-2025</td><td><span class="tag2 a">Reparar</span></td><td class="mono r">$23,2 MM</td><td class="mono r strong">$20,0 MM</td></tr>
+<tr><td class="mono">4828</td><td>Mel Interfaena</td><td class="mono c">2017</td><td>Scania</td><td>K310</td><td class="mono c">28-10-2025</td><td><span class="tag2 a">Reparar</span></td><td class="mono r">$22,3 MM</td><td class="mono r strong">$0,5 MM</td></tr>
+<tr><td class="mono">4863</td><td>Vertice</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">28-11-2025</td><td><span class="tag2 a">Reparar</span></td><td class="mono r">$22,1 MM</td><td class="mono r strong">$0,5 MM</td></tr>
+
+<tr class="tot"><td colspan="7">Totales</td><td class="mono r">$204,4 MM</td><td class="mono r strong">$61,0 MM</td></tr>
+</tbody></table></div>
+<p class="foot"><b>Costo de reparación:</b> corresponde a lo que se gastará de los $132 MM restantes del Plan 2 (columna «Costo de reparación» del archivo de recuperables). Los equipos operativos ya no lo requieren. Costo acumulado: histórico (Costo Neto) por equipo.</p></section>
+<section><div class="s-head"><span class="s-num">6</span><h2>Plan 3 — Recuperables para Operación</h2></div>
+<p class="lead">Cartera de <b>19 equipos</b> categorizados como Recuperable Operación. Incluye los <b>5 equipos trasladados desde el Plan 2</b> (4879, 4869, 4878, 4887, 4403) por la actualización del 27-08. La <b>ejecución del Plan 3 queda diferida a 2027</b>. Se detalla el tiempo detenido, el costo ya invertido y el monto necesario para recuperarlos.</p>
+<div class="kpi-row tight"><div class="kpi sm"><div class="kpi-v">19</div><div class="kpi-l">Equipos para operación</div></div><div class="kpi sm"><div class="kpi-v">$192,3 MM</div><div class="kpi-l">Costo ya invertido desde detención</div></div><div class="kpi sm accent"><div class="kpi-v">$265,5 MM</div><div class="kpi-l">Monto necesario para recuperar (col. H)</div></div></div>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Contrato</th><th>Ciudad</th><th class="c">Año</th><th>Marca</th><th>Modelo</th><th class="c">Fecha detención</th><th class="r">Días detenido</th><th class="r">Costo invertido</th><th class="r">Monto para recuperar</th></tr></thead><tbody>
+<tr><td class="mono">4878</td><td>Custodia Gestión Activos</td><td>Antofagastasta</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">25-02-2025</td><td class="mono r">542 d</td><td class="mono r">$2,4 MM</td><td class="mono r strong">$40,0 MM</td></tr>
+<tr><td class="mono">4831</td><td>Custodia Gestión Activos</td><td>Antofagastasta</td><td class="mono c">2017</td><td>Scania</td><td>K310</td><td class="mono c">04-10-2024</td><td class="mono r">686 d</td><td class="mono r">$0,8 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4887</td><td>Custodia Gestión Activos</td><td>Antofagastasta</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">25-11-2023</td><td class="mono r">1.000 d</td><td class="mono r">$2,3 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4403</td><td>Custodia Gestión Activos</td><td>Calama</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">05-10-2025</td><td class="mono r">320 d</td><td class="mono r">$19,5 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4859</td><td>Custodia Gestión Activos</td><td>Calama</td><td class="mono c">2017</td><td>Scania</td><td>K400 6X2</td><td class="mono c">09-01-2025</td><td class="mono r">589 d</td><td class="mono r">$22,5 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4879</td><td>Custodia Gestión Activos</td><td>Antofagastasta</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">30-10-2025</td><td class="mono r">295 d</td><td class="mono r">$43,8 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4849</td><td>Custodia Gestión Activos</td><td>Antofagastasta</td><td class="mono c">2017</td><td>Scania</td><td>K310</td><td class="mono c">03-08-2023</td><td class="mono r">1.114 d</td><td class="mono r">$4,6 MM</td><td class="mono r strong">$20,0 MM</td></tr>
+<tr><td class="mono">4998</td><td>Custodia Gestión Activos</td><td>Calama</td><td class="mono c">2022</td><td>Mercedes Benz</td><td>Sprinter 515 CDI</td><td class="mono c">01-01-2025</td><td class="mono r">597 d</td><td class="mono r">$1,1 MM</td><td class="mono r strong">$15,0 MM</td></tr>
+<tr><td class="mono">4324</td><td>Custodia Venta</td><td>Santiago</td><td class="mono c">2015</td><td>Mercedes Benz</td><td>O500 RS</td><td class="mono c">30-04-2025</td><td class="mono r">478 d</td><td class="mono r">$11,8 MM</td><td class="mono r strong">$12,0 MM</td></tr>
+<tr><td class="mono">5337</td><td>Custodia Gestión Activos</td><td>Copiapó</td><td class="mono c">2015</td><td>Mercedes Benz</td><td>O500 RS</td><td class="mono c">20-05-2025</td><td class="mono r">458 d</td><td class="mono r">$1,3 MM</td><td class="mono r strong">$12,0 MM</td></tr>
+<tr><td class="mono">4899</td><td>Custodia Gestión Activos</td><td>Santiago</td><td class="mono c">2019</td><td>Mercedes Benz</td><td>Sprinter 515 CDI</td><td class="mono c">17-12-2025</td><td class="mono r">247 d</td><td class="mono r">$17,5 MM</td><td class="mono r strong">$7,0 MM</td></tr>
+<tr><td class="mono">4997</td><td>Custodia Gestión Activos</td><td>Calama</td><td class="mono c">2022</td><td>Mercedes Benz</td><td>Sprinter 515 CDI</td><td class="mono c">26-02-2026</td><td class="mono r">176 d</td><td class="mono r">$13,0 MM</td><td class="mono r strong">$4,0 MM</td></tr>
+<tr><td class="mono">4360</td><td>Custodia Venta</td><td>Santiago</td><td class="mono c">2015</td><td>Mercedes Benz</td><td>O500 RS</td><td class="mono c">29-09-2025</td><td class="mono r">326 d</td><td class="mono r">$1,6 MM</td><td class="mono r strong">$3,0 MM</td></tr>
+<tr><td class="mono">4316</td><td>Custodia Venta</td><td>Santiago</td><td class="mono c">2015</td><td>Mercedes Benz</td><td>O500 RS</td><td class="mono c">14-01-2026</td><td class="mono r">219 d</td><td class="mono r">$8,9 MM</td><td class="mono r strong">$1,0 MM</td></tr>
+<tr><td class="mono">4328</td><td>Custodia Venta</td><td>Calama</td><td class="mono c">2015</td><td>Mercedes Benz</td><td>O500 RS</td><td class="mono c">20-03-2025</td><td class="mono r">519 d</td><td class="mono r">$1,8 MM</td><td class="mono r strong">$0,5 MM</td></tr>
+<tr><td class="mono">4385</td><td>Custodia Venta</td><td>Santiago</td><td class="mono c">2015</td><td>Mercedes Benz</td><td>O500 OR</td><td class="mono c">15-07-2025</td><td class="mono r">402 d</td><td class="mono r">$7,6 MM</td><td class="mono r strong">$0,5 MM</td></tr>
+<tr><td class="mono">9446</td><td>Custodia Gestión Activos</td><td>Calama</td><td class="mono c">2017</td><td>Mercedes Benz</td><td>Sprinter 515 CDI</td><td class="mono c">—</td><td class="mono r"><span class="muted">s/d</span></td><td class="mono r">$0,3 MM</td><td class="mono r strong">$0,5 MM</td></tr>
+<tr><td class="mono">2937</td><td>Custodia Gestión Activos</td><td>Santiago</td><td class="mono c">2018</td><td>King Long</td><td>6117</td><td class="mono c">14-01-2026</td><td class="mono r">219 d</td><td class="mono r">$8,9 MM</td><td class="mono r strong">$0,0 MM</td></tr>
+<tr><td class="mono">4869</td><td>Custodia Gestión Activos</td><td>Adm Viggo</td><td class="mono c">2018</td><td>Scania</td><td>K360 IB 4X2</td><td class="mono c">02-03-2026</td><td class="mono r">172 d</td><td class="mono r">$22,7 MM</td><td class="mono r strong">$0,0 MM</td></tr>
+
+<tr class="tot"><td colspan="8">Totales</td><td class="mono r">$192,3 MM</td><td class="mono r strong">$265,5 MM</td></tr>
+</tbody></table></div><p class="foot">Días detenido: días calendario desde la fecha de detención al 21-08-2026. Monto para recuperar según columna H del archivo de recuperables.</p></section>
+<section><div class="s-head"><span class="s-num">7</span><h2>Recuperables para Venta</h2></div>
+<p class="lead">Cartera de <b>7 equipos</b> categorizados como Recuperable Venta en el archivo de recuperables. Son equipos mayoritariamente del año 2015 cuyo alto costo de reparación frente a su antigüedad no justifica recuperarlos para operación; se destinan a venta. Se muestra el costo ya invertido desde su detención.</p>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Ciudad</th><th class="c">Año</th><th class="c">Fecha detención</th><th class="r">Días detenido</th><th class="r">Costo invertido</th><th class="r">Monto recuperación</th></tr></thead><tbody>
+<tr><td class="mono">4350</td><td>Calama</td><td class="mono c">2015</td><td class="mono c">01-01-2025</td><td class="mono r">597 d</td><td class="mono r">$3,7 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4361</td><td>Antofagastasta</td><td class="mono c">2015</td><td class="mono c">23-01-2024</td><td class="mono r">941 d</td><td class="mono r">$0,0 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">9504</td><td>Calama</td><td class="mono c">2017</td><td class="mono c">01-01-2025</td><td class="mono r">597 d</td><td class="mono r">$0,0 MM</td><td class="mono r strong">$30,0 MM</td></tr>
+<tr><td class="mono">4371</td><td>Calama</td><td class="mono c">2015</td><td class="mono c">01-01-2025</td><td class="mono r">597 d</td><td class="mono r">$0,1 MM</td><td class="mono r strong">$10,0 MM</td></tr>
+<tr><td class="mono">4394</td><td>Calama</td><td class="mono c">2015</td><td class="mono c">01-01-2025</td><td class="mono r">597 d</td><td class="mono r">$1,7 MM</td><td class="mono r strong">$10,0 MM</td></tr>
+<tr><td class="mono">9506</td><td>Copiapó</td><td class="mono c">2017</td><td class="mono c">20-05-2023</td><td class="mono r">1.189 d</td><td class="mono r">$0,0 MM</td><td class="mono r strong">$10,0 MM</td></tr>
+<tr><td class="mono">9505</td><td>Copiapó</td><td class="mono c">2017</td><td class="mono c">16-05-2026</td><td class="mono r">97 d</td><td class="mono r">$1,3 MM</td><td class="mono r strong">$2,0 MM</td></tr>
+
+<tr class="tot"><td colspan="5">Totales</td><td class="mono r">$6,8 MM</td><td class="mono r strong">$122,0 MM</td></tr>
+</tbody></table></div><p class="foot">Días detenido: días calendario desde la fecha de detención al 21-08-2026. Incluye equipos dentro y fuera del universo crítico de larga detención.</p></section>
+<section><div class="s-head"><span class="s-num">8</span><h2>Equipos Dados de Baja por Venta</h2></div>
+<p class="lead"><b>7 equipos</b> del universo crítico ya no figuran en el maestro de flota vigente (19-08-2026): fueron vendidos. El costo indicado corresponde a gastos acumulados previos a la venta.</p>
+<div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th class="r">Días al 01-01</th><th class="r">Costo acum.</th></tr></thead><tbody>
+<tr><td class="mono">4322</td><td class="mono r">254</td><td class="mono r">$15,5 MM</td></tr>
+<tr><td class="mono">4786</td><td class="mono r">239</td><td class="mono r">$4,2 MM</td></tr>
+<tr><td class="mono">4764</td><td class="mono r">136</td><td class="mono r">$2,5 MM</td></tr>
+<tr><td class="mono">6260</td><td class="mono r">159</td><td class="mono r">$1,8 MM</td></tr>
+<tr><td class="mono">4331</td><td class="mono r">156</td><td class="mono r">$0,5 MM</td></tr>
+<tr><td class="mono">4333</td><td class="mono r">156</td><td class="mono r">$0,4 MM</td></tr>
+<tr><td class="mono">4319</td><td class="mono r">156</td><td class="mono r"><span class="muted">—</span></td></tr>
+
+<tr class="tot"><td>Total</td><td></td><td class="mono r">$25,0 MM</td></tr>
+</tbody></table></div></section>
+</div>
+</body>
+</html>
