@@ -168,18 +168,18 @@
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Buses detenidos</div>
-        <div class="big tnum">29<span class="u">/ 127 req.</span></div>
-        <div class="foot">0 minibuses detenidos · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
+        <div class="big tnum">29<span class="u">/ 131 req.</span></div>
+        <div class="foot">Análisis solo buses · <span class="pill p-crit" id="kpiLarga">8 larga data</span></div>
       </div>
       <div class="kpi"><div class="stripe s-warn"></div>
-        <div class="cap">Disponibilidad global</div>
-        <div class="big tnum">90<span class="u">%</span></div>
-        <div class="foot">114 operativos vs. 127 requeridos · déficit <b>13</b></div>
+        <div class="cap">Disponibilidad global buses</div>
+        <div class="big tnum">87<span class="u">%</span></div>
+        <div class="foot">114 operativos vs. 131 requeridos · déficit <b>17</b></div>
       </div>
       <div class="kpi"><div class="stripe s-accent"></div>
-        <div class="cap">Atención en faena / externo</div>
-        <div class="big tnum">7<span class="u">/ 22</span></div>
-        <div class="foot">7 se atienden en taller 3.5 MEL · 22 fuera de faena</div>
+        <div class="cap">En faena — decisión 3.5</div>
+        <div class="big tnum">14<span class="u"> buses</span></div>
+        <div class="foot">Ubicación Taller MEL · 7 a 3.5 / 7 cama baja</div>
       </div>
       <div class="kpi"><div class="stripe s-info"></div>
         <div class="cap">Costo cama baja</div>
@@ -190,10 +190,10 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">01</span><h2>Disponibilidad por servicio — visión Viggo (taller)</h2>
-      <span class="hint">Buses operativos vs. requerimiento · solo buses detenidos por taller</span></div>
+    <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
+      <span class="hint">Buses operativos vs. lo que necesita la operación</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note">Mirada <b>interna de gestión de taller</b>: cuenta solo <b>buses</b> y los mide contra el requerimiento (Sube y Baja 59 · Mina 34 · Planta 34). Los equipos por sobre el requerimiento son <b>backup</b>. No incluye sprinters ni afectaciones del cliente — por eso difiere del KPI de Operaciones (sección 02).</div>
+    <div class="note">Análisis enfocado en <b>buses</b> (minibuses fuera de alcance por ahora). El <b>requerido</b> es la cantidad que necesita la operación: <b>Sube y Baja 56</b> (maestro de flota) · <b>Mina 40</b> y <b>Planta 35</b> (Report de turno, hoja Disponibilidad). <b>Operativos = maestro − detenidos</b>; el <b>backup</b> es la holgura del maestro sobre lo requerido. El objetivo es alcanzar el número de buses que declara el Report de disponibilidad.</div>
   </section>
 
   <section>
@@ -204,36 +204,41 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">03</span><h2>Flota asignada: buses vs. minibuses</h2>
-      <span class="hint">Maestro de activos · las detenciones actuales son 100% buses</span></div>
+    <div class="sec-h"><span class="n">03</span><h2>Requerido vs. maestro y backup</h2>
+      <span class="hint">Buses · el backup es la holgura del maestro sobre lo requerido</span></div>
     <div class="tblwrap">
       <table>
-        <thead><tr><th>Servicio</th><th>Buses maestro</th><th>Minibuses maestro</th><th>Requerido (bus)</th><th>Buses detenidos</th><th>Buses operativos</th><th>Backup</th></tr></thead>
+        <thead><tr><th>Servicio</th><th>Requerido operación</th><th>Maestro (buses)</th><th>Backup</th><th>Detenidos</th><th>Operativos</th><th>Disponib.</th></tr></thead>
         <tbody id="bmTable"></tbody>
         <tfoot id="bmFoot"></tfoot>
       </table>
     </div>
+    <div class="note">Requerido: Sube y Baja desde el <b>maestro de flota</b> (56); Mina (40) y Planta (35) desde el <b>Report de turno</b>. El backup del maestro (Mina +7 · Planta +5) <b>no alcanza a cubrir</b> las detenciones actuales, por eso hay déficit operativo.</div>
   </section>
 
   <section>
     <div class="sec-h"><span class="n">04</span><h2>Destino de atención</h2>
-      <span class="hint">Según decisión cargada en columna «Atención 3.5»</span></div>
+      <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
+    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Los equipos cuya <b>Ubicación = «Taller MEL»</b> (14 buses en faena) son los que se analizan: <b>bajar en cama baja</b> a Antofagasta o <b>mantener para atender en el taller 3.5</b>. Los que ya figuran en ubicaciones de Antofagasta están fuera de esta decisión (ya descendidos).</div>
     <div class="split3">
       <div class="dcard"><div class="stripe s-accent"></div>
-        <div class="cap">Atender en faena — Taller 3.5</div>
+        <div class="cap">Mantener en Taller 3.5 (faena)</div>
         <div class="big" style="color:var(--accent)">7</div>
-        <div class="desc">Se resuelven con capacidad propia en MEL (Taller MEL 5 · Kaufmann MEL 2). No generan costo de traslado.</div>
+        <div class="desc">Ubicación Taller MEL · se atienden en faena (Taller MEL 5 · Kaufmann MEL 2). No generan costo de traslado.</div>
       </div>
       <div class="dcard"><div class="stripe s-crit"></div>
         <div class="cap">Bajar en cama baja</div>
         <div class="big" style="color:var(--crit)">7</div>
-        <div class="desc">Se descienden a Antofagasta para atención externa. Cada viaje $1.785.000 c/IVA.</div>
+        <div class="desc">Ubicación Taller MEL · se descienden a Antofagasta para atención externa. Cada viaje $1.785.000 c/IVA.</div>
       </div>
       <div class="dcard"><div class="stripe s-info"></div>
         <div class="cap">Ya en Antofagasta</div>
         <div class="big" style="color:var(--info)">15</div>
-        <div class="desc">Descendidos por medios propios o previamente. En talleres externos (Kaufmann, Scania, F. Baeza).</div>
+        <div class="desc">Fuera de la decisión. En talleres externos (Kaufmann, Scania, F. Baeza).</div>
       </div>
+    </div>
+    <div class="note" style="border-left-color:var(--crit);background:var(--crit-bg);color:var(--ink);margin-top:16px">
+      <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 14 equipos en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (78%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al número de buses que exige el Report de disponibilidad.
     </div>
   </section>
 
@@ -307,10 +312,12 @@
 const TRIP=1785000, TRIP_NET=1500000;
 const fmt=n=>'$'+n.toLocaleString('es-CL');
 
+// req = buses que necesita la operación: SyB desde maestro; Mina/Planta desde Report de turno (hoja DISPONIBILIDAD)
+// busM = buses en maestro de activos; backup = busM - req
 const svc=[
-  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:59, busM:56, miniM:2, det:5},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:34, busM:47, miniM:7, det:16},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:34, busM:40, miniM:3, det:8},
+  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', req:56, reqSrc:'maestro', busM:56, det:5},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   req:40, reqSrc:'report',  busM:47, det:16},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  req:35, reqSrc:'report',  busM:40, det:8},
 ];
 svc.forEach(s=>{s.oper=s.busM-s.det; s.disp=s.oper/s.req; s.def=s.req-s.oper; s.backup=Math.max(0,s.busM-s.req)});
 
@@ -359,9 +366,9 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
       <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
     </div>
     <div class="grid4">
-      <div><div class="lbl">Requerido</div><div class="val">${s.req}</div></div>
+      <div><div class="lbl">Requerido (${s.reqSrc})</div><div class="val">${s.req}</div></div>
       <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
-      <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">${s.backup}</div></div>
+      <div><div class="lbl">Backup</div><div class="val" style="color:var(--muted)">+${s.backup}</div></div>
     </div>
     <div class="deficit">${s.def>0
       ? `<span class="pill p-crit">Déficit ${s.def}</span> bajo requerimiento`
@@ -395,19 +402,20 @@ document.getElementById('svcOps').innerHTML=ops.map(o=>{
   </div>`;
 }).join('');
 
-let tB=0,tM=0,tR=0,tD=0,tO=0,tBk=0;
+let tR=0,tB=0,tBk=0,tD=0,tO=0;
 document.getElementById('bmTable').innerHTML=svc.map(s=>{
-  tB+=s.busM;tM+=s.miniM;tR+=s.req;tD+=s.det;tO+=s.oper;tBk+=s.backup;
+  tR+=s.req;tB+=s.busM;tBk+=s.backup;tD+=s.det;tO+=s.oper;
   const c=dispColor(s.disp);
-  return `<tr><td><b>${s.name}</b></td><td class="num">${s.busM}</td><td class="num">${s.miniM}</td>
-    <td class="num">${s.req}</td><td class="num" style="color:var(--crit)">${s.det}</td>
+  return `<tr><td><b>${s.name}</b></td><td class="num">${s.req}</td><td class="num">${s.busM}</td>
+    <td class="num" style="color:var(--muted)">+${s.backup}</td><td class="num" style="color:var(--crit)">${s.det}</td>
     <td class="num" style="color:var(--${c});font-weight:600">${s.oper}</td>
-    <td class="num" style="color:var(--muted)">${s.backup}</td></tr>`;
+    <td class="num" style="color:var(--${c});font-weight:600">${Math.round(s.disp*100)}%</td></tr>`;
 }).join('');
+const tDisp=Math.round(tO/tR*100);
 document.getElementById('bmFoot').innerHTML=
-  `<tr style="font-weight:700"><td>TOTAL</td><td class="num">${tB}</td><td class="num">${tM}</td>
-   <td class="num">${tR}</td><td class="num" style="color:var(--crit)">${tD}</td>
-   <td class="num">${tO}</td><td class="num">${tBk}</td></tr>`;
+  `<tr style="font-weight:700"><td>TOTAL</td><td class="num">${tR}</td><td class="num">${tB}</td>
+   <td class="num">+${tBk}</td><td class="num" style="color:var(--crit)">${tD}</td>
+   <td class="num">${tO}</td><td class="num">${tDisp}%</td></tr>`;
 
 // Cama baja: unidades en faena (fa=1) son editables. Base = a35.
 const faUnits=det.filter(d=>d.fa);
