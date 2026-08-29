@@ -171,7 +171,7 @@
       <div class="sub">Priorización de atención en taller de faena (3.5) vs. bajada a Antofagasta, disponibilidad de flota por servicio y control de costo de cama baja.</div>
     </div>
     <div class="meta">
-      Corte de datos <b>27–28 ago 2026</b><br>
+      Corte de datos <b>29 ago 2026</b><br>
       Fuente: BBDD Flota · Plan de acción MEL<br>
       Decisión de atención <b>definida</b>
     </div>
@@ -182,7 +182,7 @@
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Buses detenidos (F/S)</div>
         <div class="big tnum">28<span class="u">/ 131 asig.</span></div>
-        <div class="foot">SyB 5 · Mina 15 · Planta 8</div>
+        <div class="foot">SyB 5 · Mina 14 · Planta 9</div>
       </div>
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Disponibilidad global buses</div>
@@ -192,7 +192,7 @@
       <div class="kpi"><div class="stripe s-accent"></div>
         <div class="cap">En faena — decisión 3.5</div>
         <div class="big tnum">13<span class="u"> buses</span></div>
-        <div class="foot">Ubicación Taller MEL · 6 a 3.5 / 7 cama baja</div>
+        <div class="foot">Ubicación Taller MEL · 4 a 3.5 / 9 cama baja</div>
       </div>
       <div class="kpi"><div class="stripe s-info"></div>
         <div class="cap">Costo cama baja</div>
@@ -206,24 +206,24 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (15 F/S), Planta 35 (8 F/S). El <b>objetivo operación</b> es la flota mínima que exige el servicio (56 · 34 · 34). Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (14 F/S), Planta 35 (9 F/S). El <b>objetivo operación</b> es la flota mínima que exige el servicio (56 · 34 · 34). Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
     <div class="sec-h"><span class="n">02</span><h2>Proyección de disponibilidad — Gantt</h2>
-      <span class="hint">Según fechas de entrega · disponibilidad = operativos / maestro</span></div>
+      <span class="hint">Fechas de entrega + caída histórica de flota</span></div>
     <div class="scard">
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Proyección de flota operativa por contrato</h3>
       <div id="projChart"></div>
       <div class="legend" style="margin-top:4px">
-        <span style="color:var(--faint)">Eje Y = cantidad de buses operativos · línea punteada = objetivo operación · tope = flota asignada al servicio</span>
+        <span style="color:var(--faint)">Eje Y = buses operativos · punteada = objetivo op. · tope = flota asignada · la curva incorpora la caída histórica</span>
       </div>
     </div>
     <div class="scard" style="margin-top:14px">
-      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (fecha de entrega)</h3>
+      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos y movimientos de flota</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Set del <b>Report</b> (Mina 15 F/S · Planta 8 · Sube y Baja 5). La proyección suma cada bus a la flota operativa en su <b>fecha de entrega</b>. <b>11 equipos sin fecha</b> quedan como pendientes (limitan el techo), de los cuales <b>7 no están en el plan de acción de Viggo</b> (4439, 6283, 6325, 4827, 4871, 4888, 4890) — detenidos según el cliente pero sin evaluación/taller aún. Barras rayadas = sin fecha comprometida.</div>
+    <div class="note">Corte <b>29-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. <b>7 equipos sin evaluación</b> (6278, 6282, 6289, 4827, 4868, 4871, 4888) no tienen fecha y limitan aún más el techo.</div>
   </section>
 
   <section>
@@ -291,7 +291,7 @@
   <section>
     <div class="sec-h"><span class="n">06</span><h2>Detalle de buses detenidos (F/S Report)</h2>
       <span class="hint">28 unidades · filtra por ubicación, decisión o taller</span></div>
-    <div class="note" style="margin-bottom:12px">Los <b>28 buses F/S del Report</b> (Mina 15 · Planta 8 · Sube y Baja 5). 21 tienen plan de acción de Viggo (taller, dificultad, decisión de cama baja); los <b>7 marcados «Sin evaluar»</b> (4439, 6283, 6325, 4827, 4871, 4888, 4890) están F/S en el Report pero aún sin evaluación de Viggo.</div>
+    <div class="note" style="margin-bottom:12px">Los <b>28 buses F/S del Report</b> (Mina 15 · Planta 8 · Sube y Baja 5). 21 tienen plan de acción de Viggo (taller, dificultad, decisión de cama baja); los <b>7 marcados «Sin evaluar»</b> (6278, 6282, 6289, 4827, 4868, 4871, 4888) están F/S en el Report pero aún sin evaluación de Viggo.</div>
     <div class="filters">
       <label>Ubicación</label>
       <select id="fUbic"><option value="">Todas</option><option value="mel">Faena MEL</option><option value="ant">Antofagasta</option></select>
@@ -304,14 +304,14 @@
     </div>
     <div class="tblwrap">
       <table>
-        <thead><tr><th>Interno</th><th>Servicio</th><th>Sistema</th><th>Motivo</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>Detención</th><th>Clasif.</th></tr></thead>
+        <thead><tr><th>Interno</th><th>Servicio</th><th>Sistema</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>F. entrega</th><th>Clasif.</th></tr></thead>
         <tbody id="detTable"></tbody>
       </table>
     </div>
   </section>
 
   <footer>
-    Reporte generado a partir de <b>BBDD Flota 27-08-2026</b>, <b>Plan de acción MEL</b> (hoja Equipos MEL: Atención 3.5, taller de atención, ponderación) y <b>Report Viggo Agosto 2026</b> (hoja KPI Disponibilidad, corte 28-ago) para la visión Operaciones. Costo referencial cama baja: $1.500.000 + IVA por viaje.
+    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Base detenidas y Certificaciones) y <b>Report Viggo 29-08-2026</b> (hoja Disponibilidad). Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
   </footer>
 </div>
 
@@ -323,43 +323,43 @@ const fmt=n=>'$'+n.toLocaleString('es-CL');
 // asignado = flota del servicio; det = detenidos (F/S); oper = asignado - det; obj = objetivo operacion
 const svc=[
   {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', aSrc:'maestro', asignado:56, det:5,  obj:56},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   aSrc:'Report',  asignado:40, det:15, obj:34},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  aSrc:'Report',  asignado:35, det:8,  obj:34},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   aSrc:'Report',  asignado:40, det:14, obj:34},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  aSrc:'Report',  asignado:35, det:9,  obj:34},
 ];
 svc.forEach(s=>{s.oper=s.asignado-s.det; s.disp=s.oper/s.asignado; s.faltan=Math.max(0,s.obj-s.oper);});
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
-// Set del REPORT (F/S al 28-ago): Mina 15 · Planta 8 · Sube y Baja 5 (maestro). 'pend' = F/S en Report sin evaluar por Viggo.
+// Set del REPORT (F/S al 29-ago): Mina 14 · Planta 9 · Sube y Baja 5 (maestro). 'pend' = F/S en Report sin evaluar. f = fecha de entrega.
 const det=[
- {i:'4437',s:'mina',sys:'—',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-08-26',lg:0,fa:1},
- {i:'4472',s:'mina',sys:'Dirección',mot:'Corr. Espera HH Int.',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-08-19',lg:0,fa:0},
- {i:'4473',s:'mina',sys:'Motor',mot:'Incidente - Evaluación',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-08-14',lg:0,fa:0},
- {i:'5136',s:'mina',sys:'Sist. Neumático',mot:'Correctivo - Repuesto',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-08-05',lg:0,fa:1},
- {i:'6266',s:'mina',sys:'Eléctrico',mot:'Correctivo - Externo',a35:'mel',taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-08-20',lg:0,fa:1},
- {i:'6272',s:'mina',sys:'Frenos',mot:'Corr. Espera HH Ext.',a35:'cb',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-08-23',lg:0,fa:1},
- {i:'6277',s:'mina',sys:'Mantenimiento',mot:'Preventivo - Externo',a35:'ant',taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-08-26',lg:0,fa:0},
- {i:'6279',s:'mina',sys:'—',mot:'Corr. Espera Traslado',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-08-27',lg:0,fa:1},
- {i:'6282',s:'mina',sys:'Mantenimiento',mot:'Preventivo - En Trabajo',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-08-24',lg:0,fa:0},
- {i:'6295',s:'mina',sys:'Transmisión',mot:'Correctivo - Externo',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-08-01',lg:0,fa:0},
- {i:'6321',s:'mina',sys:'Eléctrico',mot:'Corr. Espera HH Int.',a35:'cb',taller:'Scania',dif:'Media',p:2,f:'2026-08-20',lg:0,fa:1},
- {i:'6324',s:'mina',sys:'Motor',mot:'Incidente - Evaluación',a35:'cb',taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-08-21',lg:0,fa:1},
- {i:'4439',s:'mina',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'6283',s:'mina',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'6325',s:'mina',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'4826',s:'plan',sys:'Suspensión',mot:'Correctivo - Repuesto',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-07-14',lg:1,fa:1},
- {i:'4846',s:'plan',sys:'Transmisión',mot:'Corr. Espera HH Int.',a35:'cb',taller:'Fabian Baeza',dif:'Media',p:2,f:'2026-07-06',lg:1,fa:1},
- {i:'4853',s:'plan',sys:'Transmisión',mot:'Corr. Espera HH Int.',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-08-05',lg:0,fa:1},
- {i:'4870',s:'plan',sys:'Transmisión',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-08-21',lg:0,fa:1},
- {i:'4827',s:'plan',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'4871',s:'plan',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'4888',s:'plan',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'4890',s:'plan',sys:'—',mot:'F/S en Report',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'4914',s:'syb',sys:'Sist. Neumático',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Kaufmann MEL',dif:'Baja',p:1,f:'2026-08-26',lg:0,fa:1},
- {i:'4926',s:'syb',sys:'Sist. Neumático',mot:'Corr. Espera HH Int.',a35:'mel',taller:'Taller MEL',dif:'Baja',p:1,f:'2026-08-26',lg:0,fa:1},
- {i:'4927',s:'syb',sys:'Frenos',mot:'Correctivo - En Trabajo',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-08-24',lg:0,fa:0},
- {i:'6273',s:'syb',sys:'Transmisión',mot:'Corr. Espera Traslado',a35:'ant',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-08-20',lg:0,fa:0},
- {i:'6311',s:'syb',sys:'Transmisión',mot:'Correctivo - En Trabajo',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-08-14',lg:0,fa:0},
+ {i:'4437',s:'mina',sys:'Transmisión',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1},
+ {i:'6266',s:'mina',sys:'Eléctrico',a35:'mel',taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-08-29',lg:0,fa:1},
+ {i:'6272',s:'mina',sys:'Frenos',a35:'cb',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1},
+ {i:'6279',s:'mina',sys:'Neumáticos',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-08-30',lg:0,fa:1},
+ {i:'6321',s:'mina',sys:'Eléctrico',a35:'cb',taller:'Scania',dif:'Media',p:2,f:'2026-09-20',lg:0,fa:1},
+ {i:'6324',s:'mina',sys:'Motor',a35:'cb',taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1},
+ {i:'6325',s:'mina',sys:'—',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1},
+ {i:'4472',s:'mina',sys:'Dirección',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0},
+ {i:'4473',s:'mina',sys:'Motor',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0},
+ {i:'6277',s:'mina',sys:'Mantenimiento',a35:'ant',taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-08-29',lg:0,fa:0},
+ {i:'6295',s:'mina',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-16',lg:0,fa:0},
+ {i:'6278',s:'mina',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'6282',s:'mina',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'6289',s:'mina',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'4870',s:'plan',sys:'Transmisión',a35:'mel',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1},
+ {i:'4826',s:'plan',sys:'Suspensión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-10-30',lg:1,fa:1,leaves:'2026-08-31'},
+ {i:'4846',s:'plan',sys:'Transmisión',a35:'cb',taller:'Fabian Baeza',dif:'Media',p:2,f:'2026-09-21',lg:1,fa:1},
+ {i:'4853',s:'plan',sys:'Transmisión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:1},
+ {i:'4890',s:'plan',sys:'—',a35:'cb',taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1},
+ {i:'4827',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'4868',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'4871',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'4888',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
+ {i:'4926',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Taller MEL',dif:'Baja',p:1,f:'2026-08-30',lg:0,fa:1},
+ {i:'4914',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Kaufmann MEL',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:0},
+ {i:'6311',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-05',lg:0,fa:0},
+ {i:'6273',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann K6',dif:'Alta',p:3,f:null,lg:0,fa:0},
+ {i:'4927',s:'syb',sys:'Frenos',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:null,lg:0,fa:0},
 ];
 const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
@@ -387,27 +387,15 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
 
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
-  const START=new Date('2026-08-28T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
-  // Set del Report: buses F/S en Mina (15) y Planta (8); SyB (5) del maestro
-  const projUnits=[
-    {i:'5136',s:'mina',f:'2026-08-30'},{i:'6282',s:'mina',f:'2026-08-29'},{i:'6277',s:'mina',f:'2026-08-30'},
-    {i:'6321',s:'mina',f:'2026-08-31'},{i:'6266',s:'mina',f:'2026-09-04'},{i:'4472',s:'mina',f:'2026-09-15'},
-    {i:'6295',s:'mina',f:'2026-09-16'},{i:'4473',s:'mina',f:'2026-09-30'},{i:'6324',s:'mina',f:'2026-09-30'},
-    {i:'4437',s:'mina',f:null},{i:'6272',s:'mina',f:null},{i:'6279',s:'mina',f:null},
-    {i:'4439',s:'mina',f:null},{i:'6283',s:'mina',f:null},{i:'6325',s:'mina',f:null},
-    {i:'4846',s:'plan',f:'2026-09-04'},{i:'4853',s:'plan',f:'2026-09-14'},{i:'4870',s:'plan',f:'2026-09-04'},
-    {i:'4826',s:'plan',f:null},{i:'4827',s:'plan',f:null},
-    {i:'4871',s:'plan',f:null},{i:'4888',s:'plan',f:null},{i:'4890',s:'plan',f:null},
-    {i:'4926',s:'syb',f:'2026-09-04'},{i:'4914',s:'syb',f:'2026-08-30'},{i:'6311',s:'syb',f:'2026-09-05'},
-    {i:'4927',s:'syb',f:'2026-09-30'},{i:'6273',s:'syb',f:'2026-09-15'},
-  ];
+  const START=new Date('2026-08-29T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
   const maestroN={syb:56,mina:40,plan:35}, reqopN={syb:56,mina:34,plan:34};
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
   const gOrder=['syb','mina','plan'];
-  const units=projUnits.map(d=>{
+  // unidades detenidas (set del Report 29-ago). 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
+  const units=det.map(d=>{
     let rec=null;
-    if(d.f){const fd=new Date(d.f+'T00:00:00'); rec=fd>START?fd:new Date(START.getTime()+DAY);}
-    return {i:d.i,s:d.s,f:d.f,rec};
+    if(d.f && !d.leaves){const fd=new Date(d.f+'T00:00:00'); rec=fd>START?fd:new Date(START.getTime()+DAY);}
+    return {i:d.i,s:d.s,f:d.leaves?null:d.f,rec,leaves:d.leaves||null};
   });
   const detainedAt=(sk,t)=>units.filter(u=>u.s===sk&&(!u.rec||u.rec>t)).length;
   const W=920,padL=78,padR=16,xW=W-padL-padR;
@@ -421,11 +409,14 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     plan:[{d:'2026-08-31',dA:-1,dO:0,i:'4826',t:'out',lbl:'4826 sale de contrato'},{d:'2026-08-31',dA:-1,dO:-1,i:'4833',t:'out',lbl:'4833 sale de contrato'},{d:'2026-09-04',dA:1,dO:1,i:'4844',t:'in',lbl:'4844 ingresa a Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4872',t:'in',lbl:'4872 ingresa a Planta'}],
     syb:[]
   };
-  const baseAsig={syb:56,mina:40,plan:35}, baseOper={syb:51,mina:25,plan:27};
+  const baseAsig={syb:56,mina:40,plan:35}, baseOper={syb:51,mina:26,plan:26};
+  // caída histórica de flota (buses/día) y mediana de permanencia en taller (días)
+  const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
+  const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]); // Little: se estabiliza en λ×permanencia
   const ev=sk=>events[sk]||[];
   const ed=e=>new Date(e.d+'T00:00:00');
   const asigAt=(sk,t)=>baseAsig[sk]+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dA:0),0);
-  const operAt=(sk,t)=>baseOper[sk]+units.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0);
+  const operAt=(sk,t)=>baseOper[sk]+units.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0)-newFail(sk,t);
   // --- 3 curvas por contrato (cantidad de equipos operativos) ---
   const cH=176,cpadT=16,cpadB=26,cyH=cH-cpadT-cpadB;
   function drawC(sk){
@@ -451,12 +442,12 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
       const ty=cpadT+2; s+= e.t==='in'?`<polygon points="${x},${ty} ${x-4},${ty+7} ${x+4},${ty+7}" fill="${c2}"/>`:`<polygon points="${x-4},${ty} ${x+4},${ty} ${x},${ty+7}" fill="${c2}"/>`;});
     const opEnd=operAt(sk,END);
     s+=`<circle cx="${xOf(END)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/>`;
-    s+=`<text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${opEnd} buses</text>`;
+    s+=`<text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)} buses</text>`;
     s+='</svg>';
     const opNow=operAt(sk,START),aNow=asigAt(sk,START),aEnd=asigAt(sk,END);
     return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px">
       <span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span>
-      <span style="font-size:11.5px;color:var(--muted)">hoy <b>${opNow}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → proyecta <b>${opEnd}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span>
+      <span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span>
      </div><div style="overflow-x:auto">${s}</div></div>`;
   }
   document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
@@ -465,10 +456,12 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
   gOrder.forEach(sk=>{
     body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
     units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
-      const x1=xOf(START), x2=u.rec?xOf(u.rec):xOf(END);
+      const lv=u.leaves?new Date(u.leaves+'T00:00:00'):null;
+      const x1=xOf(START), x2=u.rec?xOf(u.rec):(lv?xOf(lv):xOf(END));
+      const fill=u.rec?col[sk]:(lv?'#8A93A1':'url(#hatch)');
       body+=`<text x="6" y="${y+10}" font-size="10" fill="var(--ink)">${u.i}</text>`;
-      body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${u.rec?col[sk]:'url(#hatch)'}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
-      body+= u.f?`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha comprometida</text>`;
+      body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${fill}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
+      body+= u.rec?`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`:(lv?`<text x="${x2+4}" y="${y+11}" font-size="8.5" fill="var(--muted)">sale contrato ${md(lv)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha comprometida</text>`);
       y+=15;
     });
     y+=6;
@@ -599,11 +592,11 @@ function renderDet(){
     const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
     const ubic = d.a35==='pend' ? '<span style="color:var(--faint)">—</span>' : (d.fa?'<span class="tag t-mel">Faena MEL</span>':'<span class="tag t-ant">Antofagasta</span>');
     const difCell = dc?`<span class="dif ${dc}">${d.dif}</span>`:'<span style="color:var(--faint)">—</span>';
-    return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td><td>${d.mot}</td>
+    return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td>
      <td>${ubic}</td>
      <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td>${difCell}</td>
      <td class="num">${d.f||'—'}</td><td>${d.lg?'<span class="tag t-larga">Larga data</span>':'Detenida'}</td></tr>`;
-  }).join('') || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
+  }).join('') || `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
   document.getElementById('detCount').textContent=`${rows.length} de ${sorted.length} equipos`;
 }
 [fUbic,fA35,fTaller].forEach(el=>el.addEventListener('change',renderDet));
