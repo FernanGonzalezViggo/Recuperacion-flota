@@ -249,10 +249,6 @@
         <div class="tot mono" id="cbTotal">$12.495.000</div>
         <div style="margin:14px 0 6px">
           <div class="line"><span>Viajes cama baja</span><b id="cbTrips">7</b></div>
-          <div class="line"><span>Valor neto unitario</span><b>$1.500.000</b></div>
-          <div class="line"><span>IVA (19%)</span><b>$285.000</b></div>
-          <div class="line"><span>Valor c/IVA por viaje</span><b>$1.785.000</b></div>
-          <div class="line"><span>Neto total</span><b id="cbNeto">$10.500.000</b></div>
         </div>
         <div class="btnrow">
           <button class="btn" onclick="setAll('ant')">Todos → bajar</button>
@@ -533,7 +529,6 @@ function renderCB(){
   const trips=faUnits.filter(d=>state[d.i]==='ant').length;
   document.getElementById('cbTrips').textContent=trips;
   document.getElementById('cbTotal').textContent=fmt(trips*TRIP);
-  document.getElementById('cbNeto').textContent=fmt(trips*TRIP_NET);
   document.getElementById('kpiCB').innerHTML='$'+(trips*TRIP/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}).replace('.',',')+'<span class="u">MM</span>';
   document.getElementById('kpiCBfoot').innerHTML=`${trips} viaje${trips!=1?'s':''} × $1.785.000 (c/IVA)`;
   try{localStorage.setItem('mel_cb2',JSON.stringify(state));}catch(e){}
