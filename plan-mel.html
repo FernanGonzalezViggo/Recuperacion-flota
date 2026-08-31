@@ -82,7 +82,11 @@
   .p-info{background:var(--info-bg);color:var(--info)}
 
   .svc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .scard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+  .scard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow);min-width:0}
+  .svc>*,.split3>*{min-width:0}
+  .gauge .row{flex-wrap:wrap;gap:2px 8px}
+  .gauge .req{white-space:normal;overflow-wrap:anywhere;text-align:right}
+  .grid4 .val{overflow-wrap:anywhere}
   .scard h3{font-size:18px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
   .scard .loc{font-size:12px;color:var(--faint);font-weight:500;font-family:Inter}
   .gauge{margin:16px 0 4px}
@@ -407,7 +411,7 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     <h3>${s.name}<span class="loc">${s.loc}</span></h3>
     <div class="gauge">
       <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-        <span class="req">${s.oper} operativos / ${s.asignado} asignados (${s.aSrc})</span></div>
+        <span class="req">${s.oper} / ${s.asignado} oper. · ${s.aSrc}</span></div>
       <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
     </div>
     <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
