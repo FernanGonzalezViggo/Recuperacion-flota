@@ -158,6 +158,13 @@
   .filters label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-right:-4px}
   .filters .clr{cursor:pointer;color:var(--accent);font-weight:600;font-size:12px;border:0;background:none}
   #detCount{font-size:12.5px;color:var(--muted);margin-left:auto}
+  .th{font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px;font-family:"Barlow Semi Condensed",sans-serif}
+  .th .tn{margin-left:auto;font-size:20px;font-weight:700;color:var(--muted)}
+  .estrow{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+  .estrow:last-child{border-bottom:0}
+  .estrow .ei{font-family:"IBM Plex Mono",monospace;font-weight:700}
+  .estrow .qn{font-family:"IBM Plex Mono",monospace;font-size:10px;background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700}
+  .estrow .epill{margin-left:auto;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
   @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
   @media print{
@@ -200,15 +207,15 @@
         <div class="big tnum">24<span class="u">/ 131 asig.</span></div>
         <div class="foot">SyB 5 · Mina 13 · Planta 6</div>
       </div>
-      <div class="kpi"><div class="stripe s-crit"></div>
+      <div class="kpi"><div class="stripe s-warn"></div>
         <div class="cap">Disponibilidad global buses</div>
-        <div class="big tnum">79<span class="u">%</span></div>
-        <div class="foot">103 operativos vs. 131 asignados</div>
+        <div class="big tnum">82<span class="u">%</span></div>
+        <div class="foot">107 operativos vs. 131 asignados</div>
       </div>
       <div class="kpi"><div class="stripe s-accent"></div>
-        <div class="cap">En faena — decisión 3.5</div>
-        <div class="big tnum">14<span class="u"> buses</span></div>
-        <div class="foot">Ubicación Taller MEL · 6 a 3.5 / 8 cama baja</div>
+        <div class="cap">Cola de cama baja</div>
+        <div class="big tnum">12<span class="u"> buses</span></div>
+        <div class="foot">Orden 1→12 · 3 se atienden en taller 3.5</div>
       </div>
       <div class="kpi"><div class="stripe s-info"></div>
         <div class="cap">Costo cama baja</div>
@@ -222,7 +229,7 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (13 F/S), Planta 35 (6 F/S). El <b>objetivo operación</b> es la flota mínima que exige el servicio (56 · 34 · 34). Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (13 F/S), Planta 35 (6 F/S). El <b>objetivo operación</b> es la flota que exige el servicio: <b>Sube y Baja necesita 52</b> (meta 56) · <b>Mina 34</b> · <b>Planta 34</b>. Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
@@ -239,14 +246,14 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos y movimientos de flota</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Corte <b>29-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión <b>23 de los 24 detenidos tienen fecha de entrega</b> (4851 sin evaluar); el techo lo fija la caída histórica.</div>
+    <div class="note">Corte <b>29-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión <b>22 de los 24 detenidos tienen fecha de entrega</b> (4851 y 6289 sin evaluar); el techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
 
   <section>
     <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
-    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>24 buses F/S del Report</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Queda <b>1 equipo pendiente de evaluación</b> (4851).</div>
+    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>24 buses F/S del Report</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Quedan <b>2 equipos pendientes de evaluación</b> (4851, 6289).</div>
     <div class="split3" id="destinoCards" style="grid-template-columns:repeat(4,1fr)"></div>
     <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 10px">Equipos por contrato y taller de atención</h3>
     <div class="tblwrap" id="contractDetail"></div>
@@ -271,11 +278,11 @@
           <button class="btn" onclick="setAll('mel')">Todos → atender 3.5</button>
           <button class="btn" onclick="setAll('reset')">Restaurar plan</button>
         </div>
-        <div class="note" style="margin-top:4px">Escenario base: <b>7 unidades en cama baja</b> según el plan cargado. Los botones permiten simular cambios de decisión sobre las 14 unidades que hoy están en faena MEL.</div>
+        <div class="note" style="margin-top:4px">Escenario base: <b>12 unidades en la cola de cama baja</b> (orden 1→12 del plan). Los botones permiten simular pasar alguna a atención en el taller 3.5.</div>
       </div>
       <div class="tblwrap">
         <table>
-          <thead><tr><th>Interno</th><th>Servicio</th><th>Sistema</th><th>Dificultad</th><th>Taller destino</th><th>Decisión</th></tr></thead>
+          <thead><tr><th>Cola</th><th>Interno</th><th>Servicio</th><th>Taller actual</th><th>Dif.</th><th>Decisión</th></tr></thead>
           <tbody id="cbTable"></tbody>
         </table>
       </div>
@@ -287,7 +294,20 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">05</span><h2>Carga de trabajo por taller</h2>
+    <div class="sec-h"><span class="n">05</span><h2>Estado y cola de reparación por taller</h2>
+      <span class="hint">Dónde está cada bus y su estado actual</span></div>
+    <div id="tallerEstado" class="split3"></div>
+    <div class="legend" style="margin-top:12px">
+      <span><i style="background:var(--good)"></i>En reparación</span>
+      <span><i style="background:var(--warn)"></i>Esperando cama baja / evaluación</span>
+      <span><i style="background:var(--crit)"></i>Espera de repuestos</span>
+      <span><i style="background:var(--info)"></i>Ingreso / traslado</span>
+      <span><i style="background:var(--faint)"></i>Sale de contrato / sin dato</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><span class="n">06</span><h2>Carga de trabajo por taller</h2>
       <span class="hint">Carga = equipos × dificultad (Alta 3 · Media 2 · Baja 1)</span></div>
     <div class="scard">
       <div id="cargaChart"></div>
@@ -302,9 +322,9 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">06</span><h2>Detalle de buses detenidos (F/S Report)</h2>
+    <div class="sec-h"><span class="n">07</span><h2>Detalle de buses detenidos (F/S Report)</h2>
       <span class="hint">28 unidades · filtra por ubicación, decisión o taller</span></div>
-    <div class="note" style="margin-bottom:12px">Los <b>24 buses F/S del Report</b> (Mina 13 · Planta 6 · Sube y Baja 5). 23 evaluados por Viggo con taller, dificultad, decisión de cama baja y fecha; <b>1 pendiente de evaluación</b> (4851).</div>
+    <div class="note" style="margin-bottom:12px">Los <b>24 buses F/S del Report</b> (Mina 13 · Planta 6 · Sube y Baja 5). 22 evaluados por Viggo con taller, dificultad, decisión y fecha; <b>2 pendientes de evaluación</b> (4851, 6289).</div>
     <div class="filters">
       <label>Ubicación</label>
       <select id="fUbic"><option value="">Todas</option><option value="mel">Faena MEL</option><option value="ant">Antofagasta</option></select>
@@ -335,7 +355,7 @@ const fmt=n=>'$'+n.toLocaleString('es-CL');
 // Base: Sube y Baja segun MAESTRO; Mina y Planta segun REPORT de turno (buses que se usan en el servicio)
 // asignado = flota del servicio; det = detenidos (F/S); oper = asignado - det; obj = objetivo operacion
 const svc=[
-  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', aSrc:'maestro', asignado:56, det:5,  obj:56},
+  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', aSrc:'maestro', asignado:56, det:5,  obj:52, meta:56},
   {key:'mina',name:'Mina',        loc:'Mel Intermina',   aSrc:'Report',  asignado:40, det:13, obj:34},
   {key:'plan',name:'Planta',      loc:'Mel Interfaena',  aSrc:'Report',  asignado:35, det:6,  obj:34},
 ];
@@ -343,32 +363,32 @@ svc.forEach(s=>{s.oper=s.asignado-s.det; s.disp=s.oper/s.asignado; s.faltan=Math
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
-// Set del REPORT (F/S al 30-ago, hoja Report del plan): Mina 13 · Planta 6 · Sube y Baja 5 (maestro). f = fecha de entrega.
+// Set del REPORT (F/S al 30-ago): Mina 13 · Planta 6 · Sube y Baja 5. f=fecha entrega · ord=cola de cama baja · est=estatus.
 const det=[
- {i:'4437',s:'mina',sys:'Transmisión',a35:'mel',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-03',lg:0,fa:1},
- {i:'6272',s:'mina',sys:'Frenos',a35:'cb',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1},
- {i:'6321',s:'mina',sys:'Eléctrico',a35:'cb',taller:'Scania',dif:'Media',p:2,f:'2026-09-20',lg:0,fa:1},
- {i:'6324',s:'mina',sys:'Motor',a35:'cb',taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1},
- {i:'6325',s:'mina',sys:'Motor',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1},
- {i:'4472',s:'mina',sys:'Dirección',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0},
- {i:'4473',s:'mina',sys:'Motor',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0},
- {i:'6276',s:'mina',sys:'Sist. Neumático',a35:'ant',taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1},
- {i:'6277',s:'mina',sys:'Mantenimiento',a35:'ant',taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0},
- {i:'6282',s:'mina',sys:'—',a35:'ant',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1},
- {i:'6289',s:'mina',sys:'—',a35:'ant',taller:'Taller MEL',dif:'Media',p:2,f:'2026-08-30',lg:0,fa:0},
- {i:'6295',s:'mina',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-16',lg:1,fa:0},
- {i:'6320',s:'mina',sys:'Motor',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:1},
- {i:'4870',s:'plan',sys:'Transmisión',a35:'mel',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1},
- {i:'4826',s:'plan',sys:'Suspensión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-10-30',lg:1,fa:1,leaves:'2026-08-31'},
- {i:'4846',s:'plan',sys:'Transmisión',a35:'cb',taller:'Fabian Baeza',dif:'Media',p:2,f:'2026-09-21',lg:1,fa:1},
- {i:'4853',s:'plan',sys:'Transmisión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:1},
- {i:'4890',s:'plan',sys:'—',a35:'cb',taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1},
- {i:'4851',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0},
- {i:'4926',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Taller MEL',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:1},
- {i:'4914',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Kaufmann MEL',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:0},
- {i:'6311',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-05',lg:0,fa:0},
- {i:'6273',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0},
- {i:'4927',s:'syb',sys:'Frenos',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-10-30',lg:0,fa:0},
+ {i:'4437',s:'mina',sys:'Transmisión',a35:'cb',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-03',lg:0,fa:1,ord:2,est:'Esperando cama baja'},
+ {i:'6272',s:'mina',sys:'Frenos',a35:'cb',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:6,est:'Esperando cama baja'},
+ {i:'6321',s:'mina',sys:'Eléctrico',a35:'cb',taller:'Scania',dif:'Media',p:2,f:'2026-09-20',lg:0,fa:1,ord:9,est:'Esperando cama baja'},
+ {i:'6324',s:'mina',sys:'Motor',a35:'cb',taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:4,est:'Esperando cama baja'},
+ {i:'6325',s:'mina',sys:'Motor',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:5,est:'Esperando cama baja'},
+ {i:'4472',s:'mina',sys:'Dirección',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0,ord:null,est:'En Scania por dirección'},
+ {i:'4473',s:'mina',sys:'Motor',a35:'ant',taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Ingresa hoy a Scania'},
+ {i:'6276',s:'mina',sys:'Sist. Neumático',a35:'cb',taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:11,est:'Esperando cama baja'},
+ {i:'6277',s:'mina',sys:'Mantenimiento',a35:'cb',taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:12,est:'Esperando cama baja'},
+ {i:'6282',s:'mina',sys:'—',a35:'ant',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'En reparación'},
+ {i:'6289',s:'mina',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0,ord:null,est:'—'},
+ {i:'6295',s:'mina',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-16',lg:1,fa:0,ord:null,est:'En reparación'},
+ {i:'6320',s:'mina',sys:'Motor',a35:'cb',taller:'Scania',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:1,ord:1,est:'Esperando cama baja'},
+ {i:'4870',s:'plan',sys:'Transmisión',a35:'mel',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1,ord:null,est:'Pendiente evaluación en faena'},
+ {i:'4826',s:'plan',sys:'Suspensión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-10-30',lg:1,fa:1,ord:10,est:'Sale de contrato',leaves:'2026-08-31'},
+ {i:'4846',s:'plan',sys:'Transmisión',a35:'cb',taller:'Fabian Baeza',dif:'Media',p:2,f:'2026-09-21',lg:1,fa:1,ord:8,est:'Esperando cama baja'},
+ {i:'4853',s:'plan',sys:'Transmisión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:1,ord:3,est:'Esperando cama baja'},
+ {i:'4890',s:'plan',sys:'—',a35:'cb',taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:7,est:'Esperando cama baja'},
+ {i:'4851',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0,ord:null,est:'—'},
+ {i:'4926',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Taller MEL',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:1,ord:null,est:'En reparación'},
+ {i:'4914',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:0,ord:null,est:'En reparación'},
+ {i:'6311',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-05',lg:0,fa:0,ord:null,est:'En reparación'},
+ {i:'6273',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0,ord:null,est:'En espera de ingreso'},
+ {i:'4927',s:'syb',sys:'Frenos',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-10-30',lg:0,fa:0,ord:null,est:'Espera de repuestos'},
 ];
 const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
@@ -386,18 +406,18 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
       <div><div class="lbl">Asignado</div><div class="val">${s.asignado}</div></div>
       <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
       <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
-      <div><div class="lbl">Objetivo op.</div><div class="val" style="color:var(--muted)">${s.obj}</div></div>
+      <div><div class="lbl">${s.meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${s.obj}${s.meta?' / '+s.meta:''}</div></div>
     </div>
     <div class="deficit">${s.faltan>0
-      ? `<span class="pill p-crit">Faltan ${s.faltan}</span> para el objetivo (${s.obj})`
-      : `<span class="pill p-good">Cubre objetivo</span> (${s.obj})`}</div>
+      ? `<span class="pill p-crit">Faltan ${s.faltan}</span> para lo que necesita (${s.obj})`
+      : `<span class="pill p-good">Cubre lo requerido</span> (${s.obj})`}${s.meta?` · meta ${s.meta}`:''}</div>
   </div>`;
 }).join('');
 
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
   const START=new Date('2026-08-30T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
-  const maestroN={syb:56,mina:40,plan:35}, reqopN={syb:56,mina:34,plan:34};
+  const maestroN={syb:56,mina:40,plan:35}, reqopN={syb:52,mina:34,plan:34};
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
   const gOrder=['syb','mina','plan'];
   // unidades detenidas (set del Report 29-ago). 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
@@ -522,11 +542,11 @@ const totCells=talleres.map(t=>{const n=det.filter(d=>d.taller===t).length;retur
 const ctFoot=`<tfoot><tr style="font-weight:700"><td>TOTAL</td><td class="num">${det.length}</td>${totCells}</tr></tfoot>`;
 document.getElementById('contractDetail').innerHTML='<table>'+ctHead+'<tbody>'+ctBody+'</tbody>'+ctFoot+'</table>';
 
-// Cama baja: unidades en faena (fa=1) son editables. Base = a35.
-const faUnits=det.filter(d=>d.fa);
-const base={}; faUnits.forEach(d=>base[d.i]= d.a35==='cb'?'ant':'mel');
+// Cama baja: unidades en la cola de bajada (a35=cb), ordenadas por 'ord'. Toggle a 3.5 para simular.
+const faUnits=det.filter(d=>d.a35==='cb').sort((a,b)=>(a.ord||99)-(b.ord||99));
+const base={}; faUnits.forEach(d=>base[d.i]='ant');
 let state={};
-try{const raw=localStorage.getItem('mel_cb2'); if(raw) state=JSON.parse(raw);}catch(e){}
+try{const raw=localStorage.getItem('mel_cb3'); if(raw) state=JSON.parse(raw);}catch(e){}
 faUnits.forEach(d=>{ if(!(d.i in state)) state[d.i]=base[d.i]; });
 
 function renderCB(){
@@ -536,15 +556,15 @@ function renderCB(){
         <span class="${dest==='mel'?'on-ant':''}">3.5</span>
         <span class="${dest==='ant'?'on-mel':''}">Bajar</span></span>`;
     const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
-    return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td><td>${d.sys}</td>
-      <td><span class="dif ${dc}">${d.dif}</span></td><td>${d.taller}</td><td>${tg}</td></tr>`;
+    return `<tr><td class="num" style="font-weight:700;color:var(--accent)">${d.ord||'·'}</td><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td>
+      <td>${d.taller}</td><td><span class="dif ${dc}">${d.dif}</span></td><td>${tg}</td></tr>`;
   }).join('');
   const trips=faUnits.filter(d=>state[d.i]==='ant').length;
   document.getElementById('cbTrips').textContent=trips;
   document.getElementById('cbTotal').textContent=fmt(trips*TRIP);
   document.getElementById('kpiCB').innerHTML='$'+(trips*TRIP/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}).replace('.',',')+'<span class="u">MM</span>';
   document.getElementById('kpiCBfoot').innerHTML=`${trips} viaje${trips!=1?'s':''} × $1.785.000 (c/IVA)`;
-  try{localStorage.setItem('mel_cb2',JSON.stringify(state));}catch(e){}
+  try{localStorage.setItem('mel_cb3',JSON.stringify(state));}catch(e){}
 }
 function toggle(i){state[i]=state[i]==='mel'?'ant':'mel';renderCB();}
 function setAll(v){
@@ -553,6 +573,27 @@ function setAll(v){
   renderCB();
 }
 renderCB();
+
+// Estado y cola de reparación por taller
+const EC={good:['var(--good)','var(--good-bg)'],crit:['var(--crit)','var(--crit-bg)'],warn:['var(--warn)','var(--warn-bg)'],info:['var(--info)','var(--info-bg)'],faint:['var(--faint)','var(--surface-2)'],muted:['var(--muted)','var(--surface-2)']};
+function estColor(e){e=(e||'').toLowerCase();
+  if(e.includes('reparaci')) return 'good';
+  if(e.includes('repuesto')) return 'crit';
+  if(e.includes('cama baja')||e.includes('evaluaci')) return 'warn';
+  if(e.includes('ingres')||e.includes('scania')||e.includes('traslad')) return 'info';
+  if(e.includes('sale de contrato')||e==='—'||e==='') return 'faint';
+  return 'muted';}
+const byTaller={};
+det.forEach(d=>{(byTaller[d.taller]=byTaller[d.taller]||[]).push(d);});
+document.getElementById('tallerEstado').innerHTML=Object.entries(byTaller)
+  .sort((a,b)=>b[1].length-a[1].length).map(([t,arr])=>{
+  const inMel=t==='Taller MEL'||t==='Kaufmann MEL';
+  arr.sort((a,b)=>(a.ord||99)-(b.ord||99)||a.i.localeCompare(b.i));
+  const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
+    return `<div class="estrow"><span class="ei">${d.i}</span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
+  }).join('');
+  return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${rows}</div>`;
+}).join('');
 
 // Carga por taller
 // Carga = equipos × dificultad, apilada por taller
