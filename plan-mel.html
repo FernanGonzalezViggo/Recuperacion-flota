@@ -137,6 +137,8 @@
   .btn{font-size:12px;font-weight:600;padding:6px 11px;border-radius:7px;border:1px solid var(--line);
     background:var(--surface);color:var(--ink);cursor:pointer;font-family:Inter}
   .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .rangebtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .rangebtn.active:hover{color:#fff}
   .note{font-size:12px;color:var(--muted);background:var(--surface-2);border-left:3px solid var(--accent);
     padding:10px 13px;border-radius:0 8px 8px 0;margin-top:12px}
   .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
@@ -204,13 +206,13 @@
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Buses detenidos (F/S)</div>
-        <div class="big tnum">24<span class="u">/ 131 asig.</span></div>
-        <div class="foot">SyB 5 · Mina 13 · Planta 6</div>
+        <div class="big tnum">22<span class="u">/ 131 asig.</span></div>
+        <div class="foot">SyB 5 · Mina 12 · Planta 5</div>
       </div>
       <div class="kpi"><div class="stripe s-warn"></div>
         <div class="cap">Disponibilidad global buses</div>
-        <div class="big tnum">82<span class="u">%</span></div>
-        <div class="foot">107 operativos vs. 131 asignados</div>
+        <div class="big tnum">83<span class="u">%</span></div>
+        <div class="foot">109 operativos vs. 131 asignados</div>
       </div>
       <div class="kpi"><div class="stripe s-accent"></div>
         <div class="cap">Cola de cama baja</div>
@@ -229,12 +231,17 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (13 F/S), Planta 35 (6 F/S). El <b>objetivo operación</b> es la flota que exige el servicio: <b>Sube y Baja necesita 52</b> (meta 56) · <b>Mina 34</b> · <b>Planta 34</b>. Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (12 F/S), Planta 35 (5 F/S). El <b>objetivo operación</b> es la flota que exige el servicio: <b>Sube y Baja necesita 52</b> (meta 56) · <b>Mina 34</b> · <b>Planta 34</b>. Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
     <div class="sec-h"><span class="n">02</span><h2>Proyección de disponibilidad — Gantt</h2>
       <span class="hint">Fechas de entrega + caída histórica de flota</span></div>
+    <div class="btnrow" style="margin:0 0 12px">
+      <span style="font-size:12px;color:var(--muted);align-self:center;margin-right:2px">Rango:</span>
+      <button class="btn rangebtn" data-r="sep" onclick="__setRange('sep')">Hoy → 30-sep</button>
+      <button class="btn rangebtn active" data-r="oct" onclick="__setRange('oct')">Hoy → 31-oct</button>
+    </div>
     <div class="scard">
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Proyección de flota operativa por contrato</h3>
       <div id="projChart"></div>
@@ -246,14 +253,14 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos y movimientos de flota</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Corte <b>29-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión <b>22 de los 24 detenidos tienen fecha de entrega</b> (4851 y 6289 sin evaluar); el techo lo fija la caída histórica.</div>
+    <div class="note">Corte <b>29-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión <b>los 22 detenidos tienen fecha de entrega</b> y evaluación; el techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
 
   <section>
     <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
-    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>24 buses F/S del Report</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Quedan <b>2 equipos pendientes de evaluación</b> (4851, 6289).</div>
+    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>24 buses F/S del Report</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Viggo ya <b>evaluó el 100%</b> del set (sin pendientes).</div>
     <div class="split3" id="destinoCards" style="grid-template-columns:repeat(4,1fr)"></div>
     <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 10px">Equipos por contrato y taller de atención</h3>
     <div class="tblwrap" id="contractDetail"></div>
@@ -324,7 +331,7 @@
   <section>
     <div class="sec-h"><span class="n">07</span><h2>Detalle de buses detenidos (F/S Report)</h2>
       <span class="hint">28 unidades · filtra por ubicación, decisión o taller</span></div>
-    <div class="note" style="margin-bottom:12px">Los <b>24 buses F/S del Report</b> (Mina 13 · Planta 6 · Sube y Baja 5). 22 evaluados por Viggo con taller, dificultad, decisión y fecha; <b>2 pendientes de evaluación</b> (4851, 6289).</div>
+    <div class="note" style="margin-bottom:12px">Los <b>22 buses F/S del Report</b> (Mina 12 · Planta 5 · Sube y Baja 5), <b>todos evaluados</b> por Viggo con taller, dificultad, decisión de cama baja y fecha de entrega.</div>
     <div class="filters">
       <label>Ubicación</label>
       <select id="fUbic"><option value="">Todas</option><option value="mel">Faena MEL</option><option value="ant">Antofagasta</option></select>
@@ -356,14 +363,14 @@ const fmt=n=>'$'+n.toLocaleString('es-CL');
 // asignado = flota del servicio; det = detenidos (F/S); oper = asignado - det; obj = objetivo operacion
 const svc=[
   {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', aSrc:'maestro', asignado:56, det:5,  obj:52, meta:56},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   aSrc:'Report',  asignado:40, det:13, obj:34},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  aSrc:'Report',  asignado:35, det:6,  obj:34},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina',   aSrc:'Report',  asignado:40, det:12, obj:34},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  aSrc:'Report',  asignado:35, det:5,  obj:34},
 ];
 svc.forEach(s=>{s.oper=s.asignado-s.det; s.disp=s.oper/s.asignado; s.faltan=Math.max(0,s.obj-s.oper);});
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
-// Set del REPORT (F/S al 30-ago): Mina 13 · Planta 6 · Sube y Baja 5. f=fecha entrega · ord=cola de cama baja · est=estatus.
+// Set del REPORT (F/S al 30-ago): Mina 12 · Planta 5 · Sube y Baja 5. f=fecha entrega · ord=cola de cama baja · est=estatus.
 const det=[
  {i:'4437',s:'mina',sys:'Transmisión',a35:'cb',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-03',lg:0,fa:1,ord:2,est:'Esperando cama baja'},
  {i:'6272',s:'mina',sys:'Frenos',a35:'cb',taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:6,est:'Esperando cama baja'},
@@ -375,7 +382,6 @@ const det=[
  {i:'6276',s:'mina',sys:'Sist. Neumático',a35:'cb',taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:11,est:'Esperando cama baja'},
  {i:'6277',s:'mina',sys:'Mantenimiento',a35:'cb',taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:12,est:'Esperando cama baja'},
  {i:'6282',s:'mina',sys:'—',a35:'ant',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'En reparación'},
- {i:'6289',s:'mina',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0,ord:null,est:'—'},
  {i:'6295',s:'mina',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-16',lg:1,fa:0,ord:null,est:'En reparación'},
  {i:'6320',s:'mina',sys:'Motor',a35:'cb',taller:'Scania',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:1,ord:1,est:'Esperando cama baja'},
  {i:'4870',s:'plan',sys:'Transmisión',a35:'mel',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1,ord:null,est:'Pendiente evaluación en faena'},
@@ -383,7 +389,6 @@ const det=[
  {i:'4846',s:'plan',sys:'Transmisión',a35:'cb',taller:'Fabian Baeza',dif:'Media',p:2,f:'2026-09-21',lg:1,fa:1,ord:8,est:'Esperando cama baja'},
  {i:'4853',s:'plan',sys:'Transmisión',a35:'cb',taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:1,ord:3,est:'Esperando cama baja'},
  {i:'4890',s:'plan',sys:'—',a35:'cb',taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:7,est:'Esperando cama baja'},
- {i:'4851',s:'plan',sys:'—',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0,ord:null,est:'—'},
  {i:'4926',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Taller MEL',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:1,ord:null,est:'En reparación'},
  {i:'4914',s:'syb',sys:'Sist. Neumático',a35:'mel',taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-01',lg:0,fa:0,ord:null,est:'En reparación'},
  {i:'6311',s:'syb',sys:'Transmisión',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-05',lg:0,fa:0,ord:null,est:'En reparación'},
@@ -427,88 +432,85 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
     return {i:d.i,s:d.s,f:d.leaves?null:d.f,rec,leaves:d.leaves||null};
   });
   const detainedAt=(sk,t)=>units.filter(u=>u.s===sk&&(!u.rec||u.rec>t)).length;
-  const W=920,padL=78,padR=16,xW=W-padL-padR;
-  const xOf=t=>padL+(t-START)/(END-START)*xW;
-  const weeks=[]; for(let d=new Date(START);d<=END;d=new Date(d.getTime()+7*DAY)) weeks.push(new Date(d));
+  const padL=78,padR=16;
   const md=d=>d.getDate()+'/'+(d.getMonth()+1);
-  const days=Math.round((END-START)/DAY);
+  const MN=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   // movimientos de flota (hoja Certificaciones): salen/entran del contrato
   const events={
     mina:[{d:'2026-08-31',dA:-1,dO:-1,i:'4436',t:'out',lbl:'4436 sale de Mina (1 mes)'},{d:'2026-09-30',dA:1,dO:1,i:'4436',t:'in',lbl:'4436 reingresa a Mina'}],
     plan:[{d:'2026-08-31',dA:-1,dO:0,i:'4826',t:'out',lbl:'4826 sale de contrato'},{d:'2026-08-31',dA:-1,dO:-1,i:'4833',t:'out',lbl:'4833 sale de contrato'},{d:'2026-09-04',dA:1,dO:1,i:'4844',t:'in',lbl:'4844 ingresa a Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4872',t:'in',lbl:'4872 ingresa a Planta'}],
     syb:[]
   };
-  const baseAsig={syb:56,mina:40,plan:35}, baseOper={syb:51,mina:27,plan:29};
-  // caída histórica de flota (buses/día) y mediana de permanencia en taller (días)
+  const baseAsig={syb:56,mina:40,plan:35}, baseOper={syb:51,mina:28,plan:30};
   const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
-  const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]); // Little: se estabiliza en λ×permanencia
+  const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]);
   const ev=sk=>events[sk]||[];
   const ed=e=>new Date(e.d+'T00:00:00');
   const asigAt=(sk,t)=>baseAsig[sk]+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dA:0),0);
   const operAt=(sk,t)=>baseOper[sk]+units.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0)-newFail(sk,t);
-  // --- 3 curvas por contrato (cantidad de equipos operativos) ---
-  const cH=176,cpadT=16,cpadB=26,cyH=cH-cpadT-cpadB;
-  function drawC(sk){
-    const TG=reqopN[sk];
-    let YMAX=baseAsig[sk]; for(let k=0;k<=days;k++){const a=asigAt(sk,new Date(START.getTime()+k*DAY)); if(a>YMAX)YMAX=a;}
-    const yv=n=>cpadT+(1-n/YMAX)*cyH;
-    let s=`<svg viewBox="0 0 ${W} ${cH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
-    [[0,'0'],[TG,'obj '+TG],[YMAX,'asig '+YMAX]].forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
-    const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".8"/>`;
-    weeks.forEach(d=>{const x=xOf(d);s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="var(--line)" stroke-dasharray="2 3" opacity=".45"/><text x="${x}" y="${cH-cpadB+13}" text-anchor="middle" font-size="9" fill="var(--muted)">${md(d)}</text>`;});
-    // asignado (step, faint)
-    let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(asigAt(sk,t)).toFixed(1)} `;}
-    s+=`<polyline points="${asigL}" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>`;
-    // operativos (area+line)
-    let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `;
-    for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
-    area+=`${xOf(END).toFixed(1)},${yv(0).toFixed(1)}`;
-    s+=`<polygon points="${area}" fill="${col[sk]}" opacity=".10"/>`;
-    s+=`<polyline points="${line}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
-    // marcadores de movimientos
-    ev(sk).forEach(e=>{const x=xOf(ed(e)),c2=e.t==='in'?'#2E7D5B':'#C0392B';
-      s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="${c2}" stroke-width="1" opacity=".6"/>`;
-      const ty=cpadT+2; s+= e.t==='in'?`<polygon points="${x},${ty} ${x-4},${ty+7} ${x+4},${ty+7}" fill="${c2}"/>`:`<polygon points="${x-4},${ty} ${x+4},${ty} ${x},${ty+7}" fill="${c2}"/>`;});
-    const opEnd=operAt(sk,END);
-    s+=`<circle cx="${xOf(END)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/>`;
-    s+=`<text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)} buses</text>`;
-    s+='</svg>';
-    const opNow=operAt(sk,START),aNow=asigAt(sk,START),aEnd=asigAt(sk,END);
-    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px">
-      <span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span>
-      <span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span>
-     </div><div style="overflow-x:auto">${s}</div></div>`;
-  }
-  document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
-  // --- gantt ---
-  let y=6,body='';
-  gOrder.forEach(sk=>{
-    body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
-    units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
-      const lv=u.leaves?new Date(u.leaves+'T00:00:00'):null;
-      const x1=xOf(START), x2=u.rec?xOf(u.rec):(lv?xOf(lv):xOf(END));
-      const fill=u.rec?col[sk]:(lv?'#8A93A1':'url(#hatch)');
-      body+=`<text x="6" y="${y+10}" font-size="10" fill="var(--ink)">${u.i}</text>`;
-      body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${fill}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
-      body+= u.rec?`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`:(lv?`<text x="${x2+4}" y="${y+11}" font-size="8.5" fill="var(--muted)">sale contrato ${md(lv)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha comprometida</text>`);
+  const cH=176,cpadT=16,cpadB=30,cyH=cH-cpadT-cpadB;
+  function draw(EN){
+    const days=Math.round((EN-START)/DAY);
+    const W=Math.max(920,padL+padR+days*15), xW=W-padL-padR;
+    const xOf=t=>padL+(t-START)/(EN-START)*xW;
+    const dayList=[]; for(let k=0;k<=days;k++) dayList.push(new Date(START.getTime()+k*DAY));
+    const ticks=(y0,y1,ly)=>{let s='';dayList.forEach(d=>{const x=xOf(d),f=d.getDate()===1;
+      s+=`<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" stroke="var(--line)" stroke-width="${f?1:0.6}" ${f?'':'stroke-dasharray="1 2"'} opacity="${f?.7:.3}"/>`;
+      s+=`<text x="${x}" y="${ly}" text-anchor="middle" font-size="7.5" fill="var(--muted)">${d.getDate()}</text>`;
+      if(f)s+=`<text x="${x+2}" y="${ly+9}" font-size="8" font-weight="700" fill="var(--accent)">${MN[d.getMonth()]}</text>`;});
+      return s;};
+    function drawC(sk){
+      const TG=reqopN[sk];
+      let YMAX=baseAsig[sk]; for(let k=0;k<=days;k++){const a=asigAt(sk,new Date(START.getTime()+k*DAY)); if(a>YMAX)YMAX=a;}
+      const yv=n=>cpadT+(1-n/YMAX)*cyH;
+      let s=`<svg viewBox="0 0 ${W} ${cH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
+      [[0,'0'],[TG,'obj '+TG],[YMAX,'asig '+YMAX]].forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
+      s+=ticks(cpadT,cH-cpadB,cH-cpadB+11);
+      const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".85"/>`;
+      let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(asigAt(sk,t)).toFixed(1)} `;}
+      s+=`<polyline points="${asigL}" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>`;
+      let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `;
+      for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
+      area+=`${xOf(EN).toFixed(1)},${yv(0).toFixed(1)}`;
+      s+=`<polygon points="${area}" fill="${col[sk]}" opacity=".10"/><polyline points="${line}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
+      ev(sk).forEach(e=>{if(ed(e)>EN)return; const x=xOf(ed(e)),c2=e.t==='in'?'#2E7D5B':'#C0392B';
+        s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="${c2}" stroke-width="1" opacity=".6"/>`;
+        const ty=cpadT+2; s+= e.t==='in'?`<polygon points="${x},${ty} ${x-4},${ty+7} ${x+4},${ty+7}" fill="${c2}"/>`:`<polygon points="${x-4},${ty} ${x+4},${ty} ${x},${ty+7}" fill="${c2}"/>`;});
+      const opEnd=operAt(sk,EN);
+      s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/><text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)}</text></svg>`;
+      const opNow=operAt(sk,START),aNow=asigAt(sk,START),aEnd=asigAt(sk,EN);
+      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span></div><div style="overflow-x:auto">${s}</div></div>`;
+    }
+    document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
+    // --- gantt ---
+    const endX=W-padR; let y=6,body='';
+    gOrder.forEach(sk=>{
+      body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
+      units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
+        const lv=u.leaves?new Date(u.leaves+'T00:00:00'):null;
+        const beyond=u.rec&&u.rec>EN; let x2=u.rec?xOf(u.rec):(lv?xOf(lv):endX); if(x2>endX)x2=endX;
+        const x1=xOf(START), fill=u.rec?col[sk]:(lv?'#8A93A1':'url(#hatch)');
+        body+=`<text x="6" y="${y+10}" font-size="10" fill="var(--ink)">${u.i}</text>`;
+        body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${fill}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
+        body+= u.rec?(beyond?`<text x="${x2-3}" y="${y+11}" text-anchor="end" font-size="8" fill="#fff">→${md(u.rec)}</text>`:`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`):(lv?`<text x="${x2+4}" y="${y+11}" font-size="8.5" fill="var(--muted)">sale ${md(lv)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha</text>`);
+        y+=15;
+      });
+      y+=6;
+    });
+    body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="var(--ink)">Movimientos de flota</text>`; y+=18;
+    [...ev('mina'),...ev('plan')].filter(e=>ed(e)<=EN).sort((a,b)=>ed(a)-ed(b)).forEach(e=>{
+      const x=xOf(ed(e)),c2=e.t==='in'?'#2E7D5B':'#C0392B';
+      body+= e.t==='in'?`<polygon points="${x},${y+3} ${x-4},${y+10} ${x+4},${y+10}" fill="${c2}"/>`:`<polygon points="${x-4},${y+3} ${x+4},${y+3} ${x},${y+10}" fill="${c2}"/>`;
+      body+=`<text x="${x+7}" y="${y+11}" font-size="9" fill="var(--muted)">${md(ed(e))} · ${e.lbl}</text>`;
       y+=15;
     });
-    y+=6;
-  });
-  // grupo movimientos de flota
-  body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="var(--ink)">Movimientos de flota</text>`; y+=18;
-  [...ev('mina'),...ev('plan')].map(e=>({...e})).sort((a,b)=>ed(a)-ed(b)).forEach(e=>{
-    const x=xOf(ed(e)),c2=e.t==='in'?'#2E7D5B':'#C0392B';
-    body+= e.t==='in'?`<polygon points="${x},${y+3} ${x-4},${y+10} ${x+4},${y+10}" fill="${c2}"/>`:`<polygon points="${x-4},${y+3} ${x+4},${y+3} ${x},${y+10}" fill="${c2}"/>`;
-    body+=`<text x="${x+7}" y="${y+11}" font-size="9" fill="var(--muted)">${md(ed(e))} · ${e.lbl}</text>`;
-    y+=15;
-  });
-  const gH=y+8;
-  let g=`<svg viewBox="0 0 ${W} ${gH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
-  g+=`<defs><pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--surface-2)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--faint)" stroke-width="1.6"/></pattern></defs>`;
-  weeks.forEach(d=>{const x=xOf(d);g+=`<line x1="${x}" y1="0" x2="${x}" y2="${gH}" stroke="var(--line)" stroke-dasharray="2 3" opacity=".5"/><text x="${x}" y="${gH-1}" text-anchor="middle" font-size="9" fill="var(--muted)">${md(d)}</text>`;});
-  g+=body+'</svg>';
-  document.getElementById('ganttChart').innerHTML=g;
+    const gH=y+16;
+    let g=`<svg viewBox="0 0 ${W} ${gH}" width="100%" style="min-width:${W}px;font-family:Inter"><defs><pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--surface-2)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--faint)" stroke-width="1.6"/></pattern></defs>`;
+    g+=ticks(0,gH-12,gH-2)+body+'</svg>';
+    document.getElementById('ganttChart').innerHTML=g;
+  }
+  window.__setRange=(r)=>{document.querySelectorAll('.rangebtn').forEach(b=>b.classList.toggle('active',b.dataset.r===r)); draw(r==='sep'?new Date('2026-09-30T00:00:00'):new Date('2026-10-31T00:00:00'));};
+  draw(new Date('2026-10-31T00:00:00'));
 })();
 
 // Tarjetas de destino de atención (dinámicas, cuadran con el set del Report)
