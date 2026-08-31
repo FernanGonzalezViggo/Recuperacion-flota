@@ -139,6 +139,9 @@
   .btn:hover{border-color:var(--accent);color:var(--accent)}
   .rangebtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .rangebtn.active:hover{color:#fff}
+  .cwrap .pptt{position:absolute;top:2px;display:none;pointer-events:none;background:var(--ink);color:var(--surface);
+    font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;white-space:nowrap;box-shadow:var(--shadow);z-index:5}
+  .cwrap svg{cursor:crosshair}
   .note{font-size:12px;color:var(--muted);background:var(--surface-2);border-left:3px solid var(--accent);
     padding:10px 13px;border-radius:0 8px 8px 0;margin-top:12px}
   .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
@@ -459,6 +462,7 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
       s+=`<text x="${x}" y="${ly}" text-anchor="middle" font-size="7.5" fill="var(--muted)">${d.getDate()}</text>`;
       if(f)s+=`<text x="${x+2}" y="${ly+9}" font-size="8" font-weight="700" fill="var(--accent)">${MN[d.getMonth()]}</text>`;});
       return s;};
+    const HV=[];
     function drawC(sk){
       const TG=reqopN[sk];
       let YMAX=baseAsig[sk]; for(let k=0;k<=days;k++){const a=asigAt(sk,new Date(START.getTime()+k*DAY)); if(a>YMAX)YMAX=a;}
@@ -469,19 +473,37 @@ document.getElementById('svc').innerHTML=svc.map(s=>{
       const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".85"/>`;
       let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(asigAt(sk,t)).toFixed(1)} `;}
       s+=`<polyline points="${asigL}" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>`;
-      let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `;
-      for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
+      let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `; const opArr=[];
+      for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t);opArr.push(op);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
       area+=`${xOf(EN).toFixed(1)},${yv(0).toFixed(1)}`;
       s+=`<polygon points="${area}" fill="${col[sk]}" opacity=".10"/><polyline points="${line}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
       ev(sk).forEach(e=>{if(ed(e)>EN)return; const x=xOf(ed(e)),c2=e.t==='in'?'#2E7D5B':'#C0392B';
         s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="${c2}" stroke-width="1" opacity=".6"/>`;
         const ty=cpadT+2; s+= e.t==='in'?`<polygon points="${x},${ty} ${x-4},${ty+7} ${x+4},${ty+7}" fill="${c2}"/>`:`<polygon points="${x-4},${ty} ${x+4},${ty} ${x},${ty+7}" fill="${c2}"/>`;});
       const opEnd=operAt(sk,EN);
-      s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/><text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)}</text></svg>`;
+      s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/><text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)}</text>`;
+      s+=`<line class="hvl" x1="0" y1="${cpadT}" x2="0" y2="${cH-cpadB}" stroke="${col[sk]}" stroke-width="1" opacity=".7" style="display:none"/><circle class="hvd" r="4.5" fill="${col[sk]}" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>`;
       const opNow=operAt(sk,START),aNow=asigAt(sk,START),aEnd=asigAt(sk,EN);
-      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span></div><div style="overflow-x:auto">${s}</div></div>`;
+      const idx=HV.length; HV.push({YMAX,opArr,color:col[sk]});
+      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
     }
     document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
+    document.querySelectorAll('#projChart .cwrap').forEach(w=>{
+      const m=HV[+w.dataset.i], svg=w.querySelector('svg'), tip=w.querySelector('.pptt');
+      const hvl=svg.querySelector('.hvl'), hvd=svg.querySelector('.hvd'), xWl=W-padL-padR;
+      svg.addEventListener('mousemove',e=>{
+        const r=svg.getBoundingClientRect(), vbx=(e.clientX-r.left)/r.width*W;
+        let k=Math.round((vbx-padL)/xWl*days); k=Math.max(0,Math.min(days,k));
+        const op=m.opArr[k], x=padL+k/days*xWl, yv=cpadT+(1-op/m.YMAX)*cyH;
+        hvl.setAttribute('x1',x);hvl.setAttribute('x2',x);hvl.style.display='';
+        hvd.setAttribute('cx',x);hvd.setAttribute('cy',yv);hvd.style.display='';
+        const dt=new Date(START.getTime()+k*DAY);
+        tip.innerHTML=`<b>${Math.round(op)}</b> operativos · ${dt.getDate()}/${dt.getMonth()+1}`;
+        tip.style.display='block';
+        tip.style.left=Math.max(2,Math.min(w.clientWidth-96,e.clientX-r.left-40))+'px';
+      });
+      svg.addEventListener('mouseleave',()=>{tip.style.display='none';hvl.style.display='none';hvd.style.display='none';});
+    });
     // --- gantt ---
     const endX=W-padR; let y=6,body='';
     gOrder.forEach(sk=>{
