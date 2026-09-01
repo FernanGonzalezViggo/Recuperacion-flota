@@ -404,32 +404,32 @@ const svc=[
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
-// Set del REPORT — f=fecha entrega · ord=cola de cama baja · est=estatus. MOV (movimientos) excluidos.
+// Set del REPORT — f=fecha entrega · ord=cola de cama baja · est=estatus · q=odómetro · t=larga data. MOV (movimientos) excluidos.
 const det=[
- {i:'4437',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-03',lg:0,fa:1,ord:1,est:'Correctivo - Espera HH Int.'},
- {i:'4472',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-09',lg:0,fa:0,ord:null,est:'Correctivo - Espera HH Int.'},
- {i:'4473',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Incidente - Evaluación'},
- {i:'6272',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:3,est:'Correctivo - Espera HH Ext.'},
- {i:'6276',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:7,est:'Correctivo - Externo'},
- {i:'6277',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Preventivo - Externo'},
- {i:'6278',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'Correctivo - En Trabajo'},
- {i:'6281',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:0,ord:null,est:'Incidente - Reparación Ext.'},
- {i:'6295',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-16',lg:1,fa:0,ord:null,est:'Correctivo - Externo'},
- {i:'6320',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:0,ord:null,est:'Incidente - Evaluación'},
- {i:'6324',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:4,est:'Incidente - Evaluación'},
- {i:'6325',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:5,est:'Correctivo - Espera Traslado'},
- {i:'9574',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-09',lg:0,fa:0,ord:null,est:'Correctivo - En Trabajo'},
- {i:'9601',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-20',lg:0,fa:0,ord:null,est:'Correctivo - Externo'},
- {i:'4828',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-10',lg:0,fa:0,ord:null,est:'Certificación'},
- {i:'4830',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:null,est:'Correctivo - Espera HH Int.'},
- {i:'4846',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-21',lg:1,fa:1,ord:null,est:'Correctivo - Espera HH Int.'},
- {i:'4853',s:'plan',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:1,ord:2,est:'Correctivo - Espera HH Int.'},
- {i:'4868',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'Correctivo - En Trabajo'},
- {i:'4870',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1,ord:null,est:'Correctivo - Espera HH Int.'},
- {i:'4873',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Certificación'},
- {i:'4885',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-10-30',lg:0,fa:0,ord:null,est:'Correctivo - Espera HH Ext.'},
- {i:'4890',s:'plan',a35:'cb',taller:'2 - Calama',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:6,est:'Correctivo - Espera Traslado'},
- {i:'4925',s:'syb',a35:'ant',taller:'3 - Antofagasta',dif:'Media',p:2,f:'',lg:0,fa:0,ord:null,est:'Correctivo - En Trabajo'},
+ {i:'4437',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-03',lg:0,fa:1,ord:1,est:'Correctivo - Espera HH Int.',q:'',t:'Detenida'},
+ {i:'4472',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-09',lg:0,fa:0,ord:null,est:'Correctivo - Espera HH Int.',q:'',t:'Detenida'},
+ {i:'4473',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Incidente - Evaluación',q:'',t:'Detenida'},
+ {i:'6272',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:3,est:'Correctivo - Espera HH Ext.',q:'',t:'Detenida'},
+ {i:'6276',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:7,est:'Correctivo - Externo',q:'',t:'Detenida'},
+ {i:'6277',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Preventivo - Externo',q:'',t:'Detenida'},
+ {i:'6278',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'Correctivo - En Trabajo',q:'',t:'Detenida'},
+ {i:'6281',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:0,ord:null,est:'Incidente - Reparación Ext.',q:'89010',t:'Larga Data'},
+ {i:'6295',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-16',lg:1,fa:0,ord:null,est:'Correctivo - Externo',q:'',t:'Larga Data'},
+ {i:'6320',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:0,ord:null,est:'Incidente - Evaluación',q:'',t:'Detenida'},
+ {i:'6324',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:4,est:'Incidente - Evaluación',q:'',t:'Detenida'},
+ {i:'6325',s:'mina',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:5,est:'Correctivo - Espera Traslado',q:'',t:'Detenida'},
+ {i:'9574',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-09',lg:0,fa:0,ord:null,est:'Correctivo - En Trabajo',q:'',t:'Detenida'},
+ {i:'9601',s:'mina',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-20',lg:0,fa:0,ord:null,est:'Correctivo - Externo',q:'',t:'Detenida'},
+ {i:'4828',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-10',lg:0,fa:0,ord:null,est:'Certificación',q:'298',t:'Larga Data'},
+ {i:'4830',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:1,ord:null,est:'Correctivo - Espera HH Int.',q:'',t:'Detenida'},
+ {i:'4846',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-21',lg:1,fa:1,ord:null,est:'Correctivo - Espera HH Int.',q:'',t:'Larga Data'},
+ {i:'4853',s:'plan',a35:'cb',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:1,ord:2,est:'Correctivo - Espera HH Int.',q:'',t:'Detenida'},
+ {i:'4868',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'Correctivo - En Trabajo',q:'',t:'Detenida'},
+ {i:'4870',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1,ord:null,est:'Correctivo - Espera HH Int.',q:'',t:'Detenida'},
+ {i:'4873',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Certificación',q:'',t:'Detenida'},
+ {i:'4885',s:'plan',a35:'ant',taller:'4 - MEL',dif:'Media',p:2,f:'2026-10-30',lg:0,fa:0,ord:null,est:'Correctivo - Espera HH Ext.',q:'',t:'Larga Data'},
+ {i:'4890',s:'plan',a35:'cb',taller:'2 - Calama',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:6,est:'Correctivo - Espera Traslado',q:'',t:'Detenida'},
+ {i:'4925',s:'syb',a35:'ant',taller:'3 - Antofagasta',dif:'Media',p:2,f:'',lg:0,fa:0,ord:null,est:'Correctivo - En Trabajo',q:'',t:'Detenida'},
 ];
 const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
@@ -437,6 +437,16 @@ const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
 // Observaciones (hoja Detenidas)
 const OBS={"4437":"Coordinar cama baja, cambio kit embrague 30-08","4472":"Equipo coordinación baja, atención garantía","4473":"Cárter fisurado, lanceo hasta estacionamiento 2000","6272":"Coordinar cama baja","6276":"En proceso asistencia Kaufmann // falla compresor","6277":"Ingreso proveedor externo por lavado","6278":"Ingreso taller 31-08","6281":"Incidente - reparación externa","6295":"Equipo ingreso sucursal K1 transmisión","6320":"Cama baja traslado 31-08","6324":"Ubicado en CM1, asistencia, cárter fisurado","6325":"Coordinar cama baja, cambiar pulmón y parachoque","9574":"Equipo en trabajo correctivo","9601":"Equipo en reparación externa","4828":"Certificación","4830":"Equipo sector Laguna Seca, panne por tirones","4846":"En evaluación // solicitar kit reparo selectora","4853":"A la espera de apertura taller MEL","4868":"En proceso cambio bomba de agua y termostato","4870":"Pendiente evaluación estacionamiento 2000","4873":"Certificación","4885":"Correctivo, espera HH externa","4890":"Coordinar cama baja por pernos cortados boguee","4925":"Equipo en trabajo correctivo"};
 det.forEach(d=>d.obs=OBS[d.i]||'');
+
+// Auditoría: validar consistencia det <-> OBS
+(function(){
+  const detIds = new Set(det.map(d=>d.i));
+  const obsIds = Object.keys(OBS);
+  const obsoletos = obsIds.filter(id=>!detIds.has(id));
+  const sinFecha = det.filter(d=>!d.f || d.f==='');
+  if(obsoletos.length) console.warn('OBS obsoletos (no en det):', obsoletos.join(', '));
+  if(sinFecha.length) console.warn('det sin fecha:', sinFecha.map(d=>d.i).join(', '));
+})();
 
 // Objetivo de flota por modo (filtro Viggo / BHP)
 const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{obj:52},mina:{obj:34},plan:{obj:32}}};
