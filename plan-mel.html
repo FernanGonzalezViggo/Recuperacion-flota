@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -200,6 +200,7 @@
     header.top{break-after:avoid}
   }
 </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -227,8 +228,8 @@
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Buses detenidos (F/S)</div>
-        <div class="big tnum">20<span class="u"> buses</span></div>
-        <div class="foot">SyB 3 · Mina 11 · Planta 6</div>
+        <div class="big tnum" id="kpiDetBig">20<span class="u"> buses</span></div>
+        <div class="foot" id="kpiDetFoot">SyB 3 · Mina 11 · Planta 6</div>
       </div>
       <div class="kpi"><div class="stripe s-warn"></div>
         <div class="cap">Disponibilidad global buses</div>
@@ -237,8 +238,8 @@
       </div>
       <div class="kpi"><div class="stripe s-accent"></div>
         <div class="cap">Cola de cama baja</div>
-        <div class="big tnum">7<span class="u"> buses</span></div>
-        <div class="foot">Orden 1→7 según plan de bajada</div>
+        <div class="big tnum" id="kpiColaBig">7<span class="u"> buses</span></div>
+        <div class="foot" id="kpiColaFoot">Orden 1→7 según plan de bajada</div>
       </div>
       <div class="kpi"><div class="stripe s-info"></div>
         <div class="cap">Costo cama baja</div>
@@ -252,7 +253,7 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note"><b>Disponibilidad = operativos / asignado.</b> El filtro <b>Viggo/BHP</b> cambia la base: <b>Viggo</b> usa el <b>maestro de flota</b> (el Report más las unidades extra que Viggo tiene en el maestro; asignado Mina 47 · Planta 40 · SyB 56). <b>BHP</b> usa el <b>Report</b> (lo que ve Operaciones) y su objetivo (Mina 34 · Planta 32 · SyB 52). Los <b>detenidos (F/S)</b> son 20 (Mina 11 · Planta 6 · SyB 3). Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note"><b>Disponibilidad = operativos / asignado.</b> El filtro <b>Viggo/BHP</b> cambia la base: <b>Viggo</b> usa el <b>maestro de flota</b> (el Report más las unidades extra que Viggo tiene en el maestro; asignado Mina 47 · Planta 40 · SyB 56). <b>BHP</b> usa el <b>Report</b> (lo que ve Operaciones) y su objetivo (Mina 34 · Planta 32 · SyB 52). Los <b>detenidos (F/S)</b> son <span id="nDetTot">20</span> (Mina <span id="nDetMina">11</span> · Planta <span id="nDetPlan">6</span> · SyB <span id="nDetSyb">3</span>). Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
@@ -306,7 +307,7 @@
           <button class="btn" onclick="setAll('mel')">Todos → atender 3.5</button>
           <button class="btn" onclick="setAll('reset')">Restaurar plan</button>
         </div>
-        <div class="note" style="margin-top:4px">Escenario base: <b>7 unidades en la cola de cama baja</b> (orden 1→7 del plan). Los botones permiten simular pasar alguna a atención en el taller 3.5.</div>
+        <div class="note" style="margin-top:4px">Escenario base: <b><span id="nColaNote">7</span> unidades en la cola de cama baja</b> (orden del plan). Los botones permiten simular pasar alguna a atención en el taller 3.5.</div>
       </div>
       <div class="tblwrap">
         <table>
@@ -352,7 +353,7 @@
   <section>
     <div class="sec-h"><span class="n">07</span><h2>Detalle de buses detenidos (F/S Report)</h2>
       <span class="hint">20 unidades · busca por interno o filtra por ubicación, decisión o taller</span></div>
-    <div class="note" style="margin-bottom:12px">Los <b>20 buses F/S</b> (Mina 11 · Planta 6 · Sube y Baja 3), todos evaluados por Viggo. (4926 y 4914 volvieron a operativo.)</div>
+    <div class="note" style="margin-bottom:12px">Los <b><span id="nDetTot2">20</span> buses F/S</b> (Mina <span id="nDetMina2">11</span> · Planta <span id="nDetPlan2">6</span> · Sube y Baja <span id="nDetSyb2">3</span>), todos evaluados por Viggo.</div>
     <div class="filters">
       <label>Interno</label>
       <input id="fInt" type="text" inputmode="numeric" placeholder="Ej: 6324" style="width:90px">
@@ -394,14 +395,12 @@
 const TRIP=1785000, TRIP_NET=1500000;
 const fmt=n=>'$'+n.toLocaleString('es-CL');
 
-// Base: Sube y Baja segun MAESTRO; Mina y Planta segun REPORT de turno (buses que se usan en el servicio)
-// asignado = flota del servicio; det = detenidos (F/S); oper = asignado - det; obj = objetivo operacion
+// Contratos. Los números de flota salen de MAESTRO / REPORTUS / OBJ / DETR (fuente única, más abajo).
 const svc=[
-  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja', aSrc:'maestro', asignado:56, det:5,  obj:52, meta:56},
-  {key:'mina',name:'Mina',        loc:'Mel Intermina',   aSrc:'Report',  asignado:40, det:11, obj:34},
-  {key:'plan',name:'Planta',      loc:'Mel Interfaena',  aSrc:'Report',  asignado:31, det:6,  obj:34},
+  {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja'},
+  {key:'mina',name:'Mina',        loc:'Mel Intermina'},
+  {key:'plan',name:'Planta',      loc:'Mel Interfaena'},
 ];
-svc.forEach(s=>{s.oper=s.asignado-s.det; s.disp=s.oper/s.asignado; s.faltan=Math.max(0,s.obj-s.oper);});
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
@@ -432,14 +431,31 @@ const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
 
 // Observaciones (hoja Detenidas)
-const OBS={"4437":"Coordinar cama baja, cambio kit embrague 30-08 // actualiza proyección","4472":"Equipo coordinación baja, atención garantía Scania","4473":"Cárter fisurado, lanceo hasta estacionamiento 2000, espera cama baja","6272":"Coordinar cama baja","6276":"En proceso asistencia Kaufmann // fuera de servicio falla compresor","6277":"Ingreso proveedor externo por lavado // en proceso MP","6278":"Ingreso taller 31-08","6295":"Equipo ingreso sucursal K1 transmisión 13-8","6320":"Cama baja traslado 31-08","6324":"Ubicado en CM1, asistencia, cárter fisurado. Pendiente de cama baja","6325":"Coordinar cama baja, cambiar pulmón y reparación parachoque trasero","4830":"Equipo sector Laguna Seca, panne por tirones, espera asistencia","4846":"En evaluación // solicitar kit reparo selectora // retraso por incidente taller","4853":"A la espera de apertura taller MEL, pendiente evaluación // coordinar cama baja","4868":"En proceso cambio bomba de agua y termostato","4870":"Pendiente evaluación estacionamiento 2000 // falta HH evaluación","4890":"Coordinar cama baja por pernos cortados boguee // reponer módulo motor","4926":"","4914":"","6311":"Equipo debe ingresar sucursal K1 campaña","6273":"Detenido km 62 ruta minera, espera evaluación Kaufmann, se traslada cama baja","4927":"Equipo en revisión Kaufmann"};
+const OBS={"4437":"Coordinar cama baja, cambio kit embrague 30-08 // actualiza proyección","4472":"Equipo coordinación baja, atención garantía Scania","4473":"Cárter fisurado, lanceo hasta estacionamiento 2000, espera cama baja","6272":"Coordinar cama baja","6276":"En proceso asistencia Kaufmann // fuera de servicio falla compresor","6277":"Ingreso proveedor externo por lavado // en proceso MP","6278":"Ingreso taller 31-08","6295":"Equipo ingreso sucursal K1 transmisión 13-8","6320":"Cama baja traslado 31-08","6324":"Ubicado en CM1, asistencia, cárter fisurado. Pendiente de cama baja","6325":"Coordinar cama baja, cambiar pulmón y reparación parachoque trasero","4830":"Equipo sector Laguna Seca, panne por tirones, espera asistencia","4846":"En evaluación // solicitar kit reparo selectora // retraso por incidente taller","4853":"A la espera de apertura taller MEL, pendiente evaluación // coordinar cama baja","4868":"En proceso cambio bomba de agua y termostato","4870":"Pendiente evaluación estacionamiento 2000 // falta HH evaluación","4890":"Coordinar cama baja por pernos cortados boguee // reponer módulo motor","6311":"Equipo debe ingresar sucursal K1 campaña","6273":"Detenido km 62 ruta minera, espera evaluación Kaufmann, se traslada cama baja","4927":"Equipo en revisión Kaufmann"};
 det.forEach(d=>d.obs=OBS[d.i]||'');
 
 // Objetivo de flota por modo (filtro Viggo / BHP)
 const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{obj:52},mina:{obj:34},plan:{obj:32}}};
-// Viggo = maestro (Report + unidades extra del maestro); BHP = Report. DETR = F/S actuales.
-const MAESTRO={syb:56,mina:47,plan:40}, REPORTUS={syb:56,mina:40,plan:31}, DETR={syb:3,mina:11,plan:6};
+// Viggo = maestro (Report + unidades extra del maestro); BHP = Report.
+const MAESTRO={syb:56,mina:47,plan:40}, REPORTUS={syb:56,mina:40,plan:31};
+const DETR={syb:0,mina:0,plan:0}; det.forEach(d=>DETR[d.s]++);      // F/S por contrato, derivado de 'det'
+const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';            // ¿se atiende en faena MEL (3.5)?
 let MODE='viggo';
+
+// Movimientos de flota — fuente única para la tabla y para la proyección. f = fecha ISO (programado) o null (realizado).
+const CKEY={'Mina':'mina','Planta':'plan','Sube y Baja':'syb'};
+const MOV=[
+ {i:'6293',t:'enroque',from:'Mina',to:'Sube y Baja',f:null},{i:'6291',t:'enroque',from:'Mina',to:'Vertice',f:null},
+ {i:'6287',t:'enroque',from:'Mina',to:'Sube y Baja',f:'2026-09-30'},{i:'4475',t:'enroque',from:'Mina',to:'Komatsu Sube y Baja',f:null},
+ {i:'6273',t:'enroque',from:'Mina',to:'Sube y Baja',f:null},
+ {i:'4874',t:'enroque',from:'Sube y Baja',to:'Planta',f:'2026-09-30'},{i:'4886',t:'enroque',from:'Sube y Baja',to:'Planta',f:'2026-09-30'},
+ {i:'4826',t:'egreso',from:'Planta',to:'Sale de contrato',f:null},{i:'4833',t:'egreso',from:'Planta',to:'Sale de contrato',f:null},
+ {i:'4892',t:'egreso',from:'Planta',to:'Sale de contrato',f:null},
+ {i:'4834',t:'egreso',from:'Planta',to:'Sale de contrato',f:'2026-09-30'},{i:'4837',t:'egreso',from:'Planta',to:'Sale de contrato',f:'2026-09-30'},
+ {i:'4436',t:'egreso',from:'Mina',to:'Fuera (1 mes)',f:'2026-08-31'},
+ {i:'4844',t:'ingreso',from:'Externo',to:'Planta',f:'2026-09-04'},{i:'4872',t:'ingreso',from:'Externo',to:'Planta',f:'2026-09-30'},
+ {i:'4436',t:'ingreso',from:'Retorno',to:'Mina',f:'2026-09-30'},
+];
 
 function renderSvc(){
   let tOper=0,tDen=0;
@@ -475,10 +491,24 @@ function renderSvc(){
 }
 renderSvc();
 
+// KPIs y notas derivados de 'det' / 'DETR' (una sola fuente)
+(function(){
+  const cbN=det.filter(d=>d.a35==='cb').length;
+  const set=(id,v)=>{const e=document.getElementById(id); if(e)e.textContent=v;};
+  const setHtml=(id,v)=>{const e=document.getElementById(id); if(e)e.innerHTML=v;};
+  setHtml('kpiDetBig', det.length+'<span class="u"> buses</span>');
+  set('kpiDetFoot', `SyB ${DETR.syb} · Mina ${DETR.mina} · Planta ${DETR.plan}`);
+  setHtml('kpiColaBig', cbN+'<span class="u"> buses</span>');
+  set('kpiColaFoot', `Orden 1→${cbN} según plan de bajada`);
+  set('nDetTot',det.length); set('nDetMina',DETR.mina); set('nDetPlan',DETR.plan); set('nDetSyb',DETR.syb);
+  set('nDetTot2',det.length); set('nDetMina2',DETR.mina); set('nDetPlan2',DETR.plan); set('nDetSyb2',DETR.syb);
+  set('nColaNote',cbN);
+})();
+
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
   const START=new Date('2026-08-30T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
-  const maestroN={syb:56,mina:40,plan:35}; const reqop=sk=>OBJ[MODE][sk].obj;
+  const reqop=sk=>OBJ[MODE][sk].obj;
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
   const gOrder=['syb','mina','plan'];
   // unidades detenidas (set del Report 29-ago). 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
@@ -487,20 +517,14 @@ renderSvc();
     if(d.f && !d.leaves){const fd=new Date(d.f+'T00:00:00'); rec=fd>START?fd:new Date(START.getTime()+DAY);}
     return {i:d.i,s:d.s,f:d.leaves?null:d.f,rec,leaves:d.leaves||null};
   });
-  const detainedAt=(sk,t)=>units.filter(u=>u.s===sk&&(!u.rec||u.rec>t)).length;
   const padL=78,padR=16;
   const md=d=>d.getDate()+'/'+(d.getMonth()+1);
   const MN=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  // movimientos de flota (hoja Certificaciones): salen/entran del contrato
-  const events={
-    mina:[{d:'2026-08-31',dA:-1,dO:-1,i:'4436',t:'out',lbl:'4436 sale de Mina (1 mes)'},{d:'2026-09-30',dA:1,dO:1,i:'4436',t:'in',lbl:'4436 reingresa a Mina'},
-      {d:'2026-09-30',dA:-1,dO:-1,i:'6287',t:'out',lbl:'6287 enroque Mina→Sube y Baja'}],
-    plan:[{d:'2026-09-04',dA:1,dO:1,i:'4844',t:'in',lbl:'4844 ingresa a Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4872',t:'in',lbl:'4872 ingresa a Planta'},
-      {d:'2026-09-30',dA:-1,dO:-1,i:'4834',t:'out',lbl:'4834 sale de contrato'},{d:'2026-09-30',dA:-1,dO:-1,i:'4837',t:'out',lbl:'4837 sale de contrato'},
-      {d:'2026-09-30',dA:1,dO:1,i:'4874',t:'in',lbl:'4874 enroque Sube y Baja→Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4886',t:'in',lbl:'4886 enroque Sube y Baja→Planta'}],
-    syb:[{d:'2026-09-30',dA:1,dO:1,i:'6287',t:'in',lbl:'6287 enroque desde Mina'},
-      {d:'2026-09-30',dA:-1,dO:-1,i:'4874',t:'out',lbl:'4874 enroque a Planta'},{d:'2026-09-30',dA:-1,dO:-1,i:'4886',t:'out',lbl:'4886 enroque a Planta'}]
-  };
+  // movimientos que salen/entran del contrato — derivados de MOV (fuente única con la tabla de la sección 08)
+  const events={mina:[],plan:[],syb:[]};
+  MOV.filter(m=>m.f).forEach(m=>{const fk=CKEY[m.from],tk=CKEY[m.to];
+    if(fk)events[fk].push({d:m.f,dA:-1,dO:-1,i:m.i,t:'out'});
+    if(tk)events[tk].push({d:m.f,dA:1,dO:1,i:m.i,t:'in'});});
   // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
   const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
   const baseOper=sk=>baseAsig(sk)-DETR[sk];
@@ -591,8 +615,7 @@ renderSvc();
   draw(curEN);
 })();
 
-// Tarjetas de destino de atención — clasificación por TALLER de atención
-const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';
+// Tarjetas de destino de atención — clasificación por TALLER de atención (melTaller definido arriba)
 function destBucket(d){
   if(d.a35==='pend'||d.taller==='Sin evaluación') return 'pend';
   if(d.a35==='cb') return 'cb';                 // cola de cama baja → Antofagasta
@@ -614,13 +637,12 @@ document.getElementById('destinoCards').innerHTML=destBuckets.map(b=>
 // Detalle por contrato y taller (destino de atención)
 const talleres=['Taller MEL','Kaufmann MEL','Taller Antofagasta','Kaufmann Viggo','Kaufmann K1','Kaufmann K6','Scania','Fabian Baeza','Sin evaluación'];
 const svcOrder=['syb','mina','plan'];
-const dInMel=t=>t==='Taller MEL'||t==='Kaufmann MEL';
 let ctHead='<thead><tr><th>Contrato</th><th>Equipos</th>'+talleres.map(t=>`<th>${t}</th>`).join('')+'</tr></thead>';
 let ctBody=svcOrder.map(sk=>{
   const rows=det.filter(d=>d.s===sk);
   const cells=talleres.map(t=>{
     const n=rows.filter(d=>d.taller===t).length;
-    return `<td class="num" style="${n?(dInMel(t)?'color:var(--accent);font-weight:700':'color:var(--ink)'):'color:var(--faint)'}">${n||'·'}</td>`;
+    return `<td class="num" style="${n?(melTaller(t)?'color:var(--accent);font-weight:700':'color:var(--ink)'):'color:var(--faint)'}">${n||'·'}</td>`;
   }).join('');
   return `<tr><td><b>${svcName(sk)}</b></td><td class="num" style="font-weight:700">${rows.length}</td>${cells}</tr>`;
 }).join('');
@@ -673,7 +695,7 @@ const byTaller={};
 det.forEach(d=>{(byTaller[d.taller]=byTaller[d.taller]||[]).push(d);});
 document.getElementById('tallerEstado').innerHTML=Object.entries(byTaller)
   .sort((a,b)=>b[1].length-a[1].length).map(([t,arr])=>{
-  const inMel=t==='Taller MEL'||t==='Kaufmann MEL';
+  const inMel=melTaller(t);
   arr.sort((a,b)=>(a.ord||99)-(b.ord||99)||a.i.localeCompare(b.i));
   const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
     return `<div class="estrow"><span class="ei">${d.i}</span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
@@ -683,7 +705,6 @@ document.getElementById('tallerEstado').innerHTML=Object.entries(byTaller)
 
 // Carga por taller
 // Carga = equipos × dificultad, apilada por taller
-const isMel=t=>t==='Taller MEL'||t==='Kaufmann MEL';
 const cargaMap={};
 det.filter(d=>d.p>0).forEach(d=>{
   const m=cargaMap[d.taller]||(cargaMap[d.taller]={A:0,M:0,B:0,n:0,carga:0});
@@ -693,13 +714,13 @@ det.filter(d=>d.p>0).forEach(d=>{
 const cEntries=Object.entries(cargaMap).sort((a,b)=>b[1].carga-a[1].carga);
 const cMax=Math.max(...cEntries.map(e=>e[1].carga));
 let pond=0; det.forEach(d=>pond+=d.p);
-const nEval=det.filter(d=>d.p>0).length, nPend=det.length-nEval;
+const nEval=det.filter(d=>d.p>0).length;
 document.getElementById('cargaChart').innerHTML=cEntries.map(([t,m])=>{
   const seg=(w,col)=>w?`<span style="width:${w/cMax*100}%;background:${col}"></span>`:'';
   const parts=[];
   if(m.A) parts.push(`${m.A}A`); if(m.M) parts.push(`${m.M}M`); if(m.B) parts.push(`${m.B}B`);
   return `<div class="cargarow">
-    <span class="ct">${t}${isMel(t)?' <span class="cbadge">3.5</span>':''}</span>
+    <span class="ct">${t}${melTaller(t)?' <span class="cbadge">3.5</span>':''}</span>
     <div class="stack">${seg(m.A*3,'var(--crit)')}${seg(m.M*2,'var(--warn)')}${seg(m.B*1,'var(--good)')}</div>
     <span class="cend"><b>${m.carga}</b> <span class="cn">${m.n} eq · ${parts.join(' ')}</span></span>
   </div>`;
@@ -740,30 +761,17 @@ document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA3
 fInt.addEventListener('input',renderDet);
 renderDet();
 
-// Movimientos de flota — enroques (hoja Enroque) + ingresos/egresos (Certificaciones). t: enroque/ingreso/egreso
-const FLOTAMOV=[
- // enroques de contrato
- {i:'6293',t:'enroque',o:'Mina',d:'Sube y Baja',f:null},{i:'6291',t:'enroque',o:'Mina',d:'Vertice',f:null},
- {i:'6287',t:'enroque',o:'Mina',d:'Sube y Baja',f:'30-09'},{i:'4475',t:'enroque',o:'Mina',d:'Komatsu Sube y Baja',f:null},
- {i:'6273',t:'enroque',o:'Mina',d:'Sube y Baja',f:null},
- {i:'4874',t:'enroque',o:'Sube y Baja',d:'Planta',f:'30-09'},{i:'4886',t:'enroque',o:'Sube y Baja',d:'Planta',f:'30-09'},
- // egresos
- {i:'4826',t:'egreso',o:'Planta',d:'Sale de contrato',f:null},{i:'4833',t:'egreso',o:'Planta',d:'Sale de contrato',f:null},
- {i:'4892',t:'egreso',o:'Planta',d:'Sale de contrato',f:null},
- {i:'4834',t:'egreso',o:'Planta',d:'Sale de contrato',f:'30-09'},{i:'4837',t:'egreso',o:'Planta',d:'Sale de contrato',f:'30-09'},
- {i:'4436',t:'egreso',o:'Mina',d:'Fuera (1 mes)',f:'31-08'},
- // ingresos
- {i:'4844',t:'ingreso',o:'Externo',d:'Planta',f:'04-09'},{i:'4872',t:'ingreso',o:'Externo',d:'Planta',f:'30-09'},
- {i:'4436',t:'ingreso',o:'Retorno',d:'Mina',f:'30-09'},
-];
+// Movimientos de flota — usa MOV (fuente única con la proyección). f ISO → 'DD-MM' para desplegar.
+const dm=iso=>{const p=iso.split('-');return p[2]+'-'+p[1];};
 const tipoTag=t=>t==='ingreso'?'<span style="color:#2E7D5B;font-weight:600">▲ Ingreso</span>':t==='egreso'?'<span style="color:#C0392B;font-weight:600">▼ Egreso</span>':'<span style="color:var(--accent);font-weight:600">⇄ Enroque</span>';
-document.getElementById('enroqueTable').innerHTML=FLOTAMOV.map(e=>{
-  const estado=e.f?`<span class="tag t-cb">Programado ${e.f}</span>`:'<span class="tag t-si">Realizado</span>';
-  return `<tr><td class="num"><b>${e.i}</b></td><td>${tipoTag(e.t)}</td><td>${e.o}</td><td><b>${e.d}</b></td><td>${estado}</td></tr>`;
+document.getElementById('enroqueTable').innerHTML=MOV.map(e=>{
+  const estado=e.f?`<span class="tag t-cb">Programado ${dm(e.f)}</span>`:'<span class="tag t-si">Realizado</span>';
+  return `<tr><td class="num"><b>${e.i}</b></td><td>${tipoTag(e.t)}</td><td>${e.from}</td><td><b>${e.to}</b></td><td>${estado}</td></tr>`;
 }).join('');
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
 window.__setMode=(m)=>{MODE=m; document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m)); renderSvc(); if(window.__redrawProj)window.__redrawProj();};
 </script>
+
 </body>
 </html>
