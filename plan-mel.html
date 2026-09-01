@@ -506,10 +506,11 @@ renderSvc();
     function drawC(sk){
       const TG=reqop(sk);
       const cap=t=>MODE==='viggo'?asigAt(sk,t):reqop(sk);   // techo: Viggo=asignado; BHP=objetivo
-      let YMAX=0; for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);YMAX=Math.max(YMAX,cap(t),operAt(sk,t));}
-      const yv=n=>cpadT+(1-n/YMAX)*cyH;
+      let YMAX=TG; for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);YMAX=Math.max(YMAX,cap(t));}
+      const yv=n=>cpadT+(1-Math.min(n,YMAX)/YMAX)*cyH;   // recorta al tope si supera
       let s=`<svg viewBox="0 0 ${W} ${cH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
-      [[0,'0'],[TG,'obj '+TG],[YMAX,(MODE==='viggo'?'asig ':'tope ')+YMAX]].forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
+      const ytk=TG<YMAX?[[0,'0'],[TG,'obj '+TG],[YMAX,'asig '+YMAX]]:[[0,'0'],[YMAX,'obj '+YMAX]];
+      ytk.forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
       s+=ticks(cpadT,cH-cpadB,cH-cpadB+11);
       const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".85"/>`;
       let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(cap(t)).toFixed(1)} `;}
