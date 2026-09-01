@@ -274,10 +274,6 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (Gantt)</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="scard" style="margin-top:14px">
-      <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 10px">Movimientos de flota programados</h3>
-      <div class="tblwrap" id="movTable"></div>
-    </div>
     <div class="note">Corte <b>30-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión 19 de los 20 detenidos tienen fecha (solo 4830 sin fecha); el techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
@@ -378,15 +374,15 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">08</span><h2>Enroque de flota</h2>
-      <span class="hint">Cambios de contrato · los que tienen fecha se aplican en la proyección</span></div>
+    <div class="sec-h"><span class="n">08</span><h2>Movimientos de flota</h2>
+      <span class="hint">Enroques de contrato e ingresos/egresos · los programados se aplican en la proyección</span></div>
     <div class="tblwrap">
       <table>
-        <thead><tr><th>Interno</th><th>Contrato origen</th><th>Contrato destino</th><th>Estado</th></tr></thead>
+        <thead><tr><th>Interno</th><th>Tipo</th><th>Contrato origen</th><th>Contrato destino</th><th>Estado</th></tr></thead>
         <tbody id="enroqueTable"></tbody>
       </table>
     </div>
-    <div class="note">Los enroques con <b>fecha comprometida (30-09)</b> se reflejan en la proyección (sección 02): mueven la flota asignada y operativa entre contratos ese día. Los marcados <b>realizado</b> ya están considerados en el corte actual del Report.</div>
+    <div class="note">Incluye los <b>enroques de contrato</b> y los <b>ingresos/egresos</b> de flota. Los marcados <b>Programado (30-09 / 04-09)</b> se reflejan en la proyección (sección 02): mueven la flota asignada y operativa entre contratos en esa fecha. Los <b>Realizados</b> ya están considerados en el corte actual del Report.</div>
   </section>
 
   <footer>
@@ -453,7 +449,7 @@ function renderSvc(){
     const asig = MODE==='viggo'? MAESTRO[k] : obj;
     const oper = (MODE==='viggo'? MAESTRO[k] : REPORTUS[k]) - DETR[k];
     const detShown = MODE==='viggo'? DETR[k] : Math.max(0,obj-oper);
-    const disp=oper/asig, c=dispColor(disp), pct=Math.round(disp*100);
+    const disp=oper/asig, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
     const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=asig;
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
@@ -473,7 +469,7 @@ function renderSvc(){
         : `<span class="pill p-good">Cubre lo requerido</span> (${obj})`}${meta?` · meta ${meta}`:''}</div>
     </div>`;
   }).join('');
-  const g=Math.round(tOper/tDen*100);
+  const g=Math.min(100,Math.round(tOper/tDen*100));
   const kd=document.getElementById('kpiDispBig'); if(kd) kd.innerHTML=g+'<span class="u">%</span>';
   const kf=document.getElementById('kpiDispFoot'); if(kf) kf.textContent=`${tOper} operativos vs. ${tDen} ${MODE==='viggo'?'asignados':'objetivo (BHP)'}`;
 }
@@ -506,18 +502,6 @@ renderSvc();
       {d:'2026-09-30',dA:-1,dO:-1,i:'4874',t:'out',lbl:'4874 enroque a Planta'},{d:'2026-09-30',dA:-1,dO:-1,i:'4886',t:'out',lbl:'4886 enroque a Planta'}]
   };
   // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
-  // movimientos físicos (para la tabla legible bajo el Gantt)
-  const MOVES=[
-    {d:'2026-08-31',i:'4436',t:'out',from:'Mina',to:'Fuera (1 mes)'},
-    {d:'2026-09-04',i:'4844',t:'in',from:'Externo',to:'Planta'},
-    {d:'2026-09-30',i:'4436',t:'in',from:'Fuera (retorno)',to:'Mina'},
-    {d:'2026-09-30',i:'4872',t:'in',from:'Externo',to:'Planta'},
-    {d:'2026-09-30',i:'6287',t:'move',from:'Mina',to:'Sube y Baja'},
-    {d:'2026-09-30',i:'4834',t:'out',from:'Planta',to:'Sale de contrato'},
-    {d:'2026-09-30',i:'4837',t:'out',from:'Planta',to:'Sale de contrato'},
-    {d:'2026-09-30',i:'4874',t:'move',from:'Sube y Baja',to:'Planta'},
-    {d:'2026-09-30',i:'4886',t:'move',from:'Sube y Baja',to:'Planta'},
-  ];
   const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
   const baseOper=sk=>baseAsig(sk)-DETR[sk];
   const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
@@ -562,7 +546,7 @@ renderSvc();
       s+=`<line class="hvl" x1="0" y1="${cpadT}" x2="0" y2="${cH-cpadB}" stroke="${col[sk]}" stroke-width="1" opacity=".7" style="display:none"/><circle class="hvd" r="4.5" fill="${col[sk]}" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>`;
       const opNow=operAt(sk,START),aNow=cap(START),aEnd=cap(EN);
       const idx=HV.length; HV.push({YMAX,opArr,color:col[sk]});
-      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
+      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.min(100,Math.round(opNow/aNow*100))}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.min(100,Math.round(opEnd/aEnd*100))}%) · objetivo op. <b>${TG}</b></span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
     }
     document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
     document.querySelectorAll('#projChart .cwrap').forEach(w=>{
@@ -600,11 +584,6 @@ renderSvc();
     let g=`<svg viewBox="0 0 ${W} ${gH}" width="100%" style="min-width:${W}px;font-family:Inter"><defs><pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--surface-2)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--faint)" stroke-width="1.6"/></pattern></defs>`;
     g+=ticks(0,gH-12,gH-2)+body+'</svg>';
     document.getElementById('ganttChart').innerHTML=g;
-    // tabla legible de movimientos de flota
-    const mv=MOVES.filter(m=>new Date(m.d+'T00:00:00')<=EN).sort((a,b)=>a.d.localeCompare(b.d));
-    const icon=t=>t==='in'?'<span style="color:#2E7D5B;font-weight:600">▲ Ingreso</span>':t==='out'?'<span style="color:#C0392B;font-weight:600">▼ Egreso</span>':'<span style="color:var(--accent);font-weight:600">⇄ Enroque</span>';
-    document.getElementById('movTable').innerHTML='<table><thead><tr><th>Fecha</th><th>Interno</th><th>Tipo</th><th>Contrato origen</th><th>Contrato destino</th></tr></thead><tbody>'+
-      mv.map(m=>`<tr><td class="num">${md(new Date(m.d+'T00:00:00'))}</td><td class="num"><b>${m.i}</b></td><td>${icon(m.t)}</td><td>${m.from}</td><td><b>${m.to}</b></td></tr>`).join('')+'</tbody></table>';
   }
   let curEN=new Date('2026-10-31T00:00:00');
   window.__setRange=(r)=>{document.querySelectorAll('.rangebtn').forEach(b=>b.classList.toggle('active',b.dataset.r===r)); curEN=r==='sep'?new Date('2026-09-30T00:00:00'):new Date('2026-10-31T00:00:00'); draw(curEN);};
@@ -761,18 +740,26 @@ document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA3
 fInt.addEventListener('input',renderDet);
 renderDet();
 
-// Enroque de flota (hoja Enroque de flota)
-const ENROQUE=[
- {i:'6293',o:'Mina',d:'Sube y Baja',f:null},{i:'6291',o:'Mina',d:'Vertice',f:null},
- {i:'6287',o:'Mina',d:'Sube y Baja',f:'30-09'},{i:'4475',o:'Mina',d:'Komatsu Sube y Baja',f:null},
- {i:'4826',o:'Planta',d:'Sale de contrato',f:null},{i:'4833',o:'Planta',d:'Sale de contrato',f:null},
- {i:'4834',o:'Planta',d:'Sale de contrato',f:'30-09'},{i:'4837',o:'Planta',d:'Sale de contrato',f:'30-09'},
- {i:'4892',o:'Planta',d:'Sale de contrato',f:null},{i:'6273',o:'Mina',d:'Sube y Baja',f:null},
- {i:'4874',o:'Sube y Baja',d:'Planta',f:'30-09'},{i:'4886',o:'Sube y Baja',d:'Planta',f:'30-09'},
+// Movimientos de flota — enroques (hoja Enroque) + ingresos/egresos (Certificaciones). t: enroque/ingreso/egreso
+const FLOTAMOV=[
+ // enroques de contrato
+ {i:'6293',t:'enroque',o:'Mina',d:'Sube y Baja',f:null},{i:'6291',t:'enroque',o:'Mina',d:'Vertice',f:null},
+ {i:'6287',t:'enroque',o:'Mina',d:'Sube y Baja',f:'30-09'},{i:'4475',t:'enroque',o:'Mina',d:'Komatsu Sube y Baja',f:null},
+ {i:'6273',t:'enroque',o:'Mina',d:'Sube y Baja',f:null},
+ {i:'4874',t:'enroque',o:'Sube y Baja',d:'Planta',f:'30-09'},{i:'4886',t:'enroque',o:'Sube y Baja',d:'Planta',f:'30-09'},
+ // egresos
+ {i:'4826',t:'egreso',o:'Planta',d:'Sale de contrato',f:null},{i:'4833',t:'egreso',o:'Planta',d:'Sale de contrato',f:null},
+ {i:'4892',t:'egreso',o:'Planta',d:'Sale de contrato',f:null},
+ {i:'4834',t:'egreso',o:'Planta',d:'Sale de contrato',f:'30-09'},{i:'4837',t:'egreso',o:'Planta',d:'Sale de contrato',f:'30-09'},
+ {i:'4436',t:'egreso',o:'Mina',d:'Fuera (1 mes)',f:'31-08'},
+ // ingresos
+ {i:'4844',t:'ingreso',o:'Externo',d:'Planta',f:'04-09'},{i:'4872',t:'ingreso',o:'Externo',d:'Planta',f:'30-09'},
+ {i:'4436',t:'ingreso',o:'Retorno',d:'Mina',f:'30-09'},
 ];
-document.getElementById('enroqueTable').innerHTML=ENROQUE.map(e=>{
+const tipoTag=t=>t==='ingreso'?'<span style="color:#2E7D5B;font-weight:600">▲ Ingreso</span>':t==='egreso'?'<span style="color:#C0392B;font-weight:600">▼ Egreso</span>':'<span style="color:var(--accent);font-weight:600">⇄ Enroque</span>';
+document.getElementById('enroqueTable').innerHTML=FLOTAMOV.map(e=>{
   const estado=e.f?`<span class="tag t-cb">Programado ${e.f}</span>`:'<span class="tag t-si">Realizado</span>';
-  return `<tr><td class="num"><b>${e.i}</b></td><td>${e.o}</td><td>${e.d}</td><td>${estado}</td></tr>`;
+  return `<tr><td class="num"><b>${e.i}</b></td><td>${tipoTag(e.t)}</td><td>${e.o}</td><td><b>${e.d}</b></td><td>${estado}</td></tr>`;
 }).join('');
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
