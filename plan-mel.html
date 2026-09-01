@@ -285,7 +285,7 @@
   <section>
     <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
-    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>20 buses F/S</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Todos evaluados.</div>
+    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Clasificación por <b>taller de atención</b>: <b>Mantener en 3.5</b> = se atienden en faena (Taller MEL o Kaufmann MEL); <b>Cama baja</b> = cola de bajada a Antofagasta; <b>Ya en Antofagasta</b> = no van en cama baja y se atienden en talleres externos (Kaufmann Viggo/K1/K6, Scania, F. Baeza, Taller Antofagasta).</div>
     <div class="split3" id="destinoCards" style="grid-template-columns:repeat(4,1fr)"></div>
     <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 10px">Equipos por contrato y taller de atención</h3>
     <div class="tblwrap" id="contractDetail"></div>
@@ -612,8 +612,14 @@ renderSvc();
   draw(curEN);
 })();
 
-// Tarjetas de destino de atención (dinámicas, cuadran con el set del Report)
-const cnt=k=>det.filter(d=>d.a35===k).length;
+// Tarjetas de destino de atención — clasificación por TALLER de atención
+const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';
+function destBucket(d){
+  if(d.a35==='pend'||d.taller==='Sin evaluación') return 'pend';
+  if(d.a35==='cb') return 'cb';                 // cola de cama baja → Antofagasta
+  return melTaller(d.taller)?'mel':'ant';        // se atiende en faena MEL vs. taller externo (Antofagasta)
+}
+const cnt=k=>det.filter(d=>destBucket(d)===k).length;
 const destBuckets=[
   {k:'mel',cap:'Mantener en Taller 3.5 (faena)',stripe:'s-accent',color:'var(--accent)',desc:'Se atienden en faena. No generan costo de traslado.'},
   {k:'cb',cap:'Bajar en cama baja',stripe:'s-crit',color:'var(--crit)',desc:'Se descienden a Antofagasta. Cada viaje $1.785.000 c/IVA.'},
