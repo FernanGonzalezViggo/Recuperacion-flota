@@ -525,11 +525,11 @@ renderSvc();
   const reqop=sk=>OBJ[MODE][sk].obj;
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
   const gOrder=['syb','mina','plan'];
-  // unidades detenidas (set del Report 29-ago). 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
+  // unidades detenidas. 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
   const units=det.map(d=>{
     let rec=null;
     if(d.f && !d.leaves){const fd=new Date(d.f+'T00:00:00'); rec=fd>START?fd:new Date(START.getTime()+DAY);}
-    return {i:d.i,s:d.s,f:d.leaves?null:d.f,rec,leaves:d.leaves||null};
+    return {i:d.i,s:d.s,f:d.leaves?null:d.f,rec,leaves:d.leaves||null,q:d.q,t:d.t};
   });
   const padL=78,padR=16;
   const md=d=>d.getDate()+'/'+(d.getMonth()+1);
@@ -605,6 +605,7 @@ renderSvc();
     });
     // --- gantt ---
     const endX=W-padR; let y=6,body='';
+    body+=`<text x="6" y="16" font-size="9" font-weight="600" fill="var(--muted)">Equipo</text><text x="56" y="16" font-size="9" font-weight="600" fill="var(--muted)">Q</text><text x="90" y="16" font-size="9" font-weight="600" fill="var(--muted)">T</text>`; y=28;
     gOrder.forEach(sk=>{
       body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
       units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
@@ -612,6 +613,8 @@ renderSvc();
         const beyond=u.rec&&u.rec>EN; let x2=u.rec?xOf(u.rec):(lv?xOf(lv):endX); if(x2>endX)x2=endX;
         const x1=xOf(START), fill=u.rec?col[sk]:(lv?'#8A93A1':'url(#hatch)');
         body+=`<text x="6" y="${y+10}" font-size="10" fill="var(--ink)">${u.i}</text>`;
+        body+=`<text x="56" y="${y+10}" font-size="8.5" fill="var(--muted)">${u.q||'—'}</text>`;
+        body+=`<text x="90" y="${y+10}" font-size="8.5" fill="var(--muted)">${u.t||'—'}</text>`;
         body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${fill}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
         body+= u.rec?(beyond?`<text x="${x2-3}" y="${y+11}" text-anchor="end" font-size="8" fill="#fff">→${md(u.rec)}</text>`:`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`):(lv?`<text x="${x2+4}" y="${y+11}" font-size="8.5" fill="var(--muted)">sale ${md(lv)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha</text>`);
         y+=15;
