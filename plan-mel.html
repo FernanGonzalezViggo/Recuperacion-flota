@@ -508,15 +508,15 @@ renderSvc();
   // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
   // movimientos físicos (para la tabla legible bajo el Gantt)
   const MOVES=[
-    {d:'2026-08-31',i:'4436',t:'out',lbl:'Sale de Mina por 1 mes'},
-    {d:'2026-09-04',i:'4844',t:'in',lbl:'Ingresa a Planta'},
-    {d:'2026-09-30',i:'4436',t:'in',lbl:'Reingresa a Mina'},
-    {d:'2026-09-30',i:'4872',t:'in',lbl:'Ingresa a Planta'},
-    {d:'2026-09-30',i:'6287',t:'move',lbl:'Enroque Mina → Sube y Baja'},
-    {d:'2026-09-30',i:'4834',t:'out',lbl:'Sale de contrato (Planta)'},
-    {d:'2026-09-30',i:'4837',t:'out',lbl:'Sale de contrato (Planta)'},
-    {d:'2026-09-30',i:'4874',t:'move',lbl:'Enroque Sube y Baja → Planta'},
-    {d:'2026-09-30',i:'4886',t:'move',lbl:'Enroque Sube y Baja → Planta'},
+    {d:'2026-08-31',i:'4436',t:'out',from:'Mina',to:'Fuera (1 mes)'},
+    {d:'2026-09-04',i:'4844',t:'in',from:'Externo',to:'Planta'},
+    {d:'2026-09-30',i:'4436',t:'in',from:'Fuera (retorno)',to:'Mina'},
+    {d:'2026-09-30',i:'4872',t:'in',from:'Externo',to:'Planta'},
+    {d:'2026-09-30',i:'6287',t:'move',from:'Mina',to:'Sube y Baja'},
+    {d:'2026-09-30',i:'4834',t:'out',from:'Planta',to:'Sale de contrato'},
+    {d:'2026-09-30',i:'4837',t:'out',from:'Planta',to:'Sale de contrato'},
+    {d:'2026-09-30',i:'4874',t:'move',from:'Sube y Baja',to:'Planta'},
+    {d:'2026-09-30',i:'4886',t:'move',from:'Sube y Baja',to:'Planta'},
   ];
   const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
   const baseOper=sk=>baseAsig(sk)-DETR[sk];
@@ -603,8 +603,8 @@ renderSvc();
     // tabla legible de movimientos de flota
     const mv=MOVES.filter(m=>new Date(m.d+'T00:00:00')<=EN).sort((a,b)=>a.d.localeCompare(b.d));
     const icon=t=>t==='in'?'<span style="color:#2E7D5B;font-weight:600">▲ Ingreso</span>':t==='out'?'<span style="color:#C0392B;font-weight:600">▼ Egreso</span>':'<span style="color:var(--accent);font-weight:600">⇄ Enroque</span>';
-    document.getElementById('movTable').innerHTML='<table><thead><tr><th>Fecha</th><th>Interno</th><th>Tipo</th><th>Movimiento</th></tr></thead><tbody>'+
-      mv.map(m=>`<tr><td class="num">${md(new Date(m.d+'T00:00:00'))}</td><td class="num"><b>${m.i}</b></td><td>${icon(m.t)}</td><td>${m.lbl}</td></tr>`).join('')+'</tbody></table>';
+    document.getElementById('movTable').innerHTML='<table><thead><tr><th>Fecha</th><th>Interno</th><th>Tipo</th><th>Contrato origen</th><th>Contrato destino</th></tr></thead><tbody>'+
+      mv.map(m=>`<tr><td class="num">${md(new Date(m.d+'T00:00:00'))}</td><td class="num"><b>${m.i}</b></td><td>${icon(m.t)}</td><td>${m.from}</td><td><b>${m.to}</b></td></tr>`).join('')+'</tbody></table>';
   }
   let curEN=new Date('2026-10-31T00:00:00');
   window.__setRange=(r)=>{document.querySelectorAll('.rangebtn').forEach(b=>b.classList.toggle('active',b.dataset.r===r)); curEN=r==='sep'?new Date('2026-09-30T00:00:00'):new Date('2026-10-31T00:00:00'); draw(curEN);};
