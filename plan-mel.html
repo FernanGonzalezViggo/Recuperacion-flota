@@ -227,8 +227,8 @@
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
         <div class="cap">Buses detenidos (F/S)</div>
-        <div class="big tnum">22<span class="u">/ 127 asig.</span></div>
-        <div class="foot">SyB 5 · Mina 11 · Planta 6</div>
+        <div class="big tnum">20<span class="u"> buses</span></div>
+        <div class="foot">SyB 3 · Mina 11 · Planta 6</div>
       </div>
       <div class="kpi"><div class="stripe s-warn"></div>
         <div class="cap">Disponibilidad global buses</div>
@@ -252,7 +252,7 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note"><b>Disponibilidad = operativos / asignado.</b> <b>Sube y Baja</b> se mide según el <b>maestro de activos</b> (56 buses, 5 detenidos). <b>Mina</b> y <b>Planta</b> según el <b>Report de turno</b>: Mina 40 buses en servicio (11 F/S), Planta 31 (6 F/S). El <b>objetivo operación</b> depende del filtro <b>Viggo/BHP</b>: Viggo mide vs. la flota asignada; BHP mide vs. su objetivo (Mina 34 · Planta 32 · Sube y Baja 52). Sube y Baja necesita 52 (meta 56). Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note"><b>Disponibilidad = operativos / asignado.</b> El filtro <b>Viggo/BHP</b> cambia la base: <b>Viggo</b> usa el <b>maestro de flota</b> (el Report más las unidades extra que Viggo tiene en el maestro; asignado Mina 47 · Planta 40 · SyB 56). <b>BHP</b> usa el <b>Report</b> (lo que ve Operaciones) y su objetivo (Mina 34 · Planta 32 · SyB 52). Los <b>detenidos (F/S)</b> son 20 (Mina 11 · Planta 6 · SyB 3). Solo buses (minibuses fuera de alcance por ahora).</div>
   </section>
 
   <section>
@@ -274,14 +274,14 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos y movimientos de flota</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Corte <b>30-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión 19 de los 22 detenidos tienen fecha (4830, 4926 y 4914 sin fecha); el techo lo fija la caída histórica.</div>
+    <div class="note">Corte <b>30-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión 19 de los 20 detenidos tienen fecha (solo 4830 sin fecha); el techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
 
   <section>
     <div class="sec-h"><span class="n">03</span><h2>Destino de atención</h2>
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
-    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>22 buses F/S del Report</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Quedan <b>2 pendientes de evaluación</b> (4926, 4914).</div>
+    <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Sobre los <b>20 buses F/S</b>: los que están en <b>Ubicación Taller MEL</b> (faena) se analizan para <b>cama baja</b> o <b>atender en el taller 3.5</b>; el resto ya está en Antofagasta. Todos evaluados.</div>
     <div class="split3" id="destinoCards" style="grid-template-columns:repeat(4,1fr)"></div>
     <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 10px">Equipos por contrato y taller de atención</h3>
     <div class="tblwrap" id="contractDetail"></div>
@@ -351,8 +351,8 @@
 
   <section>
     <div class="sec-h"><span class="n">07</span><h2>Detalle de buses detenidos (F/S Report)</h2>
-      <span class="hint">22 unidades · busca por interno o filtra por ubicación, decisión o taller</span></div>
-    <div class="note" style="margin-bottom:12px">Los <b>22 buses F/S del Report</b> (Mina 11 · Planta 6 · Sube y Baja 5). 20 evaluados por Viggo; <b>2 pendientes</b> (4926, 4914).</div>
+      <span class="hint">20 unidades · busca por interno o filtra por ubicación, decisión o taller</span></div>
+    <div class="note" style="margin-bottom:12px">Los <b>20 buses F/S</b> (Mina 11 · Planta 6 · Sube y Baja 3), todos evaluados por Viggo. (4926 y 4914 volvieron a operativo.)</div>
     <div class="filters">
       <label>Interno</label>
       <input id="fInt" type="text" inputmode="numeric" placeholder="Ej: 6324" style="width:90px">
@@ -424,8 +424,6 @@ const det=[
  {i:'4868',s:'plan',a35:'ant',taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-01',lg:0,fa:1,ord:null,est:'En espera de ingreso'},
  {i:'4870',s:'plan',a35:'ant',taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:1,ord:null,est:'En espera de ingreso'},
  {i:'4890',s:'plan',a35:'cb',taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:1,ord:6,est:'Esperando cama baja'},
- {i:'4926',s:'syb',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0,ord:null,est:'—'},
- {i:'4914',s:'syb',a35:'pend',taller:'Sin evaluación',dif:'—',p:0,f:null,lg:0,fa:0,ord:null,est:'—'},
  {i:'6311',s:'syb',a35:'ant',taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-05',lg:0,fa:0,ord:null,est:'En reparación'},
  {i:'6273',s:'syb',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0,ord:null,est:'En espera de ingreso'},
  {i:'4927',s:'syb',a35:'ant',taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-10-30',lg:0,fa:0,ord:null,est:'Espera de repuestos'},
@@ -439,27 +437,30 @@ det.forEach(d=>d.obs=OBS[d.i]||'');
 
 // Objetivo de flota por modo (filtro Viggo / BHP)
 const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{obj:52},mina:{obj:34},plan:{obj:32}}};
+// Viggo = maestro (Report + unidades extra del maestro); BHP = Report. DETR = F/S actuales.
+const MAESTRO={syb:56,mina:47,plan:40}, REPORTUS={syb:56,mina:40,plan:31}, DETR={syb:3,mina:11,plan:6};
 let MODE='viggo';
 
 function renderSvc(){
   let tOper=0,tDen=0;
   document.getElementById('svc').innerHTML=svc.map(s=>{
-    const o=OBJ[MODE][s.key], obj=o.obj, meta=o.meta;
-    // Viggo: asignado real (Report/maestro). BHP: asignado = objetivo, detenidos = asignado - operativos
-    const asig = MODE==='viggo'? s.asignado : obj;
-    const detShown = MODE==='viggo'? s.det : Math.max(0,obj-s.oper);
-    const disp=s.oper/asig, c=dispColor(disp), pct=Math.round(disp*100);
-    const faltan=Math.max(0,obj-s.oper); tOper+=s.oper; tDen+=asig;
+    const k=s.key, o=OBJ[MODE][k], obj=o.obj, meta=o.meta;
+    // Viggo: asignado = maestro. BHP: asignado = objetivo. Operativos = flota base − F/S. Detenidos: Viggo=F/S; BHP=asignado−operativos.
+    const asig = MODE==='viggo'? MAESTRO[k] : obj;
+    const oper = (MODE==='viggo'? MAESTRO[k] : REPORTUS[k]) - DETR[k];
+    const detShown = MODE==='viggo'? DETR[k] : Math.max(0,obj-oper);
+    const disp=oper/asig, c=dispColor(disp), pct=Math.round(disp*100);
+    const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=asig;
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
       <div class="gauge">
         <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-          <span class="req">${s.oper} / ${asig} oper. · ${MODE==='viggo'?s.aSrc:'objetivo BHP'}</span></div>
+          <span class="req">${oper} / ${asig} oper. · ${MODE==='viggo'?'maestro':'objetivo BHP'}</span></div>
         <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
       </div>
       <div class="grid4" style="grid-template-columns:repeat(${MODE==='viggo'?4:3},1fr)">
         <div><div class="lbl">Asignado${MODE==='viggo'?'':' (obj.)'}</div><div class="val">${asig}</div></div>
-        <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
+        <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${oper}</div></div>
         <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${detShown}</div></div>
         ${MODE==='viggo'?`<div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>`:''}
       </div>
@@ -500,13 +501,15 @@ renderSvc();
     syb:[{d:'2026-09-30',dA:1,dO:1,i:'6287',t:'in',lbl:'6287 enroque desde Mina'},
       {d:'2026-09-30',dA:-1,dO:-1,i:'4874',t:'out',lbl:'4874 enroque a Planta'},{d:'2026-09-30',dA:-1,dO:-1,i:'4886',t:'out',lbl:'4886 enroque a Planta'}]
   };
-  const baseAsig={syb:56,mina:40,plan:31}, baseOper={syb:51,mina:29,plan:25};
+  // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
+  const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
+  const baseOper=sk=>baseAsig(sk)-DETR[sk];
   const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
   const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]);
   const ev=sk=>events[sk]||[];
   const ed=e=>new Date(e.d+'T00:00:00');
-  const asigAt=(sk,t)=>baseAsig[sk]+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dA:0),0);
-  const operAt=(sk,t)=>baseOper[sk]+units.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0)-newFail(sk,t);
+  const asigAt=(sk,t)=>baseAsig(sk)+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dA:0),0);
+  const operAt=(sk,t)=>baseOper(sk)+units.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0)-newFail(sk,t);
   const cH=176,cpadT=16,cpadB=30,cyH=cH-cpadT-cpadB;
   function draw(EN){
     const days=Math.round((EN-START)/DAY);
