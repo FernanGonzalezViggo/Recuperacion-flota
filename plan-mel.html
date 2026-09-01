@@ -373,8 +373,20 @@
     </div>
   </section>
 
+  <section>
+    <div class="sec-h"><span class="n">08</span><h2>Enroque de flota</h2>
+      <span class="hint">Cambios de contrato · los que tienen fecha se aplican en la proyección</span></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Interno</th><th>Contrato origen</th><th>Contrato destino</th><th>Estado</th></tr></thead>
+        <tbody id="enroqueTable"></tbody>
+      </table>
+    </div>
+    <div class="note">Los enroques con <b>fecha comprometida (30-09)</b> se reflejan en la proyección (sección 02): mueven la flota asignada y operativa entre contratos ese día. Los marcados <b>realizado</b> ya están considerados en el corte actual del Report.</div>
+  </section>
+
   <footer>
-    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Base detenidas y Certificaciones) y <b>Report Viggo 30-08-2026</b> (hoja Report). Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
+    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Detenidas, Certificaciones y Enroque de flota) y <b>Report Viggo 30-08-2026</b> (hoja Report). Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
   </footer>
 </div>
 
@@ -480,9 +492,13 @@ renderSvc();
   const MN=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   // movimientos de flota (hoja Certificaciones): salen/entran del contrato
   const events={
-    mina:[{d:'2026-08-31',dA:-1,dO:-1,i:'4436',t:'out',lbl:'4436 sale de Mina (1 mes)'},{d:'2026-09-30',dA:1,dO:1,i:'4436',t:'in',lbl:'4436 reingresa a Mina'}],
-    plan:[{d:'2026-09-04',dA:1,dO:1,i:'4844',t:'in',lbl:'4844 ingresa a Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4872',t:'in',lbl:'4872 ingresa a Planta'}],
-    syb:[]
+    mina:[{d:'2026-08-31',dA:-1,dO:-1,i:'4436',t:'out',lbl:'4436 sale de Mina (1 mes)'},{d:'2026-09-30',dA:1,dO:1,i:'4436',t:'in',lbl:'4436 reingresa a Mina'},
+      {d:'2026-09-30',dA:-1,dO:-1,i:'6287',t:'out',lbl:'6287 enroque Mina→Sube y Baja'}],
+    plan:[{d:'2026-09-04',dA:1,dO:1,i:'4844',t:'in',lbl:'4844 ingresa a Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4872',t:'in',lbl:'4872 ingresa a Planta'},
+      {d:'2026-09-30',dA:-1,dO:-1,i:'4834',t:'out',lbl:'4834 sale de contrato'},{d:'2026-09-30',dA:-1,dO:-1,i:'4837',t:'out',lbl:'4837 sale de contrato'},
+      {d:'2026-09-30',dA:1,dO:1,i:'4874',t:'in',lbl:'4874 enroque Sube y Baja→Planta'},{d:'2026-09-30',dA:1,dO:1,i:'4886',t:'in',lbl:'4886 enroque Sube y Baja→Planta'}],
+    syb:[{d:'2026-09-30',dA:1,dO:1,i:'6287',t:'in',lbl:'6287 enroque desde Mina'},
+      {d:'2026-09-30',dA:-1,dO:-1,i:'4874',t:'out',lbl:'4874 enroque a Planta'},{d:'2026-09-30',dA:-1,dO:-1,i:'4886',t:'out',lbl:'4886 enroque a Planta'}]
   };
   const baseAsig={syb:56,mina:40,plan:31}, baseOper={syb:51,mina:29,plan:25};
   const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
@@ -721,6 +737,20 @@ function renderDet(){
 document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA35.value='';fTaller.value='';fInt.value='';renderDet();});
 fInt.addEventListener('input',renderDet);
 renderDet();
+
+// Enroque de flota (hoja Enroque de flota)
+const ENROQUE=[
+ {i:'6293',o:'Mina',d:'Sube y Baja',f:null},{i:'6291',o:'Mina',d:'Vertice',f:null},
+ {i:'6287',o:'Mina',d:'Sube y Baja',f:'30-09'},{i:'4475',o:'Mina',d:'Komatsu Sube y Baja',f:null},
+ {i:'4826',o:'Planta',d:'Sale de contrato',f:null},{i:'4833',o:'Planta',d:'Sale de contrato',f:null},
+ {i:'4834',o:'Planta',d:'Sale de contrato',f:'30-09'},{i:'4837',o:'Planta',d:'Sale de contrato',f:'30-09'},
+ {i:'4892',o:'Planta',d:'Sale de contrato',f:null},{i:'6273',o:'Mina',d:'Sube y Baja',f:null},
+ {i:'4874',o:'Sube y Baja',d:'Planta',f:'30-09'},{i:'4886',o:'Sube y Baja',d:'Planta',f:'30-09'},
+];
+document.getElementById('enroqueTable').innerHTML=ENROQUE.map(e=>{
+  const estado=e.f?`<span class="tag t-cb">Programado ${e.f}</span>`:'<span class="tag t-si">Realizado</span>';
+  return `<tr><td class="num"><b>${e.i}</b></td><td>${e.o}</td><td>${e.d}</td><td>${estado}</td></tr>`;
+}).join('');
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
 window.__setMode=(m)=>{MODE=m; document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m)); renderSvc(); if(window.__redrawProj)window.__redrawProj();};
