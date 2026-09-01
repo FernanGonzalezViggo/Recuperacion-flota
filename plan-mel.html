@@ -433,21 +433,23 @@ function renderSvc(){
   let tOper=0,tDen=0;
   document.getElementById('svc').innerHTML=svc.map(s=>{
     const o=OBJ[MODE][s.key], obj=o.obj, meta=o.meta;
-    const denom = MODE==='viggo'? s.asignado : obj;   // Viggo mide vs. asignado; BHP vs. objetivo
-    const disp=s.oper/denom, c=dispColor(disp), pct=Math.round(disp*100);
-    const faltan=Math.max(0,obj-s.oper); tOper+=s.oper; tDen+=denom;
+    // Viggo: asignado real (Report/maestro). BHP: asignado = objetivo, detenidos = asignado - operativos
+    const asig = MODE==='viggo'? s.asignado : obj;
+    const detShown = MODE==='viggo'? s.det : Math.max(0,obj-s.oper);
+    const disp=s.oper/asig, c=dispColor(disp), pct=Math.round(disp*100);
+    const faltan=Math.max(0,obj-s.oper); tOper+=s.oper; tDen+=asig;
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
       <div class="gauge">
         <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-          <span class="req">${s.oper} / ${denom} oper. · ${MODE==='viggo'?s.aSrc:'objetivo BHP'}</span></div>
+          <span class="req">${s.oper} / ${asig} oper. · ${MODE==='viggo'?s.aSrc:'objetivo BHP'}</span></div>
         <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
       </div>
-      <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
-        <div><div class="lbl">Asignado</div><div class="val">${s.asignado}</div></div>
+      <div class="grid4" style="grid-template-columns:repeat(${MODE==='viggo'?4:3},1fr)">
+        <div><div class="lbl">Asignado${MODE==='viggo'?'':' (obj.)'}</div><div class="val">${asig}</div></div>
         <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${s.oper}</div></div>
-        <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${s.det}</div></div>
-        <div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>
+        <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${detShown}</div></div>
+        ${MODE==='viggo'?`<div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>`:''}
       </div>
       <div class="deficit">${faltan>0
         ? `<span class="pill p-crit">Faltan ${faltan}</span> para lo que necesita (${obj})`
