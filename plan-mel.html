@@ -505,13 +505,14 @@ renderSvc();
     const HV=[];
     function drawC(sk){
       const TG=reqop(sk);
-      let YMAX=baseAsig[sk]; for(let k=0;k<=days;k++){const a=asigAt(sk,new Date(START.getTime()+k*DAY)); if(a>YMAX)YMAX=a;}
+      const cap=t=>MODE==='viggo'?asigAt(sk,t):reqop(sk);   // techo: Viggo=asignado; BHP=objetivo
+      let YMAX=0; for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);YMAX=Math.max(YMAX,cap(t),operAt(sk,t));}
       const yv=n=>cpadT+(1-n/YMAX)*cyH;
       let s=`<svg viewBox="0 0 ${W} ${cH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
-      [[0,'0'],[TG,'obj '+TG],[YMAX,'asig '+YMAX]].forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
+      [[0,'0'],[TG,'obj '+TG],[YMAX,(MODE==='viggo'?'asig ':'tope ')+YMAX]].forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
       s+=ticks(cpadT,cH-cpadB,cH-cpadB+11);
       const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".85"/>`;
-      let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(asigAt(sk,t)).toFixed(1)} `;}
+      let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(cap(t)).toFixed(1)} `;}
       s+=`<polyline points="${asigL}" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>`;
       let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `; const opArr=[];
       for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t);opArr.push(op);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
@@ -523,7 +524,7 @@ renderSvc();
       const opEnd=operAt(sk,EN);
       s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/><text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)}</text>`;
       s+=`<line class="hvl" x1="0" y1="${cpadT}" x2="0" y2="${cH-cpadB}" stroke="${col[sk]}" stroke-width="1" opacity=".7" style="display:none"/><circle class="hvd" r="4.5" fill="${col[sk]}" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>`;
-      const opNow=operAt(sk,START),aNow=asigAt(sk,START),aEnd=asigAt(sk,EN);
+      const opNow=operAt(sk,START),aNow=cap(START),aEnd=cap(EN);
       const idx=HV.length; HV.push({YMAX,opArr,color:col[sk]});
       return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.round(opNow/aNow*100)}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.round(opEnd/aEnd*100)}%) · objetivo op. <b>${TG}</b></span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
     }
