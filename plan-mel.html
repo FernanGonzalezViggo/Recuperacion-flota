@@ -418,8 +418,6 @@ const det=[
  {i:'6320',s:'mina',a35:'ant',report:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
  {i:'6324',s:'mina',a35:'cb',report:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:4,est:'Esperando cama baja',q:'',t:'Detenida'},
  {i:'6325',s:'mina',a35:'cb',report:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:5,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'9574',s:'mina',a35:'mel',report:true,taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-09',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'9601',s:'mina',a35:'ant',report:true,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-20',lg:0,fa:0,ord:null,est:'Espera de repuestos',q:'',t:'Detenida'},
  {i:'4826',s:'plan',a35:'cb',report:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-10-30',lg:0,fa:0,ord:8,est:'Sale de contrato',q:'',t:'Detenida'},
  {i:'4828',s:'plan',a35:'ant',report:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-10',lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
  {i:'4830',s:'plan',a35:'mel',report:true,taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
@@ -441,7 +439,7 @@ const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
 
 // Observaciones (hoja Detenidas)
-const OBS={"4436": "Cardan desmontado por desgaste crucetas, pendiente solicitar grua para bajar a Antofagasta // 14/04 Caja y cardan montados, en proceso instalación de perifericos // Caja presenta desviaciones activacion marchas, revision proveedor // 14/05 Caja reparada quedó con problemas, espera disponibilidad de transmisión // Revision externo BM mantenciones Fabina Baeza, diagnostico reparacion falla en selectora de cambios, se actualiza proyeccion entrega, espera llegada nueva caja reparada para realizar reemplazo// caja reparada llega en mal estado se envia de nuevo  // 23/07 En trabajos de carrocería, parte mecánica terminada// espera lavado interior // Solcitar hora sello MEL // 07/08 por acreditación se solicita certificado de operatividad, requiere ingreso a Scania, se cambia fecha entrega // Retraso ingreso scania, se actualiza proyeccion", "4437": "Cooridnar camma baja cambio kit embrague 30-08 // Actualiza proyeccion, cambio planificaion cam baja por equipo 6320, queda 01-09", "4472": "Equipo coordinacion baja, atencion garantia Scania // Proyeccion entrega scania 04-09, se actualiza proyeccion", "4473": "Carter Fisurado, realiza lanceo hasta estacionamiento 2000 espera cama baja", "6272": "Coordinar cama baja", "6276": "EN proceso asistencia equipo kaufmann // Fuera d servicio falla compresor", "6277": "inghreso proveedor externo por lavado 26-08 // En proceso MP  // retraso proyeccion bloqueo transmision", "6281": "Rotura carter sector interior mina, espera cooridinacion cama baja // 27/07 Prueba de ruta y corrección de desviaciones // 29/07 Se cambia fecha entrega por retardo en K1 // Retraso proteccion de entrega correctivos identificados sistema neumatico // Espera fecha entrega Kaufmann", "6293": "Falla ramal electrico, cooridnada cama baja 6-8 // en proceso repracion sucursal kaufmann", "6295": "Equipo ingreso sucursal k1 transmision 13-8", "6320": "Cama baja traslado 31-08", "6324": "Equipo ubicado en CM1, Se realiza asistencia, carter fisurado. Pendiente de cama baja", "6325": "coordinar cama baja, cambiar pulmon y reparacion parachoque trasero", "9574": "En evaluacion por alza temperatura", "9601": "Cotizar kaufmann cambio discos, pastillas, balatas y cardan transmision", "4826": "Pulmon de suspension // Soliciuar valvulas suspension trasera, amortiguadores // 26/07 Retraso solcitud repuesto, se actualiza proyeccion entrega // Retraso atencion incidente taller // programar cama baja, actualiza proyeccion, unidad no cosidfera extension", "4828": "20/03 Se debe desmontar motor y enviar a reparación local Antofa // 31/03 En proceso de reparación // Ingreso Scania proceso de certificacion y correctivos // Pendiente ingreso sucursal Scania, actualiza proyeccion // Retraso proyeccion por falla sistema direccion y motor (cañeria de dirección), posterior ingresar a scania certificacion / Retraso entrega sucursal scania // 06/08 se debe reparar cañeria de direccion de manera interna y volver a Scania para finalizar certificacion// cañeria instalada viernes 08 // Agendar hora sello MEL // reagendamienot sello parabrisa trizado, implementacion TPMS, cambio neuamticos", "4830": "Equipo sector laguna seca, panne por tirones espera asistencia", "4833": "Check list traslado", "4844": "Certificacion operativdad // Aproveed realizado, espera cotizacion de Scania// renovacion de logos// se debe realizar correctivos de certificacion y posteiror certificacion final // Correctivos internos realizados, ingreso sucursal validacion y correctivos para certificacion // Agendar hora sello MEL", "4846": "En evaluacion // Solicitar kit reparo selectora // Retraso atencio por incidente taller // programar cama baja, actualiza propyeccion", "4853": "A la espera de apertura taller MEL, Pendiente de evaluación // Coordinar cama baja por rodamienot empuje desmontado", "4868": "En proceso cambio bomba de agua y termostato", "4870": "Pendiente evaluacion estacionamienot 2000 // Falta HH evaluacion", "4872": "Espera ingreso scania// mantenimiento realizado// pendiente detalles carroceria + neumaticos // Proceso correctivos certificacion, posterior ingreso sucucresal scania", "4873": "Agendar ingreso scania", "4885": "Perdida aceite ruta mel, km 121. se tarslada cama baja 28-06// 24/07 Daño de motor  espera desmontaje", "4890": "Cooridnar cama baja por pernos cartyados boguee // reponer modulo motor //", "4892": "Certificacion operativdad // Espera deficiion para certificar u asignacion contrato // reposicion repuesto", "4925": "Equipo en evaluacion", "6273": "Equipo detenidos en km 62 ruta minera. Espera evaluacion kaufmann, se traslada cama baja 21-08 // Espera evaluación"};
+const OBS={"4436": "Cardan desmontado por desgaste crucetas, pendiente solicitar grua para bajar a Antofagasta // 14/04 Caja y cardan montados, en proceso instalación de perifericos // Caja presenta desviaciones activacion marchas, revision proveedor // 14/05 Caja reparada quedó con problemas, espera disponibilidad de transmisión // Revision externo BM mantenciones Fabina Baeza, diagnostico reparacion falla en selectora de cambios, se actualiza proyeccion entrega, espera llegada nueva caja reparada para realizar reemplazo// caja reparada llega en mal estado se envia de nuevo  // 23/07 En trabajos de carrocería, parte mecánica terminada// espera lavado interior // Solcitar hora sello MEL // 07/08 por acreditación se solicita certificado de operatividad, requiere ingreso a Scania, se cambia fecha entrega // Retraso ingreso scania, se actualiza proyeccion", "4437": "Cooridnar camma baja cambio kit embrague 30-08 // Actualiza proyeccion, cambio planificaion cam baja por equipo 6320, queda 01-09", "4472": "Equipo coordinacion baja, atencion garantia Scania // Proyeccion entrega scania 04-09, se actualiza proyeccion", "4473": "Carter Fisurado, realiza lanceo hasta estacionamiento 2000 espera cama baja", "6272": "Coordinar cama baja", "6276": "EN proceso asistencia equipo kaufmann // Fuera d servicio falla compresor", "6277": "inghreso proveedor externo por lavado 26-08 // En proceso MP  // retraso proyeccion bloqueo transmision", "6281": "Rotura carter sector interior mina, espera cooridinacion cama baja // 27/07 Prueba de ruta y corrección de desviaciones // 29/07 Se cambia fecha entrega por retardo en K1 // Retraso proteccion de entrega correctivos identificados sistema neumatico // Espera fecha entrega Kaufmann", "6293": "Falla ramal electrico, cooridnada cama baja 6-8 // en proceso repracion sucursal kaufmann", "6295": "Equipo ingreso sucursal k1 transmision 13-8", "6320": "Cama baja traslado 31-08", "6324": "Equipo ubicado en CM1, Se realiza asistencia, carter fisurado. Pendiente de cama baja", "6325": "coordinar cama baja, cambiar pulmon y reparacion parachoque trasero", "4826": "Pulmon de suspension // Soliciuar valvulas suspension trasera, amortiguadores // 26/07 Retraso solcitud repuesto, se actualiza proyeccion entrega // Retraso atencion incidente taller // programar cama baja, actualiza proyeccion, unidad no cosidfera extension", "4828": "20/03 Se debe desmontar motor y enviar a reparación local Antofa // 31/03 En proceso de reparación // Ingreso Scania proceso de certificacion y correctivos // Pendiente ingreso sucursal Scania, actualiza proyeccion // Retraso proyeccion por falla sistema direccion y motor (cañeria de dirección), posterior ingresar a scania certificacion / Retraso entrega sucursal scania // 06/08 se debe reparar cañeria de direccion de manera interna y volver a Scania para finalizar certificacion// cañeria instalada viernes 08 // Agendar hora sello MEL // reagendamienot sello parabrisa trizado, implementacion TPMS, cambio neuamticos", "4830": "Equipo sector laguna seca, panne por tirones espera asistencia", "4833": "Check list traslado", "4844": "Certificacion operativdad // Aproveed realizado, espera cotizacion de Scania// renovacion de logos// se debe realizar correctivos de certificacion y posteiror certificacion final // Correctivos internos realizados, ingreso sucursal validacion y correctivos para certificacion // Agendar hora sello MEL", "4846": "En evaluacion // Solicitar kit reparo selectora // Retraso atencio por incidente taller // programar cama baja, actualiza propyeccion", "4853": "A la espera de apertura taller MEL, Pendiente de evaluación // Coordinar cama baja por rodamienot empuje desmontado", "4868": "En proceso cambio bomba de agua y termostato", "4870": "Pendiente evaluacion estacionamienot 2000 // Falta HH evaluacion", "4872": "Espera ingreso scania// mantenimiento realizado// pendiente detalles carroceria + neumaticos // Proceso correctivos certificacion, posterior ingreso sucucresal scania", "4873": "Agendar ingreso scania", "4885": "Perdida aceite ruta mel, km 121. se tarslada cama baja 28-06// 24/07 Daño de motor  espera desmontaje", "4890": "Cooridnar cama baja por pernos cartyados boguee // reponer modulo motor //", "4892": "Certificacion operativdad // Espera deficiion para certificar u asignacion contrato // reposicion repuesto", "4925": "Equipo en evaluacion", "6273": "Equipo detenidos en km 62 ruta minera. Espera evaluacion kaufmann, se traslada cama baja 21-08 // Espera evaluación"};
 det.forEach(d=>d.obs=OBS[d.i]||'');
 
 // Auditoría: validar consistencia det <-> OBS
@@ -458,7 +456,11 @@ det.forEach(d=>d.obs=OBS[d.i]||'');
 const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{obj:52},mina:{obj:34},plan:{obj:32}}};
 // Viggo = maestro (Report + unidades extra del maestro); BHP = Report.
 const MAESTRO={syb:56,mina:47,plan:40}, REPORTUS={syb:56,mina:40,plan:31};
-const DETR={syb:0,mina:0,plan:0}; det.forEach(d=>DETR[d.s]++);      // F/S por contrato, derivado de 'det'
+// F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
+// Report: su flota base es la del Report, y descontarle los buses que solo
+// existen en el maestro Viggo subestimaria la disponibilidad.
+const fsDe=(sk,mode)=>det.reduce((n,d)=>n+(d.s===sk&&(mode==='viggo'||d.report)?1:0),0);
+const DETR={syb:0,mina:0,plan:0}; det.forEach(d=>DETR[d.s]++);      // total (modo Viggo)
 const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';            // ¿se atiende en faena MEL (3.5)?
 let MODE='viggo';
 
@@ -481,24 +483,25 @@ function renderSvc(){
   let tOper=0,tDen=0;
   document.getElementById('svc').innerHTML=svc.map(s=>{
     const k=s.key, o=OBJ[MODE][k], obj=o.obj, meta=o.meta;
-    // Viggo: asignado = maestro. BHP: asignado = objetivo. Operativos = flota base − F/S. Detenidos: Viggo=F/S; BHP=asignado−operativos.
-    const asig = MODE==='viggo'? MAESTRO[k] : obj;
-    const oper = (MODE==='viggo'? MAESTRO[k] : REPORTUS[k]) - DETR[k];
-    const detShown = MODE==='viggo'? DETR[k] : Math.max(0,obj-oper);
+    // Asignado = flota del universo activo (Viggo: maestro; BHP: Report).
+    // Operativos = asignado − F/S de ese mismo universo. El objetivo va aparte.
+    const asig = MODE==='viggo'? MAESTRO[k] : REPORTUS[k];
+    const detShown = fsDe(k,MODE);
+    const oper = asig - detShown;
     const disp=oper/asig, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
     const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=asig;
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
       <div class="gauge">
         <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-          <span class="req">${oper} / ${asig} oper. · ${MODE==='viggo'?'maestro':'objetivo BHP'}</span></div>
+          <span class="req">${oper} / ${asig} buses oper. · ${MODE==='viggo'?'maestro':'Report'}</span></div>
         <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
       </div>
-      <div class="grid4" style="grid-template-columns:repeat(${MODE==='viggo'?4:3},1fr)">
-        <div><div class="lbl">Asignado${MODE==='viggo'?'':' (obj.)'}</div><div class="val">${asig}</div></div>
+      <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
+        <div><div class="lbl">Asignado${MODE==='viggo'?'':' (Report)'}</div><div class="val">${asig}</div></div>
         <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${oper}</div></div>
-        <div><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${detShown}</div></div>
-        ${MODE==='viggo'?`<div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>`:''}
+        <div><div class="lbl">Fuera de servicio</div><div class="val" style="color:var(--crit)">${detShown}</div></div>
+        <div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>
       </div>
       <div class="deficit">${faltan>0
         ? `<span class="pill p-crit">Faltan ${faltan}</span> para lo que necesita (${obj})`
@@ -511,19 +514,22 @@ function renderSvc(){
 }
 renderSvc();
 
-// KPIs y notas derivados de 'det' / 'DETR' (una sola fuente)
-(function(){
-  const cbN=det.filter(d=>d.a35==='cb').length;
+// KPIs y notas derivados de 'det' (una sola fuente). Siguen el modo activo.
+function renderKpis(){
+  const vis=det.filter(d=>MODE==='viggo'||d.report);
+  const F={syb:fsDe('syb',MODE),mina:fsDe('mina',MODE),plan:fsDe('plan',MODE)};
+  const cbN=vis.filter(d=>d.a35==='cb').length;
   const set=(id,v)=>{const e=document.getElementById(id); if(e)e.textContent=v;};
   const setHtml=(id,v)=>{const e=document.getElementById(id); if(e)e.innerHTML=v;};
-  setHtml('kpiDetBig', det.length+'<span class="u"> buses</span>');
-  set('kpiDetFoot', `SyB ${DETR.syb} · Mina ${DETR.mina} · Planta ${DETR.plan}`);
+  setHtml('kpiDetBig', vis.length+'<span class="u"> buses</span>');
+  set('kpiDetFoot', `SyB ${F.syb} · Mina ${F.mina} · Planta ${F.plan}`);
   setHtml('kpiColaBig', cbN+'<span class="u"> buses</span>');
   set('kpiColaFoot', `Orden 1→${cbN} según plan de bajada`);
-  set('nDetTot',det.length); set('nDetMina',DETR.mina); set('nDetPlan',DETR.plan); set('nDetSyb',DETR.syb);
-  set('nDetTot2',det.length); set('nDetMina2',DETR.mina); set('nDetPlan2',DETR.plan); set('nDetSyb2',DETR.syb);
+  set('nDetTot',vis.length); set('nDetMina',F.mina); set('nDetPlan',F.plan); set('nDetSyb',F.syb);
+  set('nDetTot2',vis.length); set('nDetMina2',F.mina); set('nDetPlan2',F.plan); set('nDetSyb2',F.syb);
   set('nColaNote',cbN);
-})();
+}
+renderKpis();
 
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
@@ -547,7 +553,7 @@ renderSvc();
     if(tk)events[tk].push({d:m.f,dA:1,dO:1,i:m.i,t:'in'});});
   // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
   const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
-  const baseOper=sk=>baseAsig(sk)-DETR[sk];
+  const baseOper=sk=>baseAsig(sk)-fsDe(sk,MODE);
   const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
   const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]);
   const ev=sk=>events[sk]||[];
@@ -797,7 +803,7 @@ document.getElementById('enroqueTable').innerHTML=MOV.map(e=>{
 }).join('');
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
-window.__setMode=(m)=>{MODE=m; document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m)); renderSvc(); renderDestino(); renderContractDetail(); if(window.__redrawProj)window.__redrawProj();};
+window.__setMode=(m)=>{MODE=m; document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m)); renderSvc(); renderKpis(); renderDestino(); renderContractDetail(); if(window.__redrawProj)window.__redrawProj();};
 </script>
 </body>
 </html>
