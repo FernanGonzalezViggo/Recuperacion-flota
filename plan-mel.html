@@ -180,7 +180,6 @@
   .estrow:last-child{border-bottom:0}
   .estrow .ei{font-family:"IBM Plex Mono",monospace;font-weight:700}
   .estrow .ei .sv{font-weight:500;color:var(--muted)}
-  .estrow .qn{font-family:"IBM Plex Mono",monospace;font-size:10px;background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700}
   .estrow .epill{margin-left:auto;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
   @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
@@ -718,7 +717,9 @@ function renderTallerEstado(){
     const inMel=melTaller(t);
     arr.sort((a,b)=>(a.ord||99)-(b.ord||99)||a.i.localeCompare(b.i));
     const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
-      return `<div class="estrow"><span class="ei">${d.i}<span class="sv">/${svcCorto(d.s)}</span></span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
+      // Sin el número de cola: el estado de al lado ya dice "Esperando cama
+      // baja", y el orden de bajada se ve en la sección de costo cama baja.
+      return `<div class="estrow"><span class="ei">${d.i}<span class="sv">/${svcCorto(d.s)}</span></span><span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
     }).join('');
     return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${rows}</div>`;
   }).join('');
