@@ -274,7 +274,7 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (Gantt)</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Corte <b>30-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. En esta versión 19 de los 20 detenidos tienen fecha (solo 4830 sin fecha); el techo lo fija la caída histórica.</div>
+    <div class="note">Corte <b>30-ago</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. <span id="notaFechas"></span> El techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
 
@@ -528,6 +528,9 @@ function renderKpis(){
   set('nDetTot',vis.length); set('nDetMina',F.mina); set('nDetPlan',F.plan); set('nDetSyb',F.syb);
   set('nDetTot2',vis.length); set('nDetMina2',F.mina); set('nDetPlan2',F.plan); set('nDetSyb2',F.syb);
   set('nColaNote',cbN);
+  const sinF=vis.filter(d=>!d.f);
+  set('notaFechas', `En esta versión ${vis.length-sinF.length} de los ${vis.length} buses detenidos tienen fecha`
+    + (sinF.length? ` (sin fecha: ${sinF.map(d=>d.i).join(', ')}).` : '.'));
 }
 renderKpis();
 
@@ -623,8 +626,8 @@ renderKpis();
         const lv=u.leaves?new Date(u.leaves+'T00:00:00'):null;
         const beyond=u.rec&&u.rec>EN; let x2=u.rec?xOf(u.rec):(lv?xOf(lv):endX); if(x2>endX)x2=endX;
         const x1=xOf(START), fill=u.rec?col[sk]:(lv?'#8A93A1':'url(#hatch)');
-        body+=`<text x=”6” y=”${y+10}” font-size=”10” fill=”var(--ink)”>${u.i}</text>`;
-        body+=`<rect x=”${x1}” y=”${y+2}” width=”${Math.max(3,x2-x1)}” height=”10” rx=”2” fill=”${fill}” opacity=”${u.rec?0.85:1}” stroke=”${col[sk]}” stroke-width=”${u.rec?0:1}”/>`;
+        body+=`<text x="6" y="${y+10}" font-size="10" fill="var(--ink)">${u.i}</text>`;
+        body+=`<rect x="${x1}" y="${y+2}" width="${Math.max(3,x2-x1)}" height="10" rx="2" fill="${fill}" opacity="${u.rec?0.85:1}" stroke="${col[sk]}" stroke-width="${u.rec?0:1}"/>`;
         body+= u.rec?(beyond?`<text x="${x2-3}" y="${y+11}" text-anchor="end" font-size="8" fill="#fff">→${md(u.rec)}</text>`:`<text x="${x2+4}" y="${y+11}" font-size="9" fill="var(--muted)">${md(u.rec)}</text>`):(lv?`<text x="${x2+4}" y="${y+11}" font-size="8.5" fill="var(--muted)">sale ${md(lv)}</text>`:`<text x="${x1+6}" y="${y+11}" font-size="8.5" fill="var(--muted)">sin fecha</text>`);
         y+=15;
       });
