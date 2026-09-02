@@ -179,6 +179,7 @@
   .estrow{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--line);font-size:12.5px}
   .estrow:last-child{border-bottom:0}
   .estrow .ei{font-family:"IBM Plex Mono",monospace;font-weight:700}
+  .estrow .ei .sv{font-weight:500;color:var(--muted)}
   .estrow .qn{font-family:"IBM Plex Mono",monospace;font-size:10px;background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700}
   .estrow .epill{margin-left:auto;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
@@ -296,9 +297,6 @@
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
     <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Clasificación por <b>taller de atención</b>: <b>Mantener en 3.5</b> = se atienden en faena (Taller MEL o Kaufmann MEL); <b>Cama baja</b> = cola de bajada a Antofagasta; <b>Ya en Antofagasta</b> = no van en cama baja y se atienden en talleres externos (Kaufmann Viggo/K1/K6, Scania, F. Baeza, Taller Antofagasta).</div>
     <div class="split3" id="destinoCards" style="grid-template-columns:repeat(4,1fr)"></div>
-    <div class="note" style="border-left-color:var(--crit);background:var(--crit-bg);color:var(--ink);margin-top:16px">
-      <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los <span id="nFaena">·</span> buses en faena en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (<span id="pctMina">·</span>%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al objetivo de la operación.
-    </div>
   </section>
 
   <section>
@@ -425,6 +423,8 @@ const det=[
  {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-15',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
 ];
 const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
+// Versión corta para las fichas por taller, donde el espacio es angosto.
+const svcCorto=k=>({syb:'SyB',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
 
 // Observaciones (hoja Detenidas)
@@ -484,7 +484,6 @@ function renderSvc(){
     // pasar del 100%, y en ese caso se topa en 100%.
     const disp=oper/obj, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
     const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=obj;
-    if(k==='mina'){const e=document.getElementById('pctMina'); if(e)e.textContent=pct;}
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
       <div class="gauge">
@@ -657,7 +656,6 @@ function renderDestino(){
       <div class="cap">${b.cap}</div>
       <div class="big" style="color:${b.color}">${cnt(b.k)}</div>
       <div class="desc">${b.desc}</div></div>`).join('');
-  const e=document.getElementById('nFaena'); if(e)e.textContent=cnt('mel');
 }
 renderDestino();
 
@@ -718,7 +716,7 @@ function renderTallerEstado(){
     const inMel=melTaller(t);
     arr.sort((a,b)=>(a.ord||99)-(b.ord||99)||a.i.localeCompare(b.i));
     const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
-      return `<div class="estrow"><span class="ei">${d.i}</span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
+      return `<div class="estrow"><span class="ei">${d.i}<span class="sv">/${svcCorto(d.s)}</span></span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
     }).join('');
     return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${rows}</div>`;
   }).join('');
