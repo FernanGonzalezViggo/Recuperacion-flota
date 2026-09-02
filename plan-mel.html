@@ -588,7 +588,9 @@ renderKpis();
         s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="${c2}" stroke-width="1" opacity=".6"/>`;
         const ty=cpadT+2; s+= e.t==='in'?`<polygon points="${x},${ty} ${x-4},${ty+7} ${x+4},${ty+7}" fill="${c2}"/>`:`<polygon points="${x-4},${ty} ${x+4},${ty} ${x},${ty+7}" fill="${c2}"/>`;});
       const opEnd=operAt(sk,EN);
-      s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/><text x="${W-padR-2}" y="${yv(opEnd)-6}" text-anchor="end" font-size="12" font-weight="700" fill="${col[sk]}">${Math.round(opEnd)}</text>`;
+      // Punto de cierre de la curva. El valor no se rotula: ya va en el
+      // encabezado ("techo N/M") y sobre la línea del objetivo se solapaba.
+      s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/>`;
       s+=`<line class="hvl" x1="0" y1="${cpadT}" x2="0" y2="${cH-cpadB}" stroke="${col[sk]}" stroke-width="1" opacity=".7" style="display:none"/><circle class="hvd" r="4.5" fill="${col[sk]}" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>`;
       const opNow=operAt(sk,START),aNow=cap(START),aEnd=cap(EN);
       const idx=HV.length; HV.push({YMAX,opArr,color:col[sk]});
