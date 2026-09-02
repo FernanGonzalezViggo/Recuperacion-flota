@@ -455,7 +455,7 @@ const MAESTRO={syb:56,mina:46,plan:34}, REPORTUS={syb:56,mina:40,plan:31};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // Conciliación de flota: de dónde sale la base de cada contrato y qué se le
 // descuenta. La genera sync.py; solo se muestra en la vista Viggo.
-const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota en FLOTA", "bruto": 56, "ajustes": [], "final": 56}, {"svc": "Mina", "fuente": "flota en FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"]}], "final": 46}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "hoy son de Mina", "ids": ["4827", "4882"]}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"]}], "final": 34}];
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56, "ajustes": [], "final": 56}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"]}], "final": 46}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "hoy son de Mina", "ids": ["4827", "4882"]}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"]}], "final": 34, "nota": {"ids": ["4834", "4837"], "texto": "Operan hoy en Planta pero no son titulares de la extensión, así que no entran en la base. Salen de contrato el 30-09."}}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
@@ -522,24 +522,23 @@ function renderConcil(){
   const box=document.getElementById('concilBox');
   if(!box) return;
   if(MODE!=='viggo' || !CONCIL.length){ box.innerHTML=''; return; }
-  const fil=[];
-  CONCIL.forEach((c,n)=>{
-    const sep=n?'padding-top:14px':'';
-    fil.push(`<tr><td colspan="3" style="${sep};padding-bottom:6px;font-size:14px;font-weight:600">${c.svc}</td></tr>`);
-    fil.push(`<tr><td style="padding:5px 0;color:var(--muted)">${c.fuente}</td><td></td>
-      <td class="num" style="padding:5px 0">${c.bruto}</td></tr>`);
-    c.ajustes.forEach(a=>fil.push(`<tr>
-      <td style="padding:5px 0;color:var(--muted)">${a.motivo}</td>
-      <td class="mono" style="padding:5px 0;color:var(--muted);font-size:12px">${a.ids.join(' · ')}</td>
-      <td class="num" style="padding:5px 0;color:var(--crit)">−${a.ids.length}</td></tr>`));
-    if(c.ajustes.length) fil.push(`<tr>
-      <td style="padding:6px 0;border-top:1px solid var(--line);font-weight:600">flota asignada</td>
-      <td style="border-top:1px solid var(--line)"></td>
-      <td class="num" style="padding:6px 0;border-top:1px solid var(--line);font-weight:700">${c.final}</td></tr>`);
-  });
-  box.innerHTML=`<div class="tblwrap" style="margin-top:14px"><table>
-    <tbody>${fil.join('')}</tbody></table></div>
-    <div class="note" style="margin-top:10px">Los descuentos de <b>Planta</b> vuelven a su base cuando se concrete el traslado. Un bus no se cuenta en dos flotas a la vez.</div>`;
+  const lin=(txt,val,col,top)=>`<div style="display:flex;justify-content:space-between;gap:8px;margin-top:${top}px">
+      <span style="color:var(--muted)">${txt}</span>
+      <span class="mono"${col?` style="color:var(--${col})"`:''}>${val}</span></div>`;
+  box.innerHTML='<div class="split3" style="margin-top:14px;align-items:start">'+CONCIL.map(c=>{
+    const aj=c.ajustes.map(a=>lin(a.motivo,'−'+a.ids.length,'crit',7)
+      +`<div class="mono" style="font-size:11.5px;color:var(--faint);margin-top:2px">${a.ids.join('  ')}</div>`).join('');
+    const nota=c.nota?`<div style="margin-top:11px;padding-top:9px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted);line-height:1.45">
+        <span class="mono" style="color:var(--ink)">${c.nota.ids.join('  ')}</span> — ${c.nota.texto}</div>`:'';
+    return `<div class="scard" style="padding:14px 16px">
+      <div style="font-family:'Barlow Semi Condensed',sans-serif;font-size:17px;font-weight:700">${c.svc}</div>
+      <div class="mono" style="font-size:28px;font-weight:700;line-height:1.1;margin-top:8px">${c.final}</div>
+      <div style="font-size:11.5px;color:var(--faint)">flota asignada</div>
+      <div style="margin-top:11px;padding-top:9px;border-top:1px solid var(--line);font-size:12.5px">
+        ${lin(c.fuente,c.bruto,'',0)}
+        ${aj||'<div style="margin-top:7px;font-size:11.5px;color:var(--faint)">sin ajustes</div>'}
+      </div>${nota}</div>`;
+  }).join('')+'</div>';
 }
 
 // KPIs y notas derivados de 'det' (una sola fuente). Siguen el modo activo.
