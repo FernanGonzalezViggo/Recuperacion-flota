@@ -373,20 +373,12 @@
     </div>
   </section>
 
-  <section>
-    <div class="sec-h"><span class="n">08</span><h2>Movimientos de flota</h2>
-      <span class="hint">Enroques de contrato e ingresos/egresos · informativo, no afecta la proyección</span></div>
-    <div class="tblwrap">
-      <table>
-        <thead><tr><th>Interno</th><th>Tipo</th><th>Contrato origen</th><th>Contrato destino</th><th>Estado</th></tr></thead>
-        <tbody id="enroqueTable"></tbody>
-      </table>
-    </div>
-    <div class="note">Incluye los <b>enroques de contrato</b> y los <b>ingresos/egresos</b> de flota. Los marcados <b>Programado (30-09 / 04-09)</b> se reflejan en la proyección (sección 02): mueven la flota asignada y operativa entre contratos en esa fecha. Los <b>Realizados</b> ya están considerados en el corte actual del Report.</div>
-  </section>
+  <!-- Sección "Movimientos de flota" retirada a la espera de definir cómo
+       tratar los enroques. Los datos se siguen leyendo de la hoja "Enroque de
+       flota" y quedan disponibles en la constante MOV para reponerla. -->
 
   <footer>
-    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Detenidas, FLOTA y Enroque de flota) y <b>Report Viggo</b> (hoja Report). Solo buses. Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
+    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Detenidas y FLOTA) y <b>Report Viggo</b> (hoja Report). Solo buses. Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
   </footer>
 </div>
 
@@ -463,7 +455,8 @@ const DETR={syb:0,mina:0,plan:0}; det.forEach(d=>DETR[d.s]++);      // total (mo
 const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';            // ¿se atiende en faena MEL (3.5)?
 let MODE='viggo';
 
-// Movimientos de flota — fuente única para la tabla y para la proyección. f = fecha ISO (programado) o null (realizado).
+// Movimientos de flota (hoja "Enroque de flota"). Su sección está retirada por
+// ahora; se conservan los datos. f = fecha ISO (programado) o null (realizado).
 const CKEY={'Mina':'mina','Planta':'plan','Sube y Baja':'syb'};
 const MOV=[{"i": "6293", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "6291", "t": "enroque", "from": "Mina", "to": "Vertice", "f": null}, {"i": "6287", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "4475", "t": "enroque", "from": "Mina", "to": "Komatsu Sube y Baja", "f": null}, {"i": "4826", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4833", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4834", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4837", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4892", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "6273", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4874", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4886", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}];
 
@@ -537,8 +530,8 @@ renderKpis();
   const padL=78,padR=16;
   const md=d=>d.getDate()+'/'+(d.getMonth()+1);
   const MN=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  // Los movimientos de flota (sección 08) son informativos: no alteran la
-  // proyección. Si más adelante se decide que sí, poblar 'events' desde MOV.
+  // Los movimientos de flota no alteran la proyección (su sección está
+  // retirada). Si más adelante se decide que sí, poblar 'events' desde MOV.
   const events={mina:[],plan:[],syb:[]};
   // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
   const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
@@ -783,13 +776,8 @@ document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA3
 fInt.addEventListener('input',renderDet);
 renderDet();
 
-// Movimientos de flota — usa MOV (fuente única con la proyección). f ISO → 'DD-MM' para desplegar.
-const dm=iso=>{const p=iso.split('-');return p[2]+'-'+p[1];};
-const tipoTag=t=>t==='ingreso'?'<span style="color:#2E7D5B;font-weight:600">▲ Ingreso</span>':t==='egreso'?'<span style="color:#C0392B;font-weight:600">▼ Egreso</span>':'<span style="color:var(--accent);font-weight:600">⇄ Enroque</span>';
-document.getElementById('enroqueTable').innerHTML=MOV.map(e=>{
-  const estado=e.f?`<span class="tag t-cb">Programado ${dm(e.f)}</span>`:'<span class="tag t-si">Realizado</span>';
-  return `<tr><td class="num"><b>${e.i}</b></td><td>${tipoTag(e.t)}</td><td>${e.from}</td><td><b>${e.to}</b></td><td>${estado}</td></tr>`;
-}).join('');
+// La tabla de movimientos de flota está retirada por ahora. 'MOV' se sigue
+// llenando desde la hoja "Enroque de flota" para reponerla sin rehacer nada.
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
 window.__setMode=(m)=>{MODE=m; document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m)); renderSvc(); renderKpis(); renderDestino(); renderContractDetail(); if(window.__redrawProj)window.__redrawProj();};
