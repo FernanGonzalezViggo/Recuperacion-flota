@@ -252,7 +252,8 @@
     <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
-    <div class="note"><b>Disponibilidad = operativos / asignado.</b> El filtro <b>Viggo/BHP</b> cambia la base: <b>Viggo</b> usa el <b>maestro de flota</b> (el Report más las unidades extra que Viggo tiene en el maestro; asignado Mina 47 · Planta 40 · SyB 56). <b>BHP</b> usa el <b>Report</b> (lo que ve Operaciones) y su objetivo (Mina 34 · Planta 32 · SyB 52). Los <b>detenidos (F/S)</b> son <span id="nDetTot">20</span> (Mina <span id="nDetMina">11</span> · Planta <span id="nDetPlan">6</span> · SyB <span id="nDetSyb">3</span>). Solo buses (minibuses fuera de alcance por ahora).</div>
+    <div class="note" id="notaBase"></div>
+    <div id="concilBox"></div>
   </section>
 
   <section>
@@ -450,8 +451,11 @@ const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{ob
 // Sube y Baja: 56 en el maestro Viggo, 52 en el Report.
 // Sube y Baja no está en la hoja Report (solo trae Mina y Planta), así que su
 // flota sale de FLOTA en los dos modos: 56. Su 52 es el objetivo, no la base.
-const MAESTRO={syb:56,mina:47,plan:37}, REPORTUS={syb:56,mina:40,plan:31};
+const MAESTRO={syb:56,mina:46,plan:34}, REPORTUS={syb:56,mina:40,plan:31};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
+// Conciliación de flota: de dónde sale la base de cada contrato y qué se le
+// descuenta. La genera sync.py; solo se muestra en la vista Viggo.
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota en FLOTA", "bruto": 56, "ajustes": [], "final": 56}, {"svc": "Mina", "fuente": "flota en FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"]}], "final": 46}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "hoy son de Mina", "ids": ["4827", "4882"]}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"]}], "final": 34}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
@@ -470,7 +474,7 @@ let MODE='viggo';
 // Movimientos de flota (hoja "Enroque de flota"). Su sección está retirada por
 // ahora; se conservan los datos. f = fecha ISO (programado) o null (realizado).
 const CKEY={'Mina':'mina','Planta':'plan','Sube y Baja':'syb'};
-const MOV=[{"i": "6293", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "6291", "t": "enroque", "from": "Mina", "to": "Vertice", "f": null}, {"i": "6287", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "4475", "t": "enroque", "from": "Mina", "to": "Komatsu Sube y Baja", "f": null}, {"i": "4826", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4833", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4834", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4837", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4892", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "6273", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4874", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4886", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}];
+const MOV=[{"i": "6293", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "6291", "t": "enroque", "from": "Mina", "to": "Vertice", "f": null}, {"i": "6287", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "4475", "t": "enroque", "from": "Mina", "to": "Komatsu Sube y Baja", "f": null}, {"i": "4826", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4833", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4834", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4837", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4892", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "6273", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4874", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4886", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}];
 
 function renderSvc(){
   let tOper=0,tDen=0;
@@ -511,6 +515,33 @@ function renderSvc(){
 }
 renderSvc();
 
+// Conciliación de flota (sección 01). Explica de dónde sale la base de cada
+// contrato y qué se le descuenta. Solo tiene sentido en la vista Viggo: en BHP
+// la base es el Report y no hay nada que conciliar.
+function renderConcil(){
+  const box=document.getElementById('concilBox');
+  if(!box) return;
+  if(MODE!=='viggo' || !CONCIL.length){ box.innerHTML=''; return; }
+  const fil=[];
+  CONCIL.forEach((c,n)=>{
+    const sep=n?'padding-top:14px':'';
+    fil.push(`<tr><td colspan="3" style="${sep};padding-bottom:6px;font-size:14px;font-weight:600">${c.svc}</td></tr>`);
+    fil.push(`<tr><td style="padding:5px 0;color:var(--muted)">${c.fuente}</td><td></td>
+      <td class="num" style="padding:5px 0">${c.bruto}</td></tr>`);
+    c.ajustes.forEach(a=>fil.push(`<tr>
+      <td style="padding:5px 0;color:var(--muted)">${a.motivo}</td>
+      <td class="mono" style="padding:5px 0;color:var(--muted);font-size:12px">${a.ids.join(' · ')}</td>
+      <td class="num" style="padding:5px 0;color:var(--crit)">−${a.ids.length}</td></tr>`));
+    if(c.ajustes.length) fil.push(`<tr>
+      <td style="padding:6px 0;border-top:1px solid var(--line);font-weight:600">flota asignada</td>
+      <td style="border-top:1px solid var(--line)"></td>
+      <td class="num" style="padding:6px 0;border-top:1px solid var(--line);font-weight:700">${c.final}</td></tr>`);
+  });
+  box.innerHTML=`<div class="tblwrap" style="margin-top:14px"><table>
+    <tbody>${fil.join('')}</tbody></table></div>
+    <div class="note" style="margin-top:10px">Los descuentos de <b>Planta</b> vuelven a su base cuando se concrete el traslado. Un bus no se cuenta en dos flotas a la vez.</div>`;
+}
+
 // KPIs y notas derivados de 'det' (una sola fuente). Siguen el modo activo.
 function renderKpis(){
   const vis=visibles();
@@ -522,6 +553,10 @@ function renderKpis(){
   set('kpiDetFoot', `SyB ${F.syb} · Mina ${F.mina} · Planta ${F.plan}`);
   setHtml('kpiColaBig', cbN+'<span class="u"> buses</span>');
   set('kpiColaFoot', `Orden 1→${cbN} según plan de bajada`);
+  const b=(o)=>`Mina ${o.mina} · Planta ${o.plan} · SyB ${o.syb}`;
+  setHtml('notaBase', MODE==='viggo'
+    ? `<b>Disponibilidad = operativos / flota asignada.</b> Mide qué parte de la flota propia está operando. La flota sale de <b>FLOTA</b> (Mina y Sube y Baja) y de <b>Extension planta</b> (Planta), con los ajustes del cuadro: ${b(MAESTRO)}. Los <b>fuera de servicio</b> son ${vis.length} (${b(F)}), de la hoja Detenidas. Solo buses.`
+    : `<b>Disponibilidad = operativos / objetivo.</b> Mide cumplimiento del contrato, así que puede pasar del 100% y se topa ahí. La flota es la del <b>Report</b> (${b(REPORTUS)}) y el objetivo ${b({mina:OBJ.bhp.mina.obj,plan:OBJ.bhp.plan.obj,syb:OBJ.bhp.syb.obj})}. Los <b>fuera de servicio</b> son ${vis.length} (${b(F)}), de la hoja Detenidas. Solo buses.`);
   set('nDetTot',vis.length); set('nDetMina',F.mina); set('nDetPlan',F.plan); set('nDetSyb',F.syb);
   set('nDetTot2',vis.length); set('nDetMina2',F.mina); set('nDetPlan2',F.plan); set('nDetSyb2',F.syb);
   set('nColaNote',cbN);
@@ -531,6 +566,7 @@ function renderKpis(){
     + (sinF.length? ` (sin fecha: ${sinF.map(d=>d.i).join(', ')}).` : '.'));
 }
 renderKpis();
+renderConcil();
 
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
@@ -808,6 +844,7 @@ window.__setMode=(m)=>{
   document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
   renderSvc();            // 01 disponibilidad
   renderKpis();           // KPIs de cabecera
+  renderConcil();         // 01 conciliación de flota (solo Viggo)
   renderDestino();        // 03 destino de atención
   renderCB();             // 04 costo cama baja
   renderTallerEstado();   // 05 estado y cola por taller
