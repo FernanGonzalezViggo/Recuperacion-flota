@@ -283,9 +283,6 @@
       <span class="hint">La columna «Ubicación» define qué equipos entran a la decisión</span></div>
     <div class="note" style="border-left-color:var(--info);margin-bottom:16px">Clasificación por <b>taller de atención</b>: <b>Mantener en 3.5</b> = se atienden en faena (Taller MEL o Kaufmann MEL); <b>Cama baja</b> = cola de bajada a Antofagasta; <b>Ya en Antofagasta</b> = no van en cama baja y se atienden en talleres externos (Kaufmann Viggo/K1/K6, Scania, F. Baeza, Taller Antofagasta).</div>
     <div class="split3" id="destinoCards" style="grid-template-columns:repeat(4,1fr)"></div>
-    <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 10px">Equipos por contrato y taller de atención</h3>
-    <div class="tblwrap" id="contractDetail"></div>
-    <div class="legend"><span><i style="background:var(--accent)"></i>Taller en faena MEL (3.5)</span><span><i style="background:var(--info)"></i>Taller en Antofagasta / externo</span></div>
     <div class="note" style="border-left-color:var(--crit);background:var(--crit-bg);color:var(--ink);margin-top:16px">
       <b style="color:var(--crit)">⚠ Alerta de capacidad —</b> Si se mantiene la decisión de atender <b>los 12 equipos en faena en el taller 3.5</b>, la faena <b>no tendrá la capacidad</b> (HH y repuestos) para revertir la disponibilidad actual, sobre todo en <b>Mina (73%)</b>. Bajar en cama baja los equipos de mayor dificultad libera capacidad del 3.5 y es la vía para acercarse al objetivo de la operación.
     </div>
@@ -367,7 +364,7 @@
     </div>
     <div class="tblwrap">
       <table>
-        <thead><tr><th>Interno</th><th>Servicio</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>F. entrega</th><th>Observación</th></tr></thead>
+        <thead><tr><th>Interno</th><th>Marca</th><th>Modelo</th><th>Servicio</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>F. entrega</th><th>Observación</th></tr></thead>
         <tbody id="detTable"></tbody>
       </table>
     </div>
@@ -397,35 +394,35 @@ const svc=[
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
 // Set del REPORT — f=fecha entrega · est=estatus · q=odometro · t=larga data (permite MOV overlaps).
 const det=[
- {i:'4436',s:'mina',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4437',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-07',lg:0,fa:0,ord:1,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4472',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-09',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4473',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'6272',s:'mina',a35:'cb',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:3,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'6276',s:'mina',a35:'cb',report:true,rfs:true,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:7,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'6277',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6281',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K1',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6283',s:'mina',a35:'mel',report:true,rfs:false,taller:'Kaufmann MEL',dif:'',p:2,f:'2026-09-02',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
- {i:'6293',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6295',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-16',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6320',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-03',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6321',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'',p:2,f:'2026-09-03',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
- {i:'6324',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:4,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'6325',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:5,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4828',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-10',lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
- {i:'4830',s:'plan',a35:'mel',report:true,rfs:true,taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4840',s:'plan',a35:'mel',report:true,rfs:false,taller:'Taller MEL',dif:'',p:2,f:'2026-09-02',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
- {i:'4844',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-08',lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
- {i:'4846',s:'plan',a35:'mel',report:true,rfs:true,taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-21',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4853',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-15',lg:0,fa:0,ord:2,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4870',s:'plan',a35:'mel',report:true,rfs:true,taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4872',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4873',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:null,est:'Certificacion',q:'',t:'Detenida'},
- {i:'4885',s:'plan',a35:'ant',report:false,rfs:false,taller:'Washtruck',dif:'Alta',p:3,f:'2026-10-30',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4890',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',lg:0,fa:0,ord:6,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4886',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'',p:2,f:'',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
- {i:'4925',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
- {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-15',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4436',s:'mina',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4437',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-07',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:1,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'4472',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-09',marca:'Scania',modelo:'K410C B4X2NB',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4473',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'6272',s:'mina',a35:'cb',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:3,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'6276',s:'mina',a35:'cb',report:true,rfs:true,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:7,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'6277',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6281',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K1',dif:'Media',p:2,f:'2026-09-15',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6283',s:'mina',a35:'mel',report:true,rfs:false,taller:'Kaufmann MEL',dif:'',p:2,f:'2026-09-02',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
+ {i:'6293',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6295',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann K1',dif:'Alta',p:3,f:'2026-09-16',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6320',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-03',marca:'Scania',modelo:'K410C B4X2NB',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6321',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'',p:2,f:'2026-09-03',marca:'Scania',modelo:'K410C B4X2NB',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
+ {i:'6324',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',lg:0,fa:0,ord:4,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'6325',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',lg:0,fa:0,ord:5,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'4828',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-10',marca:'Scania',modelo:'K310',lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
+ {i:'4830',s:'plan',a35:'mel',report:true,rfs:true,taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-30',marca:'Scania',modelo:'K310',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4840',s:'plan',a35:'mel',report:true,rfs:false,taller:'Taller MEL',dif:'',p:2,f:'2026-09-02',marca:'Scania',modelo:'K310',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
+ {i:'4844',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-08',marca:'Scania',modelo:'K310',lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
+ {i:'4846',s:'plan',a35:'mel',report:true,rfs:true,taller:'Taller MEL',dif:'Media',p:2,f:'2026-09-21',marca:'Scania',modelo:'K310',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4853',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-15',marca:'Scania',modelo:'K310',lg:0,fa:0,ord:2,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'4870',s:'plan',a35:'mel',report:true,rfs:true,taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-08',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4872',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4873',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:null,est:'Certificacion',q:'',t:'Detenida'},
+ {i:'4885',s:'plan',a35:'ant',report:false,rfs:false,taller:'Washtruck',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4890',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:6,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'4886',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'',p:2,f:'',marca:'Scania',modelo:'K360 IB 4X2',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
+ {i:'4925',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'',marca:'Mercedes Benz',modelo:'O500 RS',lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
+ {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-15',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
 ];
 const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
@@ -456,11 +453,10 @@ const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flot
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
-// ¿Cuenta como fuera de servicio en la foto del día? Para los contratos que el
-// Report cubre manda su columna Estatus (rfs); Sube y Baja no está en esa hoja,
-// así que ahí vale la hoja Detenidas. Un bus detenido que el Report da como
-// operativa no entra a la foto del día, solo a la vista Viggo.
-const enBHP=d=>enReport[d.s]? d.rfs : d.report;
+// La hoja Detenidas es la fuente oficial de quién está detenido. Si el Report
+// dice otra cosa (campo 'rfs') es un error del Report y no se le hace caso.
+// El Report solo aporta la flota asignada. En BHP se filtra por pertenencia.
+const enBHP=d=>d.report;
 const fsDe=(sk,mode)=>det.reduce((n,d)=>n+(d.s===sk&&(mode==='viggo'||enBHP(d))?1:0),0);
 // Buses que corresponden al modo activo. Toda sección que liste detenidos debe
 // partir de acá para que el filtro Viggo/BHP mueva el reporte completo.
@@ -662,25 +658,10 @@ function renderDestino(){
 }
 renderDestino();
 
-// Detalle por contrato y taller (destino de atención)
+// Talleres de atención. 'talleres' lo genera sync.py desde los datos, con los
+// de faena siempre presentes aunque queden en cero (sección 06).
 const talleres=["Kaufmann MEL", "Taller MEL", "Kaufmann K1", "Kaufmann K6", "Kaufmann Viggo", "Scania", "Taller Antofagasta", "Washtruck"];
 const svcOrder=['syb','mina','plan'];
-function renderContractDetail(){
-  const detFiltered=visibles();
-  let ctHead='<thead><tr><th>Contrato</th><th>Equipos</th>'+talleres.map(t=>`<th>${t}</th>`).join('')+'</tr></thead>';
-  let ctBody=svcOrder.map(sk=>{
-    const rows=detFiltered.filter(d=>d.s===sk);
-    const cells=talleres.map(t=>{
-      const n=rows.filter(d=>d.taller===t).length;
-      return `<td class="num" style="${n?(melTaller(t)?'color:var(--accent);font-weight:700':'color:var(--ink)'):'color:var(--faint)'}">${n||'·'}</td>`;
-    }).join('');
-    return `<tr><td><b>${svcName(sk)}</b></td><td class="num" style="font-weight:700">${rows.length}</td>${cells}</tr>`;
-  }).join('');
-  const totCells=talleres.map(t=>{const n=detFiltered.filter(d=>d.taller===t).length;return `<td class="num" style="font-weight:700">${n||'·'}</td>`;}).join('');
-  const ctFoot=`<tfoot><tr style="font-weight:700"><td>TOTAL</td><td class="num">${detFiltered.length}</td>${totCells}</tr></tfoot>`;
-  document.getElementById('contractDetail').innerHTML='<table>'+ctHead+'<tbody>'+ctBody+'</tbody>'+ctFoot+'</table>';
-}
-renderContractDetail();
 
 // Cama baja: unidades en la cola de bajada (a35=cb), ordenadas por 'ord'. Toggle a 3.5 para simular.
 const faUnits=det.filter(d=>d.a35==='cb').sort((a,b)=>(a.ord||99)-(b.ord||99));
@@ -794,11 +775,13 @@ function renderDet(){
     const dc={Alta:'d-alta',Media:'d-media',Baja:'d-baja'}[d.dif];
     const ubic = d.a35==='pend' ? '<span style="color:var(--faint)">—</span>' : (d.fa?'<span class="tag t-mel">Faena MEL</span>':'<span class="tag t-ant">Antofagasta</span>');
     const difCell = dc?`<span class="dif ${dc}">${d.dif}</span>`:'<span style="color:var(--faint)">—</span>';
-    return `<tr><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td>
+    const na='<span style="color:var(--faint)">—</span>';
+    return `<tr><td class="num"><b>${d.i}</b></td>
+     <td>${d.marca||na}</td><td>${d.modelo||na}</td><td>${svcName(d.s)}</td>
      <td>${ubic}</td>
      <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td>${difCell}</td>
      <td class="num">${d.f||'—'}</td><td style="white-space:normal;min-width:220px;font-size:12px;color:var(--muted)">${d.obs||'—'}</td></tr>`;
-  }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
+  }).join('') || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
   document.getElementById('detCount').textContent=`${rows.length} de ${visibles().length} buses`;
 }
 [fUbic,fA35,fTaller].forEach(el=>el.addEventListener('change',renderDet));
@@ -818,7 +801,6 @@ window.__setMode=(m)=>{
   renderSvc();            // 01 disponibilidad
   renderKpis();           // KPIs de cabecera
   renderDestino();        // 03 destino de atención
-  renderContractDetail(); // 03 detalle por contrato y taller
   renderCB();             // 04 costo cama baja
   renderTallerEstado();   // 05 estado y cola por taller
   renderCarga();          // 06 carga de trabajo por taller
