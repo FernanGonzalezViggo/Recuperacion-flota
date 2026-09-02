@@ -455,7 +455,7 @@ const MAESTRO={syb:56,mina:46,plan:34}, REPORTUS={syb:56,mina:40,plan:31};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // Conciliación de flota: de dónde sale la base de cada contrato y qué se le
 // descuenta. La genera sync.py; solo se muestra en la vista Viggo.
-const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56, "ajustes": [], "final": 56}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"]}], "final": 46}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "hoy son de Mina", "ids": ["4827", "4882"]}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"]}], "final": 34, "nota": {"ids": ["4834", "4837"], "texto": "Operan hoy en Planta pero no son titulares de la extensión, así que no entran en la base. Salen de contrato el 30-09."}}];
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56, "ajustes": [], "final": 56, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"]}], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "hoy son de Mina", "ids": ["4827", "4882"]}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"]}], "final": 34, "notas": [{"ids": ["4834", "4837"], "texto": "Operan hoy en Planta pero no son titulares de la extensión, así que no entran en la base. En BHP sí se cuentan. Salen de contrato el 30-09."}]}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
@@ -528,8 +528,8 @@ function renderConcil(){
   box.innerHTML='<div class="split3" style="margin-top:14px;align-items:start">'+CONCIL.map(c=>{
     const aj=c.ajustes.map(a=>lin(a.motivo,'−'+a.ids.length,'crit',7)
       +`<div class="mono" style="font-size:11.5px;color:var(--faint);margin-top:2px">${a.ids.join('  ')}</div>`).join('');
-    const nota=c.nota?`<div style="margin-top:11px;padding-top:9px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted);line-height:1.45">
-        <span class="mono" style="color:var(--ink)">${c.nota.ids.join('  ')}</span> — ${c.nota.texto}</div>`:'';
+    const nota=(c.notas||[]).map(nt=>`<div style="margin-top:11px;padding-top:9px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted);line-height:1.45">
+        <span class="mono" style="color:var(--ink)">${nt.ids.join('  ')}</span> — ${nt.texto}</div>`).join('');
     return `<div class="scard" style="padding:14px 16px">
       <div style="font-family:'Barlow Semi Condensed',sans-serif;font-size:17px;font-weight:700">${c.svc}</div>
       <div class="mono" style="font-size:28px;font-weight:700;line-height:1.1;margin-top:8px">${c.final}</div>
@@ -538,7 +538,17 @@ function renderConcil(){
         ${lin(c.fuente,c.bruto,'',0)}
         ${aj||'<div style="margin-top:7px;font-size:11.5px;color:var(--faint)">sin ajustes</div>'}
       </div>${nota}</div>`;
-  }).join('')+'</div>';
+  }).join('')+'</div>'+(()=>{
+    // Totales en las dos vistas: es la pregunta que surge al alternar el filtro.
+    const tot=m=>['syb','mina','plan'].reduce((a,k)=>
+      a+((m==='viggo'?MAESTRO[k]:REPORTUS[k])-fsDe(k,m)),0);
+    const v=tot('viggo'), b=tot('bhp');
+    if(v===b) return '';
+    return `<div class="note" style="margin-top:12px">Los tres contratos suman
+      <b>${v} operativos</b> en esta vista y <b>${b}</b> en BHP. La diferencia
+      son los buses de las notas: los que aquí se cuentan en otro contrato y los
+      que operan hoy sin ser titulares de la extensión.</div>`;
+  })();
 }
 
 // KPIs y notas derivados de 'det' (una sola fuente). Siguen el modo activo.
