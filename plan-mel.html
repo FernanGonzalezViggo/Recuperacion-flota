@@ -446,11 +446,17 @@ const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{ob
 // Viggo = maestro (Report + unidades extra del maestro); BHP = Report.
 // Planta: 37 buses en FLOTA menos los 3 que ya salieron de contrato = 34.
 // Sube y Baja: 56 en el maestro Viggo, 52 en el Report.
-const MAESTRO={syb:56,mina:47,plan:34}, REPORTUS={syb:52,mina:40,plan:31};
+// Sube y Baja no está en la hoja Report (solo trae Mina y Planta), así que su
+// flota sale de FLOTA en los dos modos: 56. Su 52 es el objetivo, no la base.
+const MAESTRO={syb:56,mina:47,plan:34}, REPORTUS={syb:56,mina:40,plan:31};
+const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
 const fsDe=(sk,mode)=>det.reduce((n,d)=>n+(d.s===sk&&(mode==='viggo'||d.report)?1:0),0);
+// Buses que corresponden al modo activo. Toda sección que liste detenidos debe
+// partir de acá para que el filtro Viggo/BHP mueva el reporte completo.
+const visibles=()=>det.filter(d=>MODE==='viggo'||d.report);
 const DETR={syb:0,mina:0,plan:0}; det.forEach(d=>DETR[d.s]++);      // total (modo Viggo)
 const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';            // ¿se atiende en faena MEL (3.5)?
 let MODE='viggo';
@@ -469,17 +475,20 @@ function renderSvc(){
     const asig = MODE==='viggo'? MAESTRO[k] : REPORTUS[k];
     const detShown = fsDe(k,MODE);
     const oper = asig - detShown;
-    const disp=oper/asig, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
-    const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=asig;
+    // La disponibilidad se mide contra el OBJETIVO del contrato, no contra la
+    // flota asignada: mide cumplimiento. Si la flota supera el objetivo puede
+    // pasar del 100%, y en ese caso se topa en 100%.
+    const disp=oper/obj, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
+    const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=obj;
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
       <div class="gauge">
         <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-          <span class="req">${oper} / ${asig} buses oper. · ${MODE==='viggo'?'maestro':'Report'}</span></div>
+          <span class="req">${oper} / ${obj} buses${oper>obj?` · +${oper-obj} sobre el objetivo`:' · objetivo'}</span></div>
         <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
       </div>
       <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
-        <div><div class="lbl">Asignado${MODE==='viggo'?'':' (Report)'}</div><div class="val">${asig}</div></div>
+        <div><div class="lbl">Asignado${MODE==='viggo'?'':(enReport[k]?' (Report)':' (FLOTA)')}</div><div class="val">${asig}</div></div>
         <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${oper}</div></div>
         <div><div class="lbl">Fuera de servicio</div><div class="val" style="color:var(--crit)">${detShown}</div></div>
         <div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>
@@ -673,7 +682,10 @@ try{const raw=localStorage.getItem('mel_cb3'); if(raw) state=JSON.parse(raw);}ca
 faUnits.forEach(d=>{ if(!(d.i in state)) state[d.i]=base[d.i]; });
 
 function renderCB(){
-  document.getElementById('cbTable').innerHTML=faUnits.map(d=>{
+  // La cola se acota al modo activo; 'state' sigue indexado por todos los
+  // internos para no perder los toggles al alternar el filtro.
+  const cola=faUnits.filter(d=>MODE==='viggo'||d.report);
+  document.getElementById('cbTable').innerHTML=cola.map(d=>{
     const dest=state[d.i];
     const tg=`<span class="toggle" onclick="toggle('${d.i}')">
         <span class="${dest==='mel'?'on-ant':''}">3.5</span>
@@ -682,7 +694,7 @@ function renderCB(){
     return `<tr><td class="num" style="font-weight:700;color:var(--accent)">${d.ord||'·'}</td><td class="num"><b>${d.i}</b></td><td>${svcName(d.s)}</td>
       <td>${d.taller}</td><td><span class="dif ${dc}">${d.dif}</span></td><td>${tg}</td></tr>`;
   }).join('');
-  const trips=faUnits.filter(d=>state[d.i]==='ant').length;
+  const trips=cola.filter(d=>state[d.i]==='ant').length;
   document.getElementById('cbTrips').textContent=trips;
   document.getElementById('cbTotal').textContent=fmt(trips*TRIP);
   document.getElementById('kpiCB').innerHTML='$'+(trips*TRIP/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1}).replace('.',',')+'<span class="u">MM</span>';
@@ -706,56 +718,66 @@ function estColor(e){e=(e||'').toLowerCase();
   if(e.includes('ingres')||e.includes('scania')||e.includes('traslad')) return 'info';
   if(e.includes('sale de contrato')||e==='—'||e==='') return 'faint';
   return 'muted';}
-const byTaller={};
-det.forEach(d=>{(byTaller[d.taller]=byTaller[d.taller]||[]).push(d);});
-document.getElementById('tallerEstado').innerHTML=Object.entries(byTaller)
-  .sort((a,b)=>b[1].length-a[1].length).map(([t,arr])=>{
-  const inMel=melTaller(t);
-  arr.sort((a,b)=>(a.ord||99)-(b.ord||99)||a.i.localeCompare(b.i));
-  const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
-    return `<div class="estrow"><span class="ei">${d.i}</span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
+function renderTallerEstado(){
+  const byTaller={};
+  visibles().forEach(d=>{(byTaller[d.taller]=byTaller[d.taller]||[]).push(d);});
+  document.getElementById('tallerEstado').innerHTML=Object.entries(byTaller)
+    .sort((a,b)=>b[1].length-a[1].length).map(([t,arr])=>{
+    const inMel=melTaller(t);
+    arr.sort((a,b)=>(a.ord||99)-(b.ord||99)||a.i.localeCompare(b.i));
+    const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
+      return `<div class="estrow"><span class="ei">${d.i}</span>${d.ord?`<span class="qn">#${d.ord}</span>`:''}<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
+    }).join('');
+    return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${rows}</div>`;
   }).join('');
-  return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${rows}</div>`;
-}).join('');
+}
+renderTallerEstado();
 
 // Carga por taller
 // Carga = equipos × dificultad, apilada por taller
-const cargaMap={};
-det.filter(d=>d.p>0).forEach(d=>{
-  const m=cargaMap[d.taller]||(cargaMap[d.taller]={A:0,M:0,B:0,n:0,carga:0});
-  if(d.dif==='Alta')m.A++; else if(d.dif==='Media')m.M++; else m.B++;
-  m.n++; m.carga+=d.p;
-});
-const cEntries=Object.entries(cargaMap).sort((a,b)=>b[1].carga-a[1].carga);
-const cMax=Math.max(...cEntries.map(e=>e[1].carga));
-let pond=0; det.forEach(d=>pond+=d.p);
-const nEval=det.filter(d=>d.p>0).length;
-document.getElementById('cargaChart').innerHTML=cEntries.map(([t,m])=>{
-  const seg=(w,col)=>w?`<span style="width:${w/cMax*100}%;background:${col}"></span>`:'';
-  const parts=[];
-  if(m.A) parts.push(`${m.A}A`); if(m.M) parts.push(`${m.M}M`); if(m.B) parts.push(`${m.B}B`);
-  return `<div class="cargarow">
-    <span class="ct">${t}${melTaller(t)?' <span class="cbadge">3.5</span>':''}</span>
-    <div class="stack">${seg(m.A*3,'var(--crit)')}${seg(m.M*2,'var(--warn)')}${seg(m.B*1,'var(--good)')}</div>
-    <span class="cend"><b>${m.carga}</b> <span class="cn">${m.n} eq · ${parts.join(' ')}</span></span>
-  </div>`;
-}).join('');
-document.getElementById('pondTot').textContent=pond;
-document.getElementById('cargaN').textContent=nEval;
+function renderCarga(){
+  const vis=visibles();
+  const cargaMap={};
+  // Los talleres de faena se muestran aunque queden en cero: sirve para ver
+  // capacidad ociosa y asignarles trabajo.
+  talleres.filter(melTaller).forEach(t=>cargaMap[t]={A:0,M:0,B:0,n:0,carga:0});
+  vis.filter(d=>d.p>0).forEach(d=>{
+    const m=cargaMap[d.taller]||(cargaMap[d.taller]={A:0,M:0,B:0,n:0,carga:0});
+    if(d.dif==='Alta')m.A++; else if(d.dif==='Media')m.M++; else m.B++;
+    m.n++; m.carga+=d.p;
+  });
+  const cEntries=Object.entries(cargaMap).sort((a,b)=>b[1].carga-a[1].carga);
+  const cMax=Math.max(1,...cEntries.map(e=>e[1].carga));
+  let pond=0; vis.forEach(d=>pond+=d.p);
+  const nEval=vis.filter(d=>d.p>0).length;
+  document.getElementById('cargaChart').innerHTML=cEntries.map(([t,m])=>{
+    const seg=(w,col)=>w?`<span style="width:${w/cMax*100}%;background:${col}"></span>`:'';
+    const parts=[];
+    if(m.A) parts.push(`${m.A}A`); if(m.M) parts.push(`${m.M}M`); if(m.B) parts.push(`${m.B}B`);
+    return `<div class="cargarow">
+      <span class="ct">${t}${melTaller(t)?' <span class="cbadge">3.5</span>':''}</span>
+      <div class="stack">${seg(m.A*3,'var(--crit)')}${seg(m.M*2,'var(--warn)')}${seg(m.B*1,'var(--good)')}</div>
+      <span class="cend"><b>${m.carga}</b> <span class="cn">${m.n?m.n+' eq · '+parts.join(' '):'sin carga'}</span></span>
+    </div>`;
+  }).join('');
+  document.getElementById('pondTot').textContent=pond;
+  document.getElementById('cargaN').textContent=nEval;
+}
+renderCarga();
 
 // Detalle completo con filtros
 const order={syb:0,mina:1,plan:2};
 const a35tag={cb:'<span class="tag t-cb">Cama baja</span>',mel:'<span class="tag t-si">Taller 3.5</span>',ant:'<span class="tag t-ant">En Antofa</span>',pend:'<span class="dif d-media">Sin evaluar</span>'};
-const sorted=[...det].sort((a,b)=>order[a.s]-order[b.s]||(a.f||'9999').localeCompare(b.f||'9999'));
+const porFecha=L=>[...L].sort((a,b)=>order[a.s]-order[b.s]||(a.f||'9999').localeCompare(b.f||'9999'));
 // poblar filtro de talleres
 const fTaller=document.getElementById('fTaller');
-[...new Set(sorted.map(d=>d.taller))].sort().forEach(t=>{
+[...new Set(det.map(d=>d.taller))].sort().forEach(t=>{
   const o=document.createElement('option'); o.value=t; o.textContent=t; fTaller.appendChild(o);
 });
 const fUbic=document.getElementById('fUbic'), fA35=document.getElementById('fA35'), fInt=document.getElementById('fInt');
 function renderDet(){
   const u=fUbic.value, a=fA35.value, t=fTaller.value, q=(fInt.value||'').trim();
-  const rows=sorted.filter(d=>
+  const rows=porFecha(visibles()).filter(d=>
     (!u || (u==='mel'? d.fa : !d.fa)) &&
     (!a || d.a35===a) &&
     (!t || d.taller===t) &&
@@ -769,7 +791,7 @@ function renderDet(){
      <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td>${difCell}</td>
      <td class="num">${d.f||'—'}</td><td style="white-space:normal;min-width:220px;font-size:12px;color:var(--muted)">${d.obs||'—'}</td></tr>`;
   }).join('') || `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
-  document.getElementById('detCount').textContent=`${rows.length} de ${sorted.length} equipos`;
+  document.getElementById('detCount').textContent=`${rows.length} de ${visibles().length} buses`;
 }
 [fUbic,fA35,fTaller].forEach(el=>el.addEventListener('change',renderDet));
 document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA35.value='';fTaller.value='';fInt.value='';renderDet();});
@@ -780,7 +802,21 @@ renderDet();
 // llenando desde la hoja "Enroque de flota" para reponerla sin rehacer nada.
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
-window.__setMode=(m)=>{MODE=m; document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m)); renderSvc(); renderKpis(); renderDestino(); renderContractDetail(); if(window.__redrawProj)window.__redrawProj();};
+// Toda sección que dependa de 'det' se redibuja acá: el filtro debe mover el
+// reporte completo, no solo las tarjetas de arriba.
+window.__setMode=(m)=>{
+  MODE=m;
+  document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
+  renderSvc();            // 01 disponibilidad
+  renderKpis();           // KPIs de cabecera
+  renderDestino();        // 03 destino de atención
+  renderContractDetail(); // 03 detalle por contrato y taller
+  renderCB();             // 04 costo cama baja
+  renderTallerEstado();   // 05 estado y cola por taller
+  renderCarga();          // 06 carga de trabajo por taller
+  renderDet();            // 07 detalle de buses detenidos
+  if(window.__redrawProj)window.__redrawProj();   // 02 proyección
+};
 </script>
 </body>
 </html>
