@@ -451,11 +451,11 @@ const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{ob
 // Sube y Baja: 56 en el maestro Viggo, 52 en el Report.
 // Sube y Baja no está en la hoja Report (solo trae Mina y Planta), así que su
 // flota sale de FLOTA en los dos modos: 56. Su 52 es el objetivo, no la base.
-const MAESTRO={syb:56,mina:46,plan:34}, REPORTUS={syb:56,mina:40,plan:31};
+const MAESTRO={syb:56,mina:46,plan:36}, REPORTUS={syb:56,mina:40,plan:31};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // Conciliación de flota: de dónde sale la base de cada contrato y qué se le
 // descuenta. La genera sync.py; solo se muestra en la vista Viggo.
-const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56, "ajustes": [], "final": 56, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"]}], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "hoy son de Mina", "ids": ["4827", "4882"]}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"]}], "final": 34, "notas": [{"ids": ["4834", "4837"], "texto": "Operan hoy en Planta pero no son titulares de la extensión, así que no entran en la base. En BHP sí se cuentan. Salen de contrato el 30-09."}]}];
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56, "ajustes": [], "final": 56, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 47, "ajustes": [{"motivo": "pasa a Komatsu Sube y Baja", "ids": ["4475"], "signo": -1}], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy sin ser titulares", "ids": ["4834", "4837"], "signo": 1}, {"motivo": "hoy son de Mina", "ids": ["4827", "4882"], "signo": -1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 36, "notas": [{"ids": ["4834", "4837"], "texto": "Están asignados hoy y cuentan en la base, pero no son titulares de la extensión. Salen de contrato el 30-09, y ahí la base baja a 34."}]}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
@@ -526,7 +526,7 @@ function renderConcil(){
       <span style="color:var(--muted)">${txt}</span>
       <span class="mono"${col?` style="color:var(--${col})"`:''}>${val}</span></div>`;
   box.innerHTML='<div class="split3" style="margin-top:14px;align-items:start">'+CONCIL.map(c=>{
-    const aj=c.ajustes.map(a=>lin(a.motivo,'−'+a.ids.length,'crit',7)
+    const aj=c.ajustes.map(a=>lin(a.motivo,(a.signo>0?'+':'−')+a.ids.length,a.signo>0?'good':'crit',7)
       +`<div class="mono" style="font-size:11.5px;color:var(--faint);margin-top:2px">${a.ids.join('  ')}</div>`).join('');
     const nota=(c.notas||[]).map(nt=>`<div style="margin-top:11px;padding-top:9px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted);line-height:1.45">
         <span class="mono" style="color:var(--ink)">${nt.ids.join('  ')}</span> — ${nt.texto}</div>`).join('');
@@ -583,8 +583,10 @@ renderConcil();
   const reqop=sk=>OBJ[MODE][sk].obj;
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
   const gOrder=['syb','mina','plan'];
-  // unidades detenidas. 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
-  const units=det.map(d=>{
+  // Unidades detenidas del modo activo: se recalcula en cada dibujado para que
+  // el filtro Viggo/BHP también mueva la curva y el Gantt por bus.
+  // 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
+  const unidades=()=>visibles().map(d=>{
     let rec=null;
     if(d.f && !d.leaves){const fd=new Date(d.f+'T00:00:00'); rec=fd>START?fd:new Date(START.getTime()+DAY);}
     return {i:d.i,s:d.s,f:d.leaves?null:d.f,rec,leaves:d.leaves||null,q:d.q,t:d.t};
@@ -603,9 +605,10 @@ renderConcil();
   const ev=sk=>events[sk]||[];
   const ed=e=>new Date(e.d+'T00:00:00');
   const asigAt=(sk,t)=>baseAsig(sk)+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dA:0),0);
-  const operAt=(sk,t)=>baseOper(sk)+units.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0)-newFail(sk,t);
+  const operAt=(sk,t,U)=>baseOper(sk)+U.filter(u=>u.s===sk&&u.rec&&u.rec<=t).length+ev(sk).reduce((a,e)=>a+(ed(e)<=t?e.dO:0),0)-newFail(sk,t);
   const cH=176,cpadT=16,cpadB=30,cyH=cH-cpadT-cpadB;
   function draw(EN){
+    const units=unidades();
     const days=Math.round((EN-START)/DAY);
     const W=Math.max(920,padL+padR+days*15), xW=W-padL-padR;
     const xOf=t=>padL+(t-START)/(EN-START)*xW;
@@ -629,18 +632,18 @@ renderConcil();
       let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(cap(t)).toFixed(1)} `;}
       s+=`<polyline points="${asigL}" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>`;
       let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `; const opArr=[];
-      for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t);opArr.push(op);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
+      for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);const op=operAt(sk,t,units);opArr.push(op);const X=xOf(t).toFixed(1),Y=yv(op).toFixed(1);line+=`${X},${Y} `;area+=`${X},${Y} `;}
       area+=`${xOf(EN).toFixed(1)},${yv(0).toFixed(1)}`;
       s+=`<polygon points="${area}" fill="${col[sk]}" opacity=".10"/><polyline points="${line}" fill="none" stroke="${col[sk]}" stroke-width="2.5"/>`;
       ev(sk).forEach(e=>{if(ed(e)>EN)return; const x=xOf(ed(e)),c2=e.t==='in'?'#2E7D5B':'#C0392B';
         s+=`<line x1="${x}" y1="${cpadT}" x2="${x}" y2="${cH-cpadB}" stroke="${c2}" stroke-width="1" opacity=".6"/>`;
         const ty=cpadT+2; s+= e.t==='in'?`<polygon points="${x},${ty} ${x-4},${ty+7} ${x+4},${ty+7}" fill="${c2}"/>`:`<polygon points="${x-4},${ty} ${x+4},${ty} ${x},${ty+7}" fill="${c2}"/>`;});
-      const opEnd=operAt(sk,EN);
+      const opEnd=operAt(sk,EN,units);
       // Punto de cierre de la curva. El valor no se rotula: ya va en el
       // encabezado ("techo N/M") y sobre la línea del objetivo se solapaba.
       s+=`<circle cx="${xOf(EN)}" cy="${yv(opEnd)}" r="3.5" fill="${col[sk]}"/>`;
       s+=`<line class="hvl" x1="0" y1="${cpadT}" x2="0" y2="${cH-cpadB}" stroke="${col[sk]}" stroke-width="1" opacity=".7" style="display:none"/><circle class="hvd" r="4.5" fill="${col[sk]}" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>`;
-      const opNow=operAt(sk,START),aNow=cap(START),aEnd=cap(EN);
+      const opNow=operAt(sk,START,units),aNow=cap(START),aEnd=cap(EN);
       const idx=HV.length; HV.push({YMAX,opArr,color:col[sk]});
       return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.min(100,Math.round(opNow/aNow*100))}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.min(100,Math.round(opEnd/aEnd*100))}%) · objetivo op. <b>${TG}</b></span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
     }
