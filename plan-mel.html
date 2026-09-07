@@ -391,6 +391,16 @@ const svcBus=[
 // Minibuses: los grupos son los de "Usada en" del Report. sync.py los genera.
 const MBASE={msyb:2,mauto:3,msprin:3,psprin:4};
 const SVCMB=[{"key": "msyb", "name": "Sube y Baja", "loc": "FLOTA · MEL Sube y Baja"}, {"key": "mauto", "name": "Mina Autonomía", "loc": "Report · Mina Autonomía"}, {"key": "msprin", "name": "Mina Sprinter", "loc": "Report · Mina Sprinter"}, {"key": "psprin", "name": "Planta Sprinter", "loc": "Report · Planta Sprinter"}];
+// Caída histórica de minibuses, medida por CONTRATO. Cuando un contrato
+// tiene más de un grupo (Mina: Autonomía y Sprinter), la tasa se reparte
+// en proporción a la flota de cada uno para no duplicar la caída.
+const MBCAIDA={mina:{tasa:0.07,perm:2},plan:{tasa:0.01,perm:9},
+               syb:{tasa:0.01,perm:6}};
+const MBCONTRATO={msyb:'syb',mauto:'mina',msprin:'mina',psprin:'plan'};
+const mbTasa=sk=>{const c=MBCAIDA[MBCONTRATO[sk]]; if(!c) return {tasa:0,perm:0};
+  const flotaC=Object.keys(MBCONTRATO).filter(k=>MBCONTRATO[k]===MBCONTRATO[sk])
+    .reduce((a,k)=>a+(MBASE[k]||0),0);
+  return {tasa:flotaC?c.tasa*(MBASE[sk]||0)/flotaC:0, perm:c.perm};};
 // Servicios del modo activo.
 const esMB=()=>MODE==='minibus';
 const uni=()=>esMB()?'minibuses':'buses';        // unidad del modo activo
@@ -585,7 +595,7 @@ function renderKpis(){
   set('capDet', esMB()?'Minibuses detenidos (F/S)':'Buses detenidos (F/S)');
   set('capDisp', `Disponibilidad global ${uni()}`);
   set('legProj', esMB()
-    ? `Eje Y = minibuses operativos · tope = flota asignada · sin objetivo definido ni caída histórica medida`
+    ? `Eje Y = minibuses operativos · tope = flota asignada · la curva incorpora la caída histórica · sin objetivo contractual definido`
     : `Eje Y = buses operativos · punteada = objetivo op. · tope = flota asignada · la curva incorpora la caída histórica`);
   set('kpiDetFoot', `SyB ${F.syb} · Mina ${F.mina} · Planta ${F.plan}`);
   setHtml('kpiColaBig', cbN+`<span class="u"> ${uni()}</span>`);
@@ -597,7 +607,7 @@ function renderKpis(){
     ? 'Minibuses: Sprinter y Autonomía, según el Report'
     : 'BHP: Mina '+OBJ.bhp.mina.obj+' · Planta '+OBJ.bhp.plan.obj+' · Sube y Baja '+OBJ.bhp.syb.obj;
   if(esMB()){
-    setHtml('notaBase', `<b>Disponibilidad = operativos / flota asignada.</b> Vista de <b>minibuses</b>: Sprinter y Autonomía. La flota sale del <b>Report</b>, agrupada por su columna «Usada en» (${b(MBASE)}), y no hay objetivo contractual definido para estos grupos. Los <b>fuera de servicio</b> son ${vis.length}, de la hoja Detenidas. Los minibuses no tienen tasa de caída histórica medida, así que su proyección solo refleja recuperaciones.`);
+    setHtml('notaBase', `<b>Disponibilidad = operativos / flota asignada.</b> Vista de <b>minibuses</b>: Sprinter y Autonomía. La flota sale del <b>Report</b>, agrupada por su columna «Usada en» (${b(MBASE)}), y no hay objetivo contractual definido para estos grupos. Los <b>fuera de servicio</b> son ${vis.length}, de la hoja Detenidas. Caída histórica por contrato: Mina <b>0,07 minibus/día</b> · 2 días de permanencia; Planta <b>0,01</b> · 9 días; Sube y Baja <b>0,01</b> · 6 días. En Mina la tasa se reparte entre sus dos grupos según su flota.`);
   } else setHtml('notaBase', MODE==='viggo'
     ? `<b>Disponibilidad = operativos / flota asignada.</b> Mide qué parte de la flota propia está operando. La flota sale de <b>FLOTA</b> (Mina y Sube y Baja) y de <b>Extension planta</b> (Planta), con los ajustes del cuadro: ${b(MAESTRO)}. Los <b>fuera de servicio</b> son ${vis.length} (${b(F)}), de la hoja Detenidas. Solo buses.`
     : `<b>Disponibilidad = operativos / objetivo.</b> Mide cumplimiento del contrato, así que puede pasar del 100% y se topa ahí. La flota es la del <b>Report</b> (${b(REPORTUS)}) y el objetivo ${b({mina:OBJ.bhp.mina.obj,plan:OBJ.bhp.plan.obj,syb:OBJ.bhp.syb.obj})}. Los <b>fuera de servicio</b> son ${vis.length} (${b(F)}), de la hoja Detenidas. Solo buses.`);
@@ -638,8 +648,9 @@ renderConcil();
   const baseOper=sk=>baseAsig(sk)-fsDe(sk,MODE);
   // Los minibuses no tienen tasa de caída histórica medida: van en 0, así que
   // su curva solo refleja recuperaciones. Se avisa en la nota de la sección.
-  const caida={mina:0.88,plan:0.30,syb:0.35,msyb:0,mauto:0,msprin:0,psprin:0},
-        perman={mina:4,plan:6,syb:4,msyb:0,mauto:0,msprin:0,psprin:0};
+  const caida={mina:0.88,plan:0.30,syb:0.35},perman={mina:4,plan:6,syb:4};
+  Object.keys(MBCONTRATO).forEach(k=>{const c=mbTasa(k);
+    caida[k]=c.tasa; perman[k]=c.perm;});
   const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]);
   const ev=sk=>events[sk]||[];
   const ed=e=>new Date(e.d+'T00:00:00');
