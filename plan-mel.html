@@ -217,21 +217,22 @@
   </header>
 
   <div class="modebar">
-    <span class="modelbl">Flota objetivo según:</span>
+    <span class="modelbl">Vista:</span>
     <button class="btn modebtn active" data-m="viggo" onclick="__setMode('viggo')">Viggo</button>
     <button class="btn modebtn" data-m="bhp" onclick="__setMode('bhp')">BHP</button>
-    <span class="modehint">BHP: Mina 34 · Planta 32 · Sube y Baja 52</span>
+    <button class="btn modebtn" data-m="minibus" onclick="__setMode('minibus')">Minibuses</button>
+    <span class="modehint" id="modeHint"></span>
   </div>
 
   <section>
     <div class="kpis">
       <div class="kpi"><div class="stripe s-crit"></div>
-        <div class="cap">Buses detenidos (F/S)</div>
+        <div class="cap" id="capDet">Buses detenidos (F/S)</div>
         <div class="big tnum" id="kpiDetBig">20<span class="u"> buses</span></div>
         <div class="foot" id="kpiDetFoot">SyB 3 · Mina 11 · Planta 6</div>
       </div>
       <div class="kpi"><div class="stripe s-warn"></div>
-        <div class="cap">Disponibilidad global buses</div>
+        <div class="cap" id="capDisp">Disponibilidad global buses</div>
         <div class="big tnum" id="kpiDispBig">83<span class="u">%</span></div>
         <div class="foot" id="kpiDispFoot">operativos vs. asignados</div>
       </div>
@@ -249,7 +250,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">01</span><h2>Disponibilidad de buses por servicio</h2>
+    <div class="sec-h"><span class="n">01</span><h2 id="tit01">Disponibilidad de buses por servicio</h2>
       <span class="hint">Operativos vs. flota asignada al servicio</span></div>
     <div class="svc" id="svc"></div>
     <div class="note" id="notaBase"></div>
@@ -268,7 +269,7 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Proyección de flota operativa por contrato</h3>
       <div id="projChart"></div>
       <div class="legend" style="margin-top:4px">
-        <span style="color:var(--faint)">Eje Y = buses operativos · punteada = objetivo op. · tope = flota asignada · la curva incorpora la caída histórica</span>
+        <span style="color:var(--faint)"><span id="legProj"></span></span>
       </div>
     </div>
     <div class="scard" style="margin-top:14px">
@@ -345,7 +346,7 @@
   </section>
 
   <section>
-    <div class="sec-h"><span class="n">07</span><h2>Detalle de buses detenidos (F/S Report)</h2>
+    <div class="sec-h"><span class="n">07</span><h2 id="tit07">Detalle de buses detenidos</h2>
       <span class="hint"><span id="nDetHint">·</span> buses · busca por interno o filtra por ubicación, decisión o taller</span></div>
     <div class="note" style="margin-bottom:12px">Los <b><span id="nDetTot2">20</span> buses F/S</b> (Mina <span id="nDetMina2">11</span> · Planta <span id="nDetPlan2">6</span> · Sube y Baja <span id="nDetSyb2">3</span>), todos evaluados por Viggo.</div>
     <div class="filters">
@@ -382,11 +383,18 @@ const TRIP=1785000, TRIP_NET=1500000;
 const fmt=n=>'$'+n.toLocaleString('es-CL');
 
 // Contratos. Los números de flota salen de MAESTRO / REPORTUS / OBJ / DETR (fuente única, más abajo).
-const svc=[
+const svcBus=[
   {key:'syb', name:'Sube y Baja', loc:'MEL Sube y Baja'},
   {key:'mina',name:'Mina',        loc:'Mel Intermina'},
   {key:'plan',name:'Planta',      loc:'Mel Interfaena'},
 ];
+// Minibuses: los grupos son los de "Usada en" del Report. sync.py los genera.
+const MBASE={mauto:3,msprin:3,psprin:4};
+const SVCMB=[{"key": "mauto", "name": "Mina Autonomía", "loc": "Report · Mina Autonomía"}, {"key": "msprin", "name": "Mina Sprinter", "loc": "Report · Mina Sprinter"}, {"key": "psprin", "name": "Planta Sprinter", "loc": "Report · Planta Sprinter"}];
+// Servicios del modo activo.
+const esMB=()=>MODE==='minibus';
+const uni=()=>esMB()?'minibuses':'buses';        // unidad del modo activo
+const svcDe=()=>esMB()?SVCMB:svcBus;
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
@@ -424,14 +432,19 @@ const det=[
  {i:'4954',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'',marca:'Mercedes Benz',modelo:'O 500 RS 1936',sis:'',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
  {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-15',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Transmisión',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
  {i:'6314',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'9601',s:'mauto',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-20',marca:'Mercedes Benz',modelo:'Sprinter 517+ CDI',sis:'',lg:0,fa:0,ord:null,est:'Espera de repuestos',q:'',t:'Detenida'},
+ {i:'9575',s:'psprin',a35:'mel',report:true,rfs:false,taller:'Kaufmann MEL',dif:'Media',p:2,f:'2026-09-05',marca:'Mercedes Benz',modelo:'Sprinter 517 CDI',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
 ];
-const svcName=k=>({syb:'Sube y Baja',mina:'Mina',plan:'Planta'}[k]);
+const NOMSVC={syb:'Sube y Baja',mina:'Mina',plan:'Planta',
+  mauto:'Mina Autonomía',msprin:'Mina Sprinter',psprin:'Planta Sprinter'};
+const svcName=k=>NOMSVC[k];
 // Versión corta para las fichas por taller, donde el espacio es angosto.
-const svcCorto=k=>({syb:'SyB',mina:'Mina',plan:'Planta'}[k]);
+const svcCorto=k=>({syb:'SyB',mina:'Mina',plan:'Planta',
+  mauto:'M.Autonomía',msprin:'M.Sprinter',psprin:'P.Sprinter'}[k]);
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
 
 // Observaciones (hoja Detenidas)
-const OBS={"4436": "Cardan desmontado por desgaste crucetas, pendiente solicitar grua para bajar a Antofagasta // 14/04 Caja y cardan montados, en proceso instalación de perifericos // Caja presenta desviaciones activacion marchas, revision proveedor // 14/05 Caja reparada quedó con problemas, espera disponibilidad de transmisión // Revision externo BM mantenciones Fabina Baeza, diagnostico reparacion falla en selectora de cambios, se actualiza proyeccion entrega, espera llegada nueva caja reparada para realizar reemplazo// caja reparada llega en mal estado se envia de nuevo  // 23/07 En trabajos de carrocería, parte mecánica terminada// espera lavado interior // Solcitar hora sello MEL // 07/08 por acreditación se solicita certificado de operatividad, requiere ingreso a Scania, se cambia fecha entrega // Retraso ingreso scania, se actualiza proyeccion//En Scania se envia autorizacion por adicionales//3-9-2026 Scania Fuga en cañeria de direccion", "4437": "Cooridnar camma baja cambio kit embrague 30-08 // Actualiza proyeccion, cambio planificaion cam baja por equipo 6320, queda 01-09 // Servicio cama baja 4-09", "4473": "Carter Fisurado, realiza lanceo hasta estacionamiento 2000 espera cama baja.//Evaluado por Scania daño en cigueñal", "5136": "Rotura carter//esperando cama baja", "6266": "Espera asistencia Leo loa, fuga cañeria combustible y RT", "6272": "Coordinar cama baja", "6276": "EN proceso asistencia equipo kaufmann // Fuera d servicio falla compresor", "6277": "inghreso proveedor externo por lavado 26-08 // En proceso MP  // retraso proyeccion bloqueo transmision", "6281": "Rotura carter sector interior mina, espera cooridinacion cama baja // 27/07 Prueba de ruta y corrección de desviaciones // 29/07 Se cambia fecha entrega por retardo en K1 // Retraso proteccion de entrega correctivos identificados sistema neumatico // Espera fecha entrega Kaufmann", "6293": "Falla ramal electrico, cooridnada cama baja 6-8 // en proceso repracion sucursal kaufmann por sistema neumatico//falta portalon//se posterga campaña caja", "6295": "Equipo ingreso sucursal k1 transmision 13-8", "6320": "Cama baja traslado 31-08, cañeria de direccion, cambio carter. Reparacion carroceria", "6324": "Equipo ubicado en CM1, Se realiza asistencia, carter fisurado. Pendiente de cama baja", "6325": "coordinar cama baja, cambiar pulmon y reparacion parachoque trasero", "4828": "20/03 Se debe desmontar motor y enviar a reparación local Antofa // 31/03 En proceso de reparación // Ingreso Scania proceso de certificacion y correctivos // Pendiente ingreso sucursal Scania, actualiza proyeccion // Retraso proyeccion por falla sistema direccion y motor (cañeria de dirección), posterior ingresar a scania certificacion / Retraso entrega sucursal scania // 06/08 se debe reparar cañeria de direccion de manera interna y volver a Scania para finalizar certificacion// cañeria instalada viernes 08 // Agendar hora sello MEL // reagendamienot sello parabrisa trizado, implementacion TPMS, cambio neuamticos", "4830": "Equipo sector laguna seca, panne por tirones espera asistencia", "4842": "26/03 Espera envío de motor a Santiago para trabajo y reposición de caja de cambios // 14/04 Motor en proveedor MasterMotors", "4846": "En evaluacion // Solicitar kit reparo selectora // Retraso atencio por incidente taller // programar cama baja, actualiza propyeccion", "4853": "A la espera de apertura taller MEL, Pendiente de evaluación // Coordinar cama baja por rodamienot empuje desmontado", "4869": "Pendiente evaluación y levantamiento // Cigueñal rayado, proceso desmontaje motor // Se envia motor santiago", "4870": "Pendiente evaluacion estacionamienot 2000 // Falta HH evaluacion. 1-9-2026 evaluacion de ramal electrico por caja", "4872": "Espera ingreso scania// mantenimiento realizado// pendiente detalles carroceria + neumaticos // Proceso correctivos certificacion, posterior ingreso sucucresal scania", "4873": "Agendar ingreso scania", "4879": "se envian culatas para reparacion a Santiago// se esperan culatas hoy 16-02 // 27/03 Culatas entregadas a Antofagasta,pendiente ingreso a Scania  // 14/04 Ingresa a Scania a montaje de culatas//Equipo se encuentra con motor comprometido por estar mucho tiempo al aire libre//1 culata de las reparadas esta en mal estado", "4885": "Perdida aceite ruta mel, km 121. se tarslada cama baja 28-06// 24/07 Daño de motor  espera desmontaje", "4890": "Cooridnar cama baja por pernos cartyados boguee // reponer modulo motor //", "4886": "Perdida de potencia//Catalizador en mal estado", "4915": "Se recepciona repuesto para abordar con mantenimiento preventivo", "4925": "Equipo en evaluacion", "4954": "Mantenimiento preventivo - desviaciones tracktec", "6273": "Equipo detenidos en km 62 ruta minera. Espera evaluacion kaufmann, se traslada cama baja 21-08 // Espera evaluación", "6314": "Calefacción directa"};
+const OBS={"4436": "Cardan desmontado por desgaste crucetas, pendiente solicitar grua para bajar a Antofagasta // 14/04 Caja y cardan montados, en proceso instalación de perifericos // Caja presenta desviaciones activacion marchas, revision proveedor // 14/05 Caja reparada quedó con problemas, espera disponibilidad de transmisión // Revision externo BM mantenciones Fabina Baeza, diagnostico reparacion falla en selectora de cambios, se actualiza proyeccion entrega, espera llegada nueva caja reparada para realizar reemplazo// caja reparada llega en mal estado se envia de nuevo  // 23/07 En trabajos de carrocería, parte mecánica terminada// espera lavado interior // Solcitar hora sello MEL // 07/08 por acreditación se solicita certificado de operatividad, requiere ingreso a Scania, se cambia fecha entrega // Retraso ingreso scania, se actualiza proyeccion//En Scania se envia autorizacion por adicionales//3-9-2026 Scania Fuga en cañeria de direccion", "4437": "Cooridnar camma baja cambio kit embrague 30-08 // Actualiza proyeccion, cambio planificaion cam baja por equipo 6320, queda 01-09 // Servicio cama baja 4-09", "4473": "Carter Fisurado, realiza lanceo hasta estacionamiento 2000 espera cama baja.//Evaluado por Scania daño en cigueñal", "5136": "Rotura carter//esperando cama baja", "6266": "Espera asistencia Leo loa, fuga cañeria combustible y RT", "6272": "Coordinar cama baja", "6276": "EN proceso asistencia equipo kaufmann // Fuera d servicio falla compresor", "6277": "inghreso proveedor externo por lavado 26-08 // En proceso MP  // retraso proyeccion bloqueo transmision", "6281": "Rotura carter sector interior mina, espera cooridinacion cama baja // 27/07 Prueba de ruta y corrección de desviaciones // 29/07 Se cambia fecha entrega por retardo en K1 // Retraso proteccion de entrega correctivos identificados sistema neumatico // Espera fecha entrega Kaufmann", "6293": "Falla ramal electrico, cooridnada cama baja 6-8 // en proceso repracion sucursal kaufmann por sistema neumatico//falta portalon//se posterga campaña caja", "6295": "Equipo ingreso sucursal k1 transmision 13-8", "6320": "Cama baja traslado 31-08, cañeria de direccion, cambio carter. Reparacion carroceria", "6324": "Equipo ubicado en CM1, Se realiza asistencia, carter fisurado. Pendiente de cama baja", "6325": "coordinar cama baja, cambiar pulmon y reparacion parachoque trasero", "4828": "20/03 Se debe desmontar motor y enviar a reparación local Antofa // 31/03 En proceso de reparación // Ingreso Scania proceso de certificacion y correctivos // Pendiente ingreso sucursal Scania, actualiza proyeccion // Retraso proyeccion por falla sistema direccion y motor (cañeria de dirección), posterior ingresar a scania certificacion / Retraso entrega sucursal scania // 06/08 se debe reparar cañeria de direccion de manera interna y volver a Scania para finalizar certificacion// cañeria instalada viernes 08 // Agendar hora sello MEL // reagendamienot sello parabrisa trizado, implementacion TPMS, cambio neuamticos", "4830": "Equipo sector laguna seca, panne por tirones espera asistencia", "4842": "26/03 Espera envío de motor a Santiago para trabajo y reposición de caja de cambios // 14/04 Motor en proveedor MasterMotors", "4846": "En evaluacion // Solicitar kit reparo selectora // Retraso atencio por incidente taller // programar cama baja, actualiza propyeccion", "4853": "A la espera de apertura taller MEL, Pendiente de evaluación // Coordinar cama baja por rodamienot empuje desmontado", "4869": "Pendiente evaluación y levantamiento // Cigueñal rayado, proceso desmontaje motor // Se envia motor santiago", "4870": "Pendiente evaluacion estacionamienot 2000 // Falta HH evaluacion. 1-9-2026 evaluacion de ramal electrico por caja", "4872": "Espera ingreso scania// mantenimiento realizado// pendiente detalles carroceria + neumaticos // Proceso correctivos certificacion, posterior ingreso sucucresal scania", "4873": "Agendar ingreso scania", "4879": "se envian culatas para reparacion a Santiago// se esperan culatas hoy 16-02 // 27/03 Culatas entregadas a Antofagasta,pendiente ingreso a Scania  // 14/04 Ingresa a Scania a montaje de culatas//Equipo se encuentra con motor comprometido por estar mucho tiempo al aire libre//1 culata de las reparadas esta en mal estado", "4885": "Perdida aceite ruta mel, km 121. se tarslada cama baja 28-06// 24/07 Daño de motor  espera desmontaje", "4890": "Cooridnar cama baja por pernos cartyados boguee // reponer modulo motor //", "4886": "Perdida de potencia//Catalizador en mal estado", "4915": "Se recepciona repuesto para abordar con mantenimiento preventivo", "4925": "Equipo en evaluacion", "4954": "Mantenimiento preventivo - desviaciones tracktec", "6273": "Equipo detenidos en km 62 ruta minera. Espera evaluacion kaufmann, se traslada cama baja 21-08 // Espera evaluación", "6314": "Calefacción directa", "9601": "Cotizar kaufmann cambio discos, pastillas, balatas y cardan transmision", "9575": "espera pozo"};
 det.forEach(d=>d.obs=OBS[d.i]||'');
 
 // Auditoría: validar consistencia det <-> OBS
@@ -462,12 +475,17 @@ const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56
 // La hoja Detenidas es la fuente oficial de quién está detenido. Si el Report
 // dice otra cosa (campo 'rfs') es un error del Report y no se le hace caso.
 // El Report solo aporta la flota asignada. En BHP se filtra por pertenencia.
+const esMBsvc=s=>s==='mauto'||s==='msprin'||s==='psprin';
 const enBHP=d=>d.report;
-const fsDe=(sk,mode)=>det.reduce((n,d)=>n+(d.s===sk&&(mode==='viggo'||enBHP(d))?1:0),0);
+const fsDe=(sk,mode)=>det.reduce((n,d)=>n+(d.s===sk&&
+  (mode==='minibus'?esMBsvc(d.s):(mode==='viggo'||enBHP(d)))?1:0),0);
 // Buses que corresponden al modo activo. Toda sección que liste detenidos debe
 // partir de acá para que el filtro Viggo/BHP mueva el reporte completo.
-const visibles=()=>det.filter(d=>MODE==='viggo'||enBHP(d));
-const DETR={syb:0,mina:0,plan:0}; det.forEach(d=>DETR[d.s]++);      // total (modo Viggo)
+const visibles=()=>esMB()
+  ? det.filter(d=>esMBsvc(d.s))
+  : det.filter(d=>!esMBsvc(d.s)&&(MODE==='viggo'||enBHP(d)));
+const DETR={syb:0,mina:0,plan:0,mauto:0,msprin:0,psprin:0};
+det.forEach(d=>DETR[d.s]++);                                        // total por servicio
 const melTaller=t=>t==='Taller MEL'||t==='Kaufmann MEL';            // ¿se atiende en faena MEL (3.5)?
 let MODE='viggo';
 
@@ -478,40 +496,40 @@ const MOV=[{"i": "6293", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f
 
 function renderSvc(){
   let tOper=0,tDen=0;
-  document.getElementById('svc').innerHTML=svc.map(s=>{
-    const k=s.key, o=OBJ[MODE][k], obj=o.obj, meta=o.meta;
-    // Asignado = flota del universo activo (Viggo: maestro; BHP: Report).
-    // Operativos = asignado − F/S de ese mismo universo. El objetivo va aparte.
-    const asig = MODE==='viggo'? MAESTRO[k] : REPORTUS[k];
+  document.getElementById('svc').innerHTML=svcDe().map(s=>{
+    const k=s.key, o=(OBJ[MODE]||{})[k]||{}, obj=o.obj, meta=o.meta;
+    // Asignado = flota del universo activo. Viggo: maestro. BHP y minibuses:
+    // el Report. Operativos = asignado − F/S de ese mismo universo.
+    const asig = esMB()? MBASE[k] : (MODE==='viggo'? MAESTRO[k] : REPORTUS[k]);
     const detShown = fsDe(k,MODE);
     const oper = asig - detShown;
-    // Viggo mide contra la flota asignada: qué proporción de la flota propia
-    // está operando. BHP mide contra el objetivo del contrato: cumplimiento.
-    // En BHP puede pasar del 100% si la flota supera el objetivo; se topa ahí.
-    const den = MODE==='viggo'? asig : obj;
-    const disp=oper/den, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
-    const faltan=Math.max(0,obj-oper); tOper+=oper; tDen+=den;
+    // Viggo y minibuses miden contra la flota asignada: qué parte de la flota
+    // propia opera. BHP mide contra el objetivo: cumplimiento, y puede pasar
+    // del 100% si la flota lo supera, en cuyo caso se topa ahí.
+    const den = (MODE==='bhp'&&obj)? obj : asig;
+    const disp=asig?oper/den:0, c=dispColor(disp), pct=Math.min(100,Math.round(disp*100));
+    const faltan=obj?Math.max(0,obj-oper):0; tOper+=oper; tDen+=den;
     return `<div class="scard">
       <h3>${s.name}<span class="loc">${s.loc}</span></h3>
       <div class="gauge">
         <div class="row"><span class="pct" style="color:var(--${c})">${pct}%</span>
-          <span class="req">${oper} / ${den} buses · ${MODE==='viggo'?(k==='plan'?'meta extensión':'flota asignada'):(oper>obj?`objetivo · +${oper-obj} sobre la meta`:'objetivo')}</span></div>
+          <span class="req">${oper} / ${den} ${esMB()?'minibuses':'buses'} · ${esMB()?'flota asignada':(MODE==='viggo'?(k==='plan'?'meta extensión':'flota asignada'):(oper>obj?`objetivo · +${oper-obj} sobre la meta`:'objetivo'))}</span></div>
         <div class="track"><div class="fill" style="width:${Math.min(100,pct)}%;background:var(--${c})"></div></div>
       </div>
-      <div class="grid4" style="grid-template-columns:repeat(4,1fr)">
-        <div><div class="lbl">Asignado${MODE==='viggo'?(k==='plan'?' (extensión)':' (FLOTA)'):(enReport[k]?' (Report)':' (FLOTA)')}</div><div class="val">${asig}</div></div>
+      <div class="grid4" style="grid-template-columns:repeat(${obj?4:3},1fr)">
+        <div><div class="lbl">Asignado${esMB()?' (Report)':(MODE==='viggo'?(k==='plan'?' (extensión)':' (FLOTA)'):(enReport[k]?' (Report)':' (FLOTA)'))}</div><div class="val">${asig}</div></div>
         <div><div class="lbl">Operativos</div><div class="val" style="color:var(--${c})">${oper}</div></div>
         <div><div class="lbl">Fuera de servicio</div><div class="val" style="color:var(--crit)">${detShown}</div></div>
-        <div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>
+        ${obj?`<div><div class="lbl">${meta?'Necesita / meta':'Objetivo op.'}</div><div class="val" style="color:var(--muted)">${obj}${meta?' / '+meta:''}</div></div>`:''}
       </div>
-      <div class="deficit">${faltan>0
+      ${obj?`<div class="deficit">${faltan>0
         ? `<span class="pill p-crit">Faltan ${faltan}</span> para lo que necesita (${obj})`
-        : `<span class="pill p-good">Cubre lo requerido</span> (${obj})`}${meta?` · meta ${meta}`:''}</div>
+        : `<span class="pill p-good">Cubre lo requerido</span> (${obj})`}${meta?` · meta ${meta}`:''}</div>`:''}
     </div>`;
   }).join('');
   const g=Math.min(100,Math.round(tOper/tDen*100));
   const kd=document.getElementById('kpiDispBig'); if(kd) kd.innerHTML=g+'<span class="u">%</span>';
-  const kf=document.getElementById('kpiDispFoot'); if(kf) kf.textContent=`${tOper} operativos vs. ${tDen} ${MODE==='viggo'?'asignados':'objetivo (BHP)'}`;
+  const kf=document.getElementById('kpiDispFoot'); if(kf) kf.textContent=`${tOper} operativos vs. ${tDen} ${MODE==='bhp'?'objetivo (BHP)':'asignados'}`;
 }
 renderSvc();
 
@@ -521,7 +539,7 @@ renderSvc();
 function renderConcil(){
   const box=document.getElementById('concilBox');
   if(!box) return;
-  if(MODE!=='viggo' || !CONCIL.length){ box.innerHTML=''; return; }
+  if(MODE!=='viggo' || !CONCIL.length){ box.innerHTML=''; return; }   // solo buses en Viggo
   const lin=(txt,val,col,top)=>`<div style="display:flex;justify-content:space-between;gap:8px;margin-top:${top}px">
       <span style="color:var(--muted)">${txt}</span>
       <span class="mono"${col?` style="color:var(--${col})"`:''}>${val}</span></div>`;
@@ -558,12 +576,26 @@ function renderKpis(){
   const cbN=vis.filter(d=>d.a35==='cb').length;
   const set=(id,v)=>{const e=document.getElementById(id); if(e)e.textContent=v;};
   const setHtml=(id,v)=>{const e=document.getElementById(id); if(e)e.innerHTML=v;};
-  setHtml('kpiDetBig', vis.length+'<span class="u"> buses</span>');
+  setHtml('kpiDetBig', vis.length+`<span class="u"> ${uni()}</span>`);
+  set('tit01', `Disponibilidad de ${uni()} por servicio`);
+  set('tit07', `Detalle de ${uni()} detenidos`);
+  set('capDet', esMB()?'Minibuses detenidos (F/S)':'Buses detenidos (F/S)');
+  set('capDisp', `Disponibilidad global ${uni()}`);
+  set('legProj', esMB()
+    ? `Eje Y = minibuses operativos · tope = flota asignada · sin objetivo definido ni caída histórica medida`
+    : `Eje Y = buses operativos · punteada = objetivo op. · tope = flota asignada · la curva incorpora la caída histórica`);
   set('kpiDetFoot', `SyB ${F.syb} · Mina ${F.mina} · Planta ${F.plan}`);
-  setHtml('kpiColaBig', cbN+'<span class="u"> buses</span>');
+  setHtml('kpiColaBig', cbN+`<span class="u"> ${uni()}</span>`);
   set('kpiColaFoot', `Orden 1→${cbN} según plan de bajada`);
-  const b=(o)=>`Mina ${o.mina} · Planta ${o.plan} · SyB ${o.syb}`;
-  setHtml('notaBase', MODE==='viggo'
+  // Resume un objeto de bases con los servicios del modo activo.
+  const b=(o)=>svcDe().map(s=>`${svcCorto(s.key)} ${o[s.key]}`).join(' · ');
+  const hint=document.getElementById('modeHint');
+  if(hint) hint.textContent = esMB()
+    ? 'Minibuses: Sprinter y Autonomía, según el Report'
+    : 'BHP: Mina '+OBJ.bhp.mina.obj+' · Planta '+OBJ.bhp.plan.obj+' · Sube y Baja '+OBJ.bhp.syb.obj;
+  if(esMB()){
+    setHtml('notaBase', `<b>Disponibilidad = operativos / flota asignada.</b> Vista de <b>minibuses</b>: Sprinter y Autonomía. La flota sale del <b>Report</b>, agrupada por su columna «Usada en» (${b(MBASE)}), y no hay objetivo contractual definido para estos grupos. Los <b>fuera de servicio</b> son ${vis.length}, de la hoja Detenidas. Los minibuses no tienen tasa de caída histórica medida, así que su proyección solo refleja recuperaciones.`);
+  } else setHtml('notaBase', MODE==='viggo'
     ? `<b>Disponibilidad = operativos / flota asignada.</b> Mide qué parte de la flota propia está operando. La flota sale de <b>FLOTA</b> (Mina y Sube y Baja) y de <b>Extension planta</b> (Planta), con los ajustes del cuadro: ${b(MAESTRO)}. Los <b>fuera de servicio</b> son ${vis.length} (${b(F)}), de la hoja Detenidas. Solo buses.`
     : `<b>Disponibilidad = operativos / objetivo.</b> Mide cumplimiento del contrato, así que puede pasar del 100% y se topa ahí. La flota es la del <b>Report</b> (${b(REPORTUS)}) y el objetivo ${b({mina:OBJ.bhp.mina.obj,plan:OBJ.bhp.plan.obj,syb:OBJ.bhp.syb.obj})}. Los <b>fuera de servicio</b> son ${vis.length} (${b(F)}), de la hoja Detenidas. Solo buses.`);
   set('nDetTot',vis.length); set('nDetMina',F.mina); set('nDetPlan',F.plan); set('nDetSyb',F.syb);
@@ -571,7 +603,7 @@ function renderKpis(){
   set('nColaNote',cbN);
   set('nDetHint', vis.length);
   const sinF=vis.filter(d=>!d.f);
-  set('notaFechas', `En esta versión ${vis.length-sinF.length} de los ${vis.length} buses detenidos tienen fecha`
+  set('notaFechas', `En esta versión ${vis.length-sinF.length} de los ${vis.length} ${uni()} detenidos tienen fecha`
     + (sinF.length? ` (sin fecha: ${sinF.map(d=>d.i).join(', ')}).` : '.'));
 }
 renderKpis();
@@ -580,9 +612,10 @@ renderConcil();
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
   const START=new Date('2026-09-07T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
-  const reqop=sk=>OBJ[MODE][sk].obj;
-  const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0'};
-  const gOrder=['syb','mina','plan'];
+  const reqop=sk=>((OBJ[MODE]||{})[sk]||{}).obj||0;
+  const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0',
+    mauto:'#B5651D',msprin:'#2B6CB0',psprin:'#2E7D5B'};
+  const gOrder=()=>svcDe().map(s=>s.key);
   // Unidades detenidas del modo activo: se recalcula en cada dibujado para que
   // el filtro Viggo/BHP también mueva la curva y el Gantt por bus.
   // 'leaves' = sale de contrato (no reingresa por su fecha de entrega).
@@ -598,9 +631,12 @@ renderConcil();
   // retirada). Si más adelante se decide que sí, poblar 'events' desde MOV.
   const events={mina:[],plan:[],syb:[]};
   // flota base por modo: Viggo=maestro, BHP=Report. operativa base = flota − F/S actuales
-  const baseAsig=sk=>MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk];
+  const baseAsig=sk=>esMB()?MBASE[sk]:(MODE==='viggo'?MAESTRO[sk]:REPORTUS[sk]);
   const baseOper=sk=>baseAsig(sk)-fsDe(sk,MODE);
-  const caida={mina:0.88,plan:0.30,syb:0.35}, perman={mina:4,plan:6,syb:4};
+  // Los minibuses no tienen tasa de caída histórica medida: van en 0, así que
+  // su curva solo refleja recuperaciones. Se avisa en la nota de la sección.
+  const caida={mina:0.88,plan:0.30,syb:0.35,mauto:0,msprin:0,psprin:0},
+        perman={mina:4,plan:6,syb:4,mauto:0,msprin:0,psprin:0};
   const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]);
   const ev=sk=>events[sk]||[];
   const ed=e=>new Date(e.d+'T00:00:00');
@@ -621,14 +657,16 @@ renderConcil();
     const HV=[];
     function drawC(sk){
       const TG=reqop(sk);
-      const cap=t=>MODE==='viggo'?asigAt(sk,t):reqop(sk);   // techo: Viggo=asignado; BHP=objetivo
-      let YMAX=TG; for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);YMAX=Math.max(YMAX,cap(t));}
+      // Techo: la flota asignada. Solo BHP lo mide contra el objetivo.
+      const cap=t=>MODE==='bhp'?reqop(sk):asigAt(sk,t);
+      let YMAX=TG||1; for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);YMAX=Math.max(YMAX,cap(t));}
       const yv=n=>cpadT+(1-Math.min(n,YMAX)/YMAX)*cyH;   // recorta al tope si supera
       let s=`<svg viewBox="0 0 ${W} ${cH}" width="100%" style="min-width:${W}px;font-family:Inter">`;
-      const ytk=TG<YMAX?[[0,'0'],[TG,'obj '+TG],[YMAX,'asig '+YMAX]]:[[0,'0'],[YMAX,'obj '+YMAX]];
+      const ytk=!TG?[[0,'0'],[YMAX,'asig '+YMAX]]
+        :TG<YMAX?[[0,'0'],[TG,'obj '+TG],[YMAX,'asig '+YMAX]]:[[0,'0'],[YMAX,'obj '+YMAX]];
       ytk.forEach(([n,lb])=>{const y=yv(n);s+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--line)"/><text x="${padL-6}" y="${y+3}" text-anchor="end" font-size="9.5" fill="var(--muted)">${lb}</text>`;});
       s+=ticks(cpadT,cH-cpadB,cH-cpadB+11);
-      const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".85"/>`;
+      if(TG){const yt=yv(TG); s+=`<line x1="${padL}" y1="${yt}" x2="${W-padR}" y2="${yt}" stroke="${col[sk]}" stroke-dasharray="5 4" opacity=".85"/>`;}
       let asigL='';for(let k=0;k<=days;k++){const t=new Date(START.getTime()+k*DAY);asigL+=`${xOf(t).toFixed(1)},${yv(cap(t)).toFixed(1)} `;}
       s+=`<polyline points="${asigL}" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>`;
       let line='',area=`${xOf(START).toFixed(1)},${yv(0).toFixed(1)} `; const opArr=[];
@@ -645,9 +683,9 @@ renderConcil();
       s+=`<line class="hvl" x1="0" y1="${cpadT}" x2="0" y2="${cH-cpadB}" stroke="${col[sk]}" stroke-width="1" opacity=".7" style="display:none"/><circle class="hvd" r="4.5" fill="${col[sk]}" stroke="#fff" stroke-width="1.5" style="display:none"/></svg>`;
       const opNow=operAt(sk,START,units),aNow=cap(START),aEnd=cap(EN);
       const idx=HV.length; HV.push({YMAX,opArr,color:col[sk]});
-      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.min(100,Math.round(opNow/aNow*100))}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.min(100,Math.round(opEnd/aEnd*100))}%) · objetivo op. <b>${TG}</b></span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
+      return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin:4px 2px 2px"><span style="font-family:'Barlow Semi Condensed',sans-serif;font-size:16px;font-weight:700;color:${col[sk]}">${svcName(sk)}</span><span style="font-size:11.5px;color:var(--muted)">hoy <b>${Math.round(opNow)}/${aNow}</b> (${Math.min(100,Math.round(opNow/aNow*100))}%) → techo <b>${Math.round(opEnd)}/${aEnd}</b> (${Math.min(100,Math.round(opEnd/aEnd*100))}%)${TG?` · objetivo op. <b>${TG}</b>`:''}</span></div><div class="cwrap" data-i="${idx}" style="overflow-x:auto;position:relative">${s}<div class="pptt"></div></div></div>`;
     }
-    document.getElementById('projChart').innerHTML=gOrder.map(drawC).join('');
+    document.getElementById('projChart').innerHTML=gOrder().map(drawC).join('');
     document.querySelectorAll('#projChart .cwrap').forEach(w=>{
       const m=HV[+w.dataset.i], svg=w.querySelector('svg'), tip=w.querySelector('.pptt');
       const hvl=svg.querySelector('.hvl'), hvd=svg.querySelector('.hvd'), xWl=W-padL-padR;
@@ -666,7 +704,7 @@ renderConcil();
     });
     // --- gantt ---
     const endX=W-padR; let y=6,body='';
-    gOrder.forEach(sk=>{
+    gOrder().forEach(sk=>{
       body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
       units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
         const lv=u.leaves?new Date(u.leaves+'T00:00:00'):null;
@@ -727,7 +765,9 @@ faUnits.forEach(d=>{ if(!(d.i in state)) state[d.i]=base[d.i]; });
 function renderCB(){
   // La cola se acota al modo activo; 'state' sigue indexado por todos los
   // internos para no perder los toggles al alternar el filtro.
-  const cola=faUnits.filter(d=>MODE==='viggo'||enBHP(d));
+  // La cola se arma desde el universo del modo, no solo de los buses.
+  const vis=visibles();
+  const cola=faUnits.filter(d=>vis.includes(d));
   document.getElementById('cbTable').innerHTML=cola.map(d=>{
     const dest=state[d.i];
     const tg=`<span class="toggle" onclick="toggle('${d.i}')">
@@ -838,7 +878,7 @@ function renderDet(){
      <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td>${difCell}</td>
      <td class="num">${d.f||'—'}</td><td style="white-space:normal;min-width:220px;font-size:12px;color:var(--muted)">${d.obs||'—'}</td></tr>`;
   }).join('') || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
-  document.getElementById('detCount').textContent=`${rows.length} de ${visibles().length} buses`;
+  document.getElementById('detCount').textContent=`${rows.length} de ${visibles().length} ${uni()}`;
 }
 [fUbic,fA35,fTaller].forEach(el=>el.addEventListener('change',renderDet));
 document.getElementById('fClr').addEventListener('click',()=>{fUbic.value='';fA35.value='';fTaller.value='';fInt.value='';renderDet();});
