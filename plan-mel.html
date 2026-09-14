@@ -180,7 +180,11 @@
   .estrow:last-child{border-bottom:0}
   .estrow .ei{font-family:"IBM Plex Mono",monospace;font-weight:700}
   .estrow .ei .sv{font-weight:500;color:var(--muted)}
-  .estrow .epill{margin-left:auto;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+  .estrow .epill{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+  .estrow .ec{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap}
+  .estrow .ec.na{color:var(--faint);font-weight:500}
+  .thc{display:flex;align-items:baseline;gap:6px;margin:-4px 0 9px;font-size:12px;color:var(--muted)}
+  .thc b{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--ink)}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
   @media(max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
   @media print{
@@ -846,9 +850,16 @@ function renderTallerEstado(){
     const rows=arr.map(d=>{const [cf,cb]=EC[estColor(d.est)];
       // Sin el número de cola: el estado de al lado ya dice "Esperando cama
       // baja", y el orden de bajada se ve en la sección de costo cama baja.
-      return `<div class="estrow"><span class="ei">${d.i}<span class="sv">/${svcCorto(d.s)}${d.sis?'/'+d.sis:''}</span></span><span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
+      return `<div class="estrow"><span class="ei">${d.i}<span class="sv">/${svcCorto(d.s)}${d.sis?'/'+d.sis:''}</span></span>`
+        + `<span class="ec${d.costo?'':' na'}">${d.costo?fmtM(d.costo):'s/c'}</span>`
+        + `<span class="epill" style="background:${cb};color:${cf}">${d.est}</span></div>`;
     }).join('');
-    return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${rows}</div>`;
+    // Cuánto se va a pagar en este taller, y si hay equipos sin valorizar.
+    const conC=arr.filter(d=>d.costo), tot=conC.reduce((a,d)=>a+d.costo,0);
+    const cab=conC.length
+      ? `<div class="thc">a pagar <b>${fmtMM(tot)}</b>${conC.length<arr.length?` · ${arr.length-conC.length} sin costo`:''}</div>`
+      : `<div class="thc">sin costos cargados</div>`;
+    return `<div class="scard"><div class="th">${t}${inMel?' <span class="cbadge">3.5</span>':''}<span class="tn">${arr.length}</span></div>${cab}${rows}</div>`;
   }).join('');
 }
 renderTallerEstado();
