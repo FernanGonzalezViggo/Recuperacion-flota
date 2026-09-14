@@ -63,7 +63,7 @@
   .sec-h .n{font-family:"IBM Plex Mono",monospace;color:var(--accent);font-size:13px}
   .sec-h .hint{color:var(--faint);font-size:12.5px;margin-left:auto}
 
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
   .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;
     box-shadow:var(--shadow);position:relative;overflow:hidden}
   .kpi .cap{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -182,7 +182,7 @@
   .estrow .ei .sv{font-weight:500;color:var(--muted)}
   .estrow .epill{margin-left:auto;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
   footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
-  @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
+  @media(max-width:860px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.svc,.split3{grid-template-columns:1fr}.cb{grid-template-columns:1fr}}
   @media print{
     @page{size:A4 portrait;margin:11mm}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -245,6 +245,11 @@
         <div class="cap">Costo cama baja</div>
         <div class="big tnum" id="kpiCB">$12,5<span class="u">MM</span></div>
         <div class="foot" id="kpiCBfoot">7 viajes × $1.785.000 (c/IVA)</div>
+      </div>
+      <div class="kpi"><div class="stripe s-crit"></div>
+        <div class="cap" id="capRep">Costo de reparación</div>
+        <div class="big tnum" id="kpiRep">·</div>
+        <div class="foot" id="kpiRepFoot"></div>
       </div>
     </div>
   </section>
@@ -363,7 +368,7 @@
     </div>
     <div class="tblwrap">
       <table>
-        <thead><tr><th>Interno</th><th>Marca</th><th>Modelo</th><th>Servicio</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>F. entrega</th><th>Observación</th></tr></thead>
+        <thead><tr><th>Interno</th><th>Marca</th><th>Modelo</th><th>Servicio</th><th>Ubicación</th><th>Atención 3.5</th><th>Taller destino</th><th>Dif.</th><th>F. entrega</th><th>Costo rep.</th><th>Observación</th></tr></thead>
         <tbody id="detTable"></tbody>
       </table>
     </div>
@@ -405,47 +410,50 @@ const mbTasa=sk=>{const c=MBCAIDA[MBCONTRATO[sk]]; if(!c) return {tasa:0,perm:0}
 const esMB=()=>MODE==='minibus';
 const uni=()=>esMB()?'minibuses':'buses';        // unidad del modo activo
 const uniN=n=>n===1?(esMB()?'minibús':'bus'):uni();   // concuerda con el número
+// Dinero: millones con un decimal para totales, miles para cifras por bus.
+const fmtMM=n=>'$'+(n/1e6).toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1})+' MM';
+const fmtM=n=>'$'+Math.round(n).toLocaleString('es-CL');
 const svcDe=()=>esMB()?SVCMB:svcBus;
 
 // a35: 'cb'=bajar cama baja, 'mel'=atender 3.5 (Si), 'ant'=ya en Antofagasta (sin acción de bajada)
 // atFaena: true si Ubicación = MEL ANTOFA (físicamente en faena, decisión editable)
 // Set del REPORT — f=fecha entrega · est=estatus · q=odometro · t=larga data (permite MOV overlaps).
 const det=[
- {i:'4436',s:'mina',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-17',marca:'Scania',modelo:'K360 IB 4X2',sis:'Transmisión',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4472',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Dirección',lg:0,fa:0,ord:null,est:'Espera atencion',q:'',t:'Detenida'},
- {i:'4473',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'5136',s:'mina',a35:'cb',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',lg:0,fa:0,ord:4,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'5137',s:'mina',a35:'ant',report:true,rfs:false,taller:'Maqdrill',dif:'Media',p:2,f:'2026-09-16',marca:'Scania',modelo:'K410C B4X2NB',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'5138',s:'mina',a35:'cb',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',lg:0,fa:0,ord:6,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'6272',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-28',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Frenos',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'6276',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Sist. Neumático',lg:0,fa:0,ord:null,est:'Esperando ingreso',q:'',t:'Detenida'},
- {i:'6277',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-15',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6281',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K1',dif:'Media',p:2,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Motor',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6293',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-16',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Sist. Neumático',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6324',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',lg:0,fa:0,ord:1,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'6325',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-14',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
- {i:'4828',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-16',marca:'Scania',modelo:'K310',sis:'Motor',lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
- {i:'4842',s:'plan',a35:'ant',report:false,rfs:false,taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K310',sis:'Motor',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4846',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-21',marca:'Scania',modelo:'K310',sis:'Transmisión',lg:0,fa:0,ord:2,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4869',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',lg:0,fa:0,ord:null,est:'Detenida hasta 2027',q:'',t:'Detenida'},
- {i:'4870',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-25',marca:'Scania',modelo:'K360 IB 4X2',sis:'Transmisión',lg:0,fa:0,ord:7,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4872',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-24',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4873',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'Certificacion',q:'',t:'Detenida'},
- {i:'4879',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4885',s:'plan',a35:'ant',report:false,rfs:false,taller:'Washtruck',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4890',s:'plan',a35:'cb',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Suspensión',lg:0,fa:0,ord:3,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4875',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'Media',p:2,f:'2026-09-14',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4886',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'Media',p:2,f:'2026-09-16',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'4925',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500 RS',sis:'Eléctrico',lg:0,fa:0,ord:null,est:'Esperando repuesto',q:'',t:'Detenida'},
- {i:'4931',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500 RS',sis:'Carrocería',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4954',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O 500 RS 1936',sis:'Carrocería',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6267',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Neumáticos',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Transmisión',lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'6299',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Carrocería',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6301',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6312',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'6318',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Carrocería',lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
- {i:'4901',s:'psprin',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-15',marca:'Mercedes Benz',modelo:'Sprinter 515 CDI',sis:'Mantenimiento',lg:0,fa:0,ord:null,est:'Espera atencion',q:'',t:'Detenida'},
+ {i:'4436',s:'mina',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-17',marca:'Scania',modelo:'K360 IB 4X2',sis:'Transmisión',costo:700000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4472',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Dirección',costo:null,lg:0,fa:0,ord:null,est:'Espera atencion',q:'',t:'Detenida'},
+ {i:'4473',s:'mina',a35:'ant',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:20000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'5136',s:'mina',a35:'cb',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:2500000,lg:0,fa:0,ord:4,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'5137',s:'mina',a35:'ant',report:true,rfs:false,taller:'Maqdrill',dif:'Media',p:2,f:'2026-09-16',marca:'Scania',modelo:'K410C B4X2NB',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'5138',s:'mina',a35:'cb',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:2500000,lg:0,fa:0,ord:6,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'6272',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-28',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Frenos',costo:2000000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'6276',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Sist. Neumático',costo:2500000,lg:0,fa:0,ord:null,est:'Esperando ingreso',q:'',t:'Detenida'},
+ {i:'6277',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-15',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:300000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6281',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K1',dif:'Media',p:2,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Motor',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6293',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K6',dif:'Alta',p:3,f:'2026-09-16',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Sist. Neumático',costo:600000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6324',s:'mina',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:25000000,lg:0,fa:0,ord:1,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'6325',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-14',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:1500000,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
+ {i:'4828',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Baja',p:1,f:'2026-09-16',marca:'Scania',modelo:'K310',sis:'Motor',costo:600000,lg:0,fa:0,ord:null,est:'Agendar sello',q:'',t:'Detenida'},
+ {i:'4842',s:'plan',a35:'ant',report:false,rfs:false,taller:'Fabian Baeza',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K310',sis:'Motor',costo:29000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4846',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-21',marca:'Scania',modelo:'K310',sis:'Transmisión',costo:1000000,lg:0,fa:0,ord:2,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'4869',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',costo:25000000,lg:0,fa:0,ord:null,est:'Detenida hasta 2027',q:'',t:'Detenida'},
+ {i:'4870',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller MEL',dif:'Alta',p:3,f:'2026-09-25',marca:'Scania',modelo:'K360 IB 4X2',sis:'Transmisión',costo:1500000,lg:0,fa:0,ord:7,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4872',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-24',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:3000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4873',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:8000000,lg:0,fa:0,ord:null,est:'Certificacion',q:'',t:'Detenida'},
+ {i:'4879',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:5000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4885',s:'plan',a35:'ant',report:false,rfs:false,taller:'Washtruck',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',costo:30000000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4890',s:'plan',a35:'cb',report:true,rfs:true,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Suspensión',costo:1500000,lg:0,fa:0,ord:3,est:'Esperando cama baja',q:'',t:'Detenida'},
+ {i:'4875',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'Media',p:2,f:'2026-09-14',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4886',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'Media',p:2,f:'2026-09-16',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',costo:6000000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'4925',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500 RS',sis:'Eléctrico',costo:1000000,lg:0,fa:0,ord:null,est:'Esperando repuesto',q:'',t:'Detenida'},
+ {i:'4931',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500 RS',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4954',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O 500 RS 1936',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6267',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Neumáticos',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Transmisión',costo:800000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
+ {i:'6299',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6301',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6312',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'6318',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Baja',p:1,f:'2026-09-14',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4901',s:'psprin',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-15',marca:'Mercedes Benz',modelo:'Sprinter 515 CDI',sis:'Mantenimiento',costo:500000,lg:0,fa:0,ord:null,est:'Espera atencion',q:'',t:'Detenida'},
 ];
 const NOMSVC={syb:'Sube y Baja',mina:'Mina',plan:'Planta',
   msyb:'Sube y Baja',mauto:'Mina Autonomía',
@@ -596,6 +604,12 @@ function renderKpis(){
   set('tit07', `Detalle de ${uni()} detenidos`);
   set('capDet', esMB()?'Minibuses detenidos (F/S)':'Buses detenidos (F/S)');
   set('capDisp', `Disponibilidad global ${uni()}`);
+  // Costo de reparación de lo que está detenido en el modo activo.
+  const conC=vis.filter(d=>d.costo), totC=conC.reduce((a,d)=>a+d.costo,0);
+  setHtml('kpiRep', conC.length? fmtMM(totC).replace(' MM','<span class="u"> MM</span>') : '—');
+  set('kpiRepFoot', conC.length
+    ? `${conC.length} de ${vis.length} con costo estimado`
+    : 'sin costos cargados');
   set('legProj', esMB()
     ? `Eje Y = minibuses operativos · tope = flota asignada · la curva incorpora la caída histórica · sin objetivo contractual definido`
     : `Eje Y = buses operativos · punteada = objetivo op. · tope = flota asignada · la curva incorpora la caída histórica`);
@@ -846,11 +860,11 @@ function renderCarga(){
   const cargaMap={};
   // Los talleres de faena se muestran aunque queden en cero: sirve para ver
   // capacidad ociosa y asignarles trabajo.
-  talleres.filter(melTaller).forEach(t=>cargaMap[t]={A:0,M:0,B:0,n:0,carga:0});
+  talleres.filter(melTaller).forEach(t=>cargaMap[t]={A:0,M:0,B:0,n:0,carga:0,costo:0});
   vis.filter(d=>d.p>0).forEach(d=>{
-    const m=cargaMap[d.taller]||(cargaMap[d.taller]={A:0,M:0,B:0,n:0,carga:0});
+    const m=cargaMap[d.taller]||(cargaMap[d.taller]={A:0,M:0,B:0,n:0,carga:0,costo:0});
     if(d.dif==='Alta')m.A++; else if(d.dif==='Media')m.M++; else m.B++;
-    m.n++; m.carga+=d.p;
+    m.n++; m.carga+=d.p; m.costo+=d.costo||0;
   });
   const cEntries=Object.entries(cargaMap).sort((a,b)=>b[1].carga-a[1].carga);
   const cMax=Math.max(1,...cEntries.map(e=>e[1].carga));
@@ -863,7 +877,7 @@ function renderCarga(){
     return `<div class="cargarow">
       <span class="ct">${t}${melTaller(t)?' <span class="cbadge">3.5</span>':''}</span>
       <div class="stack">${seg(m.A*3,'var(--crit)')}${seg(m.M*2,'var(--warn)')}${seg(m.B*1,'var(--good)')}</div>
-      <span class="cend"><b>${m.carga}</b> <span class="cn">${m.n?m.n+' eq · '+parts.join(' '):'sin carga'}</span></span>
+      <span class="cend"><b>${m.carga}</b> <span class="cn">${m.n?m.n+' eq · '+parts.join(' ')+(m.costo?' · '+fmtMM(m.costo):''):'sin carga'}</span></span>
     </div>`;
   }).join('');
   document.getElementById('pondTot').textContent=pond;
@@ -897,8 +911,9 @@ function renderDet(){
      <td>${d.marca||na}</td><td>${d.modelo||na}</td><td>${svcName(d.s)}</td>
      <td>${ubic}</td>
      <td>${a35tag[d.a35]}</td><td>${d.taller}</td><td>${difCell}</td>
-     <td class="num">${d.f||'—'}</td><td style="white-space:normal;min-width:220px;font-size:12px;color:var(--muted)">${d.obs||'—'}</td></tr>`;
-  }).join('') || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
+     <td class="num">${d.f||'—'}</td><td class="num">${d.costo?fmtM(d.costo):na}</td>
+     <td style="white-space:normal;min-width:220px;font-size:12px;color:var(--muted)">${d.obs||'—'}</td></tr>`;
+  }).join('') || `<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:20px">Sin equipos para este filtro</td></tr>`;
   document.getElementById('detCount').textContent=`${rows.length} de ${visibles().length} ${uniN(visibles().length)}`;
 }
 [fUbic,fA35,fTaller].forEach(el=>el.addEventListener('change',renderDet));
