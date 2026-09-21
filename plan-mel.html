@@ -452,7 +452,7 @@ const det=[
  {i:'6298',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Transmisión',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'6311',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Transmisión',costo:null,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
  {i:'6313',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-21',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
- {i:'9601',s:'mauto',a35:'ant',report:true,rfs:false,taller:'Taller Kaufmann',dif:'Media',p:2,f:'2026-09-25',marca:'Mercedes Benz',modelo:'Sprinter 517+ CDI',sis:'Eléctrico',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
+ {i:'9601',s:'mauto',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-25',marca:'Mercedes Benz',modelo:'Sprinter 517+ CDI',sis:'Eléctrico',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'4901',s:'psprin',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-22',marca:'Mercedes Benz',modelo:'Sprinter 515 CDI',sis:'Mantenimiento',costo:500000,lg:0,fa:0,ord:null,est:'Espera atencion',q:'',t:'Detenida'},
 ];
 const NOMSVC={syb:'Sube y Baja',mina:'Mina',plan:'Planta',
@@ -787,7 +787,7 @@ renderDestino();
 
 // Talleres de atención. 'talleres' lo genera sync.py desde los datos, con los
 // de faena siempre presentes aunque queden en cero (sección 06).
-const talleres=["Kaufmann MEL", "Taller MEL", "Fabian Baeza", "Kaufmann K6", "Kaufmann Viggo", "Scania", "Taller Antofagasta", "Taller Kaufmann", "Washtruck"];
+const talleres=["Kaufmann MEL", "Taller MEL", "Fabian Baeza", "Kaufmann K6", "Kaufmann Viggo", "Scania", "Taller Antofagasta", "Washtruck"];
 const svcOrder=['syb','mina','plan'];
 
 // Cama baja: unidades en la cola de bajada (a35=cb), ordenadas por 'ord'. Toggle a 3.5 para simular.
