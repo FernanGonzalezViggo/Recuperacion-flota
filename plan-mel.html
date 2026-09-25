@@ -214,7 +214,7 @@
       <div class="sub">Priorización de atención en taller de faena (3.5) vs. bajada a Antofagasta, disponibilidad de flota por servicio y control de costo de cama baja.</div>
     </div>
     <div class="meta">
-      Corte de datos <b id="corteLargo">24 sep 2026</b><br>
+      Corte de datos <b id="corteLargo">25 sep 2026</b><br>
       Fuente: BBDD Flota · Plan de acción MEL<br>
       Decisión de atención <b>definida</b>
     </div>
@@ -285,7 +285,7 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (Gantt)</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Corte <b id="corteCorto">24-sep</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. <span id="notaFechas"></span> El techo lo fija la caída histórica.</div>
+    <div class="note">Corte <b id="corteCorto">25-sep</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. <span id="notaFechas"></span> El techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
 
@@ -378,6 +378,33 @@
     </div>
   </section>
 
+  <section>
+    <div class="sec-h"><span class="n">08</span><h2>Enroque Scania K410 — Mina <span style="color:var(--accent)">⇄</span> Sube y Baja</h2>
+      <span class="hint">Plan paulatino: un ingreso a Mina por cada Scania recuperado</span></div>
+    <div class="note" style="border-left-color:var(--crit);margin-bottom:18px">Los <b>Scania K410 de Mina</b> están presentando roturas de cárter repetidas. La decisión es <b>sacarlos del contrato Mina de forma paulatina</b>: cada K410 que se repara ingresa a <b>Sube y Baja</b>, y su cupo en Mina lo toma un bus de Sube y Baja que haya terminado su <b>campaña de mejora mecánica</b>. El enroque es <b>uno a uno</b> y avanza al ritmo de las reparaciones, no de las campañas.</div>
+    <div class="scard" style="margin-bottom:16px"><div id="enrFlujo"></div></div>
+    <div class="split3" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px" id="enrKpis"></div>
+
+    <div class="sec-h" style="margin-top:26px"><h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:19px;margin:0">Pasos comprometidos</h3>
+      <span class="hint">Cada paso empareja un Scania que sale con el bus que lo reemplaza</span></div>
+    <div id="enrPasos" style="margin-bottom:8px"></div>
+    <div class="note" id="enrPasosNota"></div>
+
+    <div class="sec-h" style="margin-top:26px"><h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:19px;margin:0">Cola de campañas — Sube y Baja → Mina</h3>
+      <span class="hint">Orden de ingreso definido en la hoja «Campañas»</span></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Orden</th><th>Interno</th><th>Implementación</th><th>Avance campaña</th><th>Días restantes</th><th>Dónde se ejecuta</th><th>Estado</th></tr></thead>
+        <tbody id="enrTabla"></tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>Ex Mina — ya implementado</span>
+      <span><i style="background:var(--warn)"></i>Sin implementación de Mina</span>
+      <span style="margin-left:auto">Campaña completa: <b id="enrDias">10</b> días promedio · los días restantes se estiman sobre el % de avance</span>
+    </div>
+  </section>
+
   <!-- Sección "Movimientos de flota" retirada a la espera de definir cómo
        tratar los enroques. Los datos se siguen leyendo de la hoja "Enroque de
        flota" y quedan disponibles en la constante MOV para reponerla. -->
@@ -400,6 +427,13 @@ const svcBus=[
 // Minibuses: los grupos son los de "Usada en" del Report. sync.py los genera.
 const MBASE={msyb:2,mauto:3,msprin:3,psprin:5};
 const SVCMB=[{"key": "msyb", "name": "Sube y Baja", "loc": "FLOTA · MEL Sube y Baja"}, {"key": "mauto", "name": "Mina Autonomía", "loc": "Report · Mina Autonomía"}, {"key": "msprin", "name": "Mina Sprinter", "loc": "Report · Mina Sprinter"}, {"key": "psprin", "name": "Planta Sprinter", "loc": "Report · Planta Sprinter"}];
+// Enroque Scania K410 (sección 08). KSCA = los K410 detenidos hoy en Mina;
+// CAMP = la cola de buses de Sube y Baja con campaña de mejora mecánica.
+// sync.py los genera desde las hojas Detenidas/FLOTA y "Campañas".
+const CORTEISO='2026-09-25';
+const CAMPDIAS=10;
+const KSCA=[{"i": "4472", "f": "2026-09-26", "taller": null, "est": null, "costo": null}, {"i": "5136", "f": "2026-10-16", "taller": "Taller Antofagasta", "est": "Esperando cama baja", "costo": 2500000}, {"i": "5138", "f": "2026-10-16", "taller": "Scania", "est": "Esperando cama baja", "costo": 2500000}, {"i": "4473", "f": "2026-10-30", "taller": "Scania", "est": "En reparacion", "costo": 20000000}, {"i": "6324", "f": "2026-10-30", "taller": "Taller Antofagasta", "est": "Esperando cama baja", "costo": 25000000}];
+const CAMP=[{"i": "6274", "ord": 1, "av": 1.0, "ex": true, "dias": 0, "donde": [], "det": false}, {"i": "6280", "ord": 2, "av": 0.95, "ex": true, "dias": 1, "donde": ["Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6268", "ord": 3, "av": 0.86, "ex": true, "dias": 2, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6270", "ord": 4, "av": 0.86, "ex": true, "dias": 2, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6273", "ord": 5, "av": 0.71, "ex": true, "dias": 3, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": true}, {"i": "6267", "ord": 6, "av": 0.57, "ex": true, "dias": 5, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6297", "ord": 7, "av": 0.9, "ex": false, "dias": 1, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6316", "ord": 8, "av": 0.81, "ex": false, "dias": 2, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6301", "ord": 9, "av": 0.71, "ex": false, "dias": 3, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6309", "ord": 10, "av": 0.52, "ex": false, "dias": 5, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6290", "ord": 11, "av": 0.9, "ex": true, "dias": 1, "donde": ["Kaufmann K1", "Kaufmann K6"], "det": false}];
 // Caída histórica de minibuses, medida por CONTRATO. Cuando un contrato
 // tiene más de un grupo (Mina: Autonomía y Sprinter), la tasa se reparte
 // en proporción a la flota de cada uno para no duplicar la caída.
@@ -424,6 +458,7 @@ const svcDe=()=>esMB()?SVCMB:svcBus;
 // Set del REPORT — f=fecha entrega · est=estatus · q=odometro · t=larga data (permite MOV overlaps).
 const det=[
  {i:'4437',s:'mina',a35:'ant',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Frenos',costo:null,lg:0,fa:0,ord:null,est:'Esperando repuesto',q:'',t:'Detenida'},
+ {i:'4472',s:'mina',a35:'pend',report:true,rfs:false,taller:'',dif:'',p:2,f:'2026-09-26',marca:'Scania',modelo:'K410C B4X2NB',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
  {i:'4473',s:'mina',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:20000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
  {i:'5136',s:'mina',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-10-16',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:2500000,lg:0,fa:0,ord:null,est:'Esperando cama baja',q:'',t:'Detenida'},
  {i:'5138',s:'mina',a35:'cb',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-10-16',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:2500000,lg:0,fa:0,ord:5,est:'Esperando cama baja',q:'',t:'Detenida'},
@@ -431,10 +466,9 @@ const det=[
  {i:'6266',s:'mina',a35:'ant',report:true,rfs:false,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-10-08',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'6271',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'6272',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann Viggo',dif:'Alta',p:3,f:'2026-09-28',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Frenos',costo:2000000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
- {i:'6276',s:'mina',a35:'ant',report:false,rfs:false,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Sist. Neumático',costo:2500000,lg:0,fa:0,ord:null,est:'Esperando ingreso',q:'',t:'Detenida'},
  {i:'6278',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann K6',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Sist. Neumático',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'6279',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-10-30',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Motor',costo:5000000,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
- {i:'6285',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-25',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
+ {i:'6289',s:'mina',a35:'pend',report:true,rfs:false,taller:'',dif:'',p:2,f:'',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'',costo:null,lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
  {i:'6292',s:'mina',a35:'ant',report:true,rfs:true,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-25',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'6324',s:'mina',a35:'cb',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K410C B4X2NB',sis:'Motor',costo:25000000,lg:0,fa:0,ord:4,est:'Esperando cama baja',q:'',t:'Detenida'},
  {i:'4822',s:'plan',a35:'cb',report:true,rfs:true,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-10-02',marca:'Scania',modelo:'K310',sis:'Transmisión',costo:null,lg:0,fa:0,ord:1,est:'Espera de ingreso',q:'',t:'Detenida'},
@@ -446,15 +480,14 @@ const det=[
  {i:'4872',s:'plan',a35:'ant',report:false,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-10-09',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:3000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
  {i:'4873',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:8000000,lg:0,fa:0,ord:null,est:'Certificacion',q:'',t:'Detenida'},
  {i:'4879',s:'plan',a35:'ant',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Mantenimiento',costo:5000000,lg:0,fa:0,ord:null,est:'En reparacion',q:'',t:'Detenida'},
+ {i:'4884',s:'plan',a35:'pend',report:true,rfs:false,taller:'',dif:'',p:2,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Frenos',costo:null,lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
  {i:'4885',s:'plan',a35:'ant',report:false,rfs:false,taller:'Washtruck',dif:'Alta',p:3,f:'2026-10-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',costo:30000000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
  {i:'4890',s:'plan',a35:'cb',report:false,rfs:false,taller:'Scania',dif:'Alta',p:3,f:'2026-09-30',marca:'Scania',modelo:'K360 IB 4X2',sis:'Suspensión',costo:1500000,lg:0,fa:0,ord:2,est:'Esperando cama baja',q:'',t:'Detenida'},
- {i:'4886',s:'syb',a35:'ant',report:true,rfs:false,taller:'Scania',dif:'Media',p:2,f:'2026-09-25',marca:'Scania',modelo:'K360 IB 4X2',sis:'Motor',costo:6000000,lg:0,fa:0,ord:null,est:'En espera de ingreso',q:'',t:'Detenida'},
  {i:'4925',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-30',marca:'Mercedes Benz',modelo:'O500 RS',sis:'Eléctrico',costo:1000000,lg:0,fa:0,ord:null,est:'Esperando repuesto',q:'',t:'Detenida'},
- {i:'4965',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-26',marca:'Mercedes Benz',modelo:'O 500 RS 1936',sis:'Mantenimiento',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
+ {i:'4931',s:'syb',a35:'pend',report:true,rfs:false,taller:'',dif:'',p:2,f:'2026-09-27',marca:'Mercedes Benz',modelo:'O500 RS',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
  {i:'6273',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Transmisión',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
- {i:'6280',s:'syb',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-28',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Eléctrico',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
- {i:'6313',s:'syb',a35:'ant',report:true,rfs:false,taller:'Taller Antofagasta',dif:'Media',p:2,f:'2026-09-24',marca:'Mercedes Benz',modelo:'O500RS 1945 /30',sis:'Carrocería',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
  {i:'9601',s:'mauto',a35:'ant',report:true,rfs:false,taller:'Kaufmann Viggo',dif:'Media',p:2,f:'2026-09-25',marca:'Mercedes Benz',modelo:'Sprinter 517+ CDI',sis:'Eléctrico',costo:null,lg:0,fa:0,ord:null,est:'Espera de ingreso',q:'',t:'Detenida'},
+ {i:'4903',s:'psprin',a35:'pend',report:true,rfs:false,taller:'',dif:'',p:2,f:'',marca:'Mercedes Benz',modelo:'Sprinter 416 CDI',sis:'Frenos',costo:null,lg:0,fa:0,ord:null,est:'',q:'',t:'Detenida'},
 ];
 const NOMSVC={syb:'Sube y Baja',mina:'Mina',plan:'Planta',
   msyb:'Sube y Baja',mauto:'Mina Autonomía',
@@ -466,7 +499,7 @@ const svcCorto=k=>({syb:'SyB',mina:'Mina',plan:'Planta',
 const dispColor=d=>d>=0.9?'good':d>=0.8?'warn':'crit';
 
 // Observaciones (hoja Detenidas)
-const OBS={"4437": "Enviar a Scania // Ingreso sucursal scania 23-09", "4473": "Carter Fisurado, realiza lanceo hasta estacionamiento 2000 espera cama baja.//Evaluado por Scania daño en cigueñal", "5136": "Rotura carter//esperando cama baja", "5138": "Rotura de carter en camino los diques, entrecruce 3160 y cruce movil 10", "6265": "Envio a Maqdril lavado chasis", "6266": "Ingresa 24-09 k1 campañas", "6271": "En proceso//Choque en maqdrill", "6272": "Esperando cama baja/12-9 ingresar a pozo//P&P realizando trabajo // Revision cosigos, reposicion chapa contacto kaufmann // Detales carroceria Maqdril", "6276": "En proceso asistencia equipo kaufmann // Fuera d servicio falla compresor//Esperando cama baja//compresor con problemas", "6278": "Equipo traslado antoafagasta 20-09//estacionamiento antofagasta//k6", "6279": "Traslado cama baja 18-09//estacionado en patio 2", "6285": "En proceso//Cambio de caliper", "6292": "En proceso//k1", "6324": "Equipo ubicado en CM1, Se realiza asistencia, carter fisurado. Pendiente de cama baja", "4822": "rodamiento empuje desmontado, espera de cama baja. equipo en terminal rodoviario", "4828": "20/03 Se debe desmontar motor y enviar a reparación local Antofa // 31/03 En proceso de reparación // Ingreso Scania proceso de certificacion y correctivos // Pendiente ingreso sucursal Scania, actualiza proyeccion // Retraso proyeccion por falla sistema direccion y motor (cañeria de dirección), posterior ingresar a scania certificacion / Retraso entrega sucursal scania // 06/08 se debe reparar cañeria de direccion de manera interna y volver a Scania para finalizar certificacion// cañeria instalada viernes 08 // Agendar hora sello MEL // reagendamienot sello parabrisa trizado, implementacion TPMS, cambio neuamticos//falta RT//permiso de circulacion//Sello//15-9-2026 RT aprobada //Condensador OK//Pendiente radio base y guardian", "4842": "26/03 Espera envío de motor a Santiago para trabajo y reposición de caja de cambios // 14/04 Motor en proveedor MasterMotors", "4846": "En evaluacion // Solicitar kit reparo selectora // Retraso atencio por incidente taller // programar cama baja, actualiza propyeccion // Se realiza reparacion transmision 8torreta), pendiente evaluacion sistema suspensionpara entrega equipo", "4869": "Pendiente evaluación y levantamiento // Cigueñal rayado, proceso desmontaje motor // Se envia motor santiago", "4870": "Pendiente evaluacion estacionamienot 2000 // Falta HH evaluacion. 1-9-2026 evaluacion de ramal electrico por caja", "4872": "Espera ingreso scania// mantenimiento realizado// pendiente detalles carroceria + neumaticos // Proceso correctivos certificacion, posterior ingreso sucursal scania", "4873": "Agendar ingreso scania // Ingreso scania 21-09//maqdrill 24/9", "4879": "se envian culatas para reparacion a Santiago// se esperan culatas hoy 16-02 // 27/03 Culatas entregadas a Antofagasta,pendiente ingreso a Scania  // 14/04 Ingresa a Scania a montaje de culatas//Equipo se encuentra con motor comprometido por estar mucho tiempo al aire libre//1 culata de las reparadas esta en mal estado", "4885": "Perdida aceite ruta mel, km 121. se tarslada cama baja 28-06// 24/07 Daño de motor  espera desmontaje", "4890": "Cooridnar cama baja por pernos cartyados boguee // reponer modulo motor //", "4886": "Perdida de potencia//Catalizador en mal estado//reparar aire acondicionado", "4925": "Equipo en evaluacion", "4965": "En proceso", "6273": "Cooridnadinada grua Mayser, rescate equipo ruta MEL km 62", "6313": "reponer modulo y cpu de ac, espera vb ADC para reparacion // Retraso entrega externo carrceoria 24-09", "9601": "En proceso // instalacion sistema de tiro"};
+const OBS={"4437": "Enviar a Scania // Ingreso sucursal scania 23-09", "4472": "Ingreso scania 25-09", "4473": "Carter Fisurado, realiza lanceo hasta estacionamiento 2000 espera cama baja.//Evaluado por Scania daño en cigueñal", "5136": "Rotura carter//esperando cama baja", "5138": "Rotura de carter en camino los diques, entrecruce 3160 y cruce movil 10", "6265": "Envio a Maqdril lavado chasis", "6266": "Ingresa 24-09 k1 campañas", "6271": "En proceso//Choque en maqdrill", "6272": "Esperando cama baja/12-9 ingresar a pozo//P&P realizando trabajo // Revision cosigos, reposicion chapa contacto kaufmann // Detales carroceria Maqdril", "6278": "Equipo traslado antoafagasta 20-09//estacionamiento antofagasta//k6", "6279": "Traslado cama baja 18-09//estacionado en patio 2", "6292": "En proceso//k1", "6324": "Equipo ubicado en CM1, Se realiza asistencia, carter fisurado. Pendiente de cama baja", "4822": "rodamiento empuje desmontado, espera de cama baja. equipo en terminal rodoviario", "4828": "20/03 Se debe desmontar motor y enviar a reparación local Antofa // 31/03 En proceso de reparación // Ingreso Scania proceso de certificacion y correctivos // Pendiente ingreso sucursal Scania, actualiza proyeccion // Retraso proyeccion por falla sistema direccion y motor (cañeria de dirección), posterior ingresar a scania certificacion / Retraso entrega sucursal scania // 06/08 se debe reparar cañeria de direccion de manera interna y volver a Scania para finalizar certificacion// cañeria instalada viernes 08 // Agendar hora sello MEL // reagendamienot sello parabrisa trizado, implementacion TPMS, cambio neuamticos//falta RT//permiso de circulacion//Sello//15-9-2026 RT aprobada //Condensador OK//Pendiente radio base y guardian", "4842": "26/03 Espera envío de motor a Santiago para trabajo y reposición de caja de cambios // 14/04 Motor en proveedor MasterMotors", "4846": "En evaluacion // Solicitar kit reparo selectora // Retraso atencio por incidente taller // programar cama baja, actualiza propyeccion // Se realiza reparacion transmision (torreta), pendiente evaluacion sistema suspensionpara entrega equipo", "4869": "Pendiente evaluación y levantamiento // Cigueñal rayado, proceso desmontaje motor // Se envia motor santiago", "4870": "Pendiente evaluacion estacionamienot 2000 // Falta HH evaluacion. 1-9-2026 evaluacion de ramal electrico por caja", "4872": "Espera ingreso scania// mantenimiento realizado// pendiente detalles carroceria + neumaticos // Proceso correctivos certificacion, posterior ingreso sucursal scania", "4873": "Agendar ingreso scania // Ingreso scania 21-09//maqdrill 24/9", "4879": "se envian culatas para reparacion a Santiago// se esperan culatas hoy 16-02 // 27/03 Culatas entregadas a Antofagasta,pendiente ingreso a Scania  // 14/04 Ingresa a Scania a montaje de culatas//Equipo se encuentra con motor comprometido por estar mucho tiempo al aire libre//1 culata de las reparadas esta en mal estado", "4884": "traslado antofagasta 25-09", "4885": "Perdida aceite ruta mel, km 121. se tarslada cama baja 28-06// 24/07 Daño de motor  espera desmontaje", "4890": "Cooridnar cama baja por pernos cartyados boguee // reponer modulo motor //", "4925": "Equipo en evaluacion", "4931": "en proceso", "6273": "Cooridnadinada grua Mayser, rescate equipo ruta MEL km 62", "9601": "En proceso // instalacion sistema de tiro", "4903": "Espera cotizacion gestion de repuestos kaufmann"};
 det.forEach(d=>d.obs=OBS[d.i]||'');
 
 // Auditoría: validar consistencia det <-> OBS
@@ -486,11 +519,11 @@ const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{ob
 // Sube y Baja: 56 en el maestro Viggo, 52 en el Report.
 // Sube y Baja no está en la hoja Report (solo trae Mina y Planta), así que su
 // flota sale de FLOTA en los dos modos: 56. Su 52 es el objetivo, no la base.
-const MAESTRO={syb:56,mina:46,plan:37}, REPORTUS={syb:56,mina:36,plan:32};
+const MAESTRO={syb:59,mina:46,plan:37}, REPORTUS={syb:59,mina:36,plan:32};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // Conciliación de flota: de dónde sale la base de cada contrato y qué se le
 // descuenta. La genera sync.py; solo se muestra en la vista Viggo.
-const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 56, "ajustes": [], "final": 56, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 46, "ajustes": [], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy pero salen de Planta a otros contratos el 30/09", "ids": ["4834", "4837"], "signo": 1}, {"motivo": "asignados hoy pero no son titulares de la extensión", "ids": ["4916"], "signo": 1}, {"motivo": "hoy son de Mina", "ids": ["4827", "4882"], "signo": -1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 37, "notas": [{"ids": ["4837", "4916"], "texto": "Cuentan en la base porque están asignados, pero no son titulares de la extensión: si salen, la base baja a 35."}]}];
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 59, "ajustes": [], "final": 59, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 46, "ajustes": [], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy pero salen de Planta a otros contratos el 30/09", "ids": ["4834", "4837"], "signo": 1}, {"motivo": "asignados hoy pero no son titulares de la extensión", "ids": ["4916"], "signo": 1}, {"motivo": "hoy son de Mina", "ids": ["4827", "4882"], "signo": -1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 37, "notas": [{"ids": ["4834", "4837", "4916"], "texto": "Cuentan en la base porque están asignados, pero no son titulares de la extensión: si salen, la base baja a 34."}]}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
@@ -514,7 +547,7 @@ let MODE='viggo';
 // Movimientos de flota (hoja "Enroque de flota"). Su sección está retirada por
 // ahora; se conservan los datos. f = fecha ISO (programado) o null (realizado).
 const CKEY={'Mina':'mina','Planta':'plan','Sube y Baja':'syb'};
-const MOV=[{"i": "6293", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "6291", "t": "enroque", "from": "Mina", "to": "Vertice", "f": null}, {"i": "6287", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "4475", "t": "enroque", "from": "Mina", "to": "Komatsu Sube y Baja", "f": null}, {"i": "4826", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4833", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4834", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4837", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4892", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "6273", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4874", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4886", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4889", "t": "enroque", "from": "Planta", "to": "Planta", "f": null}];
+const MOV=[{"i": "6293", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "6291", "t": "enroque", "from": "Mina", "to": "Vertice", "f": null}, {"i": "6287", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-09-30"}, {"i": "4475", "t": "enroque", "from": "Mina", "to": "Komatsu Sube y Baja", "f": null}, {"i": "4826", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4833", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "4834", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4837", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": "2026-09-30"}, {"i": "4892", "t": "egreso", "from": "Planta", "to": "Sale de contrato", "f": null}, {"i": "6273", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4874", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4886", "t": "enroque", "from": "Sube y Baja", "to": "Planta", "f": "2026-09-30"}, {"i": "4889", "t": "enroque", "from": "Planta", "to": "Planta", "f": null}, {"i": "4471", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4472", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-11-30"}, {"i": "4473", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-12-30"}, {"i": "4474", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "4476", "t": "enroque", "from": "Sin contrato", "to": "Sube y Baja", "f": "2026-10-30"}, {"i": "4477", "t": "enroque", "from": "Sin contrato", "to": "Sube y Baja", "f": "2026-10-30"}, {"i": "4478", "t": "enroque", "from": "Sin contrato", "to": "Sube y Baja", "f": "2026-10-30"}, {"i": "5136", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-10-02"}, {"i": "5137", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-12-30"}, {"i": "5138", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-10-30"}, {"i": "6320", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "6321", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "6324", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": "2026-11-30"}, {"i": "6325", "t": "enroque", "from": "Mina", "to": "Sube y Baja", "f": null}, {"i": "6267", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6268", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6270", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6273", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6274", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6280", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6290", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6297", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6316", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6301", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}, {"i": "6309", "t": "enroque", "from": "Sube y Baja", "to": "Mina", "f": null}];
 
 function renderSvc(){
   let tOper=0,tDen=0;
@@ -646,7 +679,7 @@ renderConcil();
 
 // ---- Proyección de disponibilidad (Gantt) ----
 (function(){
-  const START=new Date('2026-09-24T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
+  const START=new Date('2026-09-25T00:00:00'), END=new Date('2026-10-31T00:00:00'), DAY=86400000;
   const reqop=sk=>((OBJ[MODE]||{})[sk]||{}).obj||0;
   const col={syb:'#2E7D5B',mina:'#C0392B',plan:'#2B6CB0',
     msyb:'#2E7D5B',mauto:'#B5651D',msprin:'#2B6CB0',psprin:'#C0392B'};
@@ -931,6 +964,149 @@ renderDet();
 
 // La tabla de movimientos de flota está retirada por ahora. 'MOV' se sigue
 // llenando desde la hoja "Enroque de flota" para reponerla sin rehacer nada.
+
+// ---- 08 Enroque Scania K410: Mina ⇄ Sube y Baja ----
+// El plan no depende del filtro Viggo/BHP: es un compromiso de flota, no una
+// foto de disponibilidad. Por eso se dibuja una sola vez.
+(function(){
+  const DAY=86400000, HOY=new Date(CORTEISO+'T00:00:00');
+  const MN=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const fFecha=d=>d?`${d.getDate()} ${MN[d.getMonth()]}`:'—';
+  const fISO=s=>s?new Date(s+'T00:00:00'):null;
+  const dias=n=>n==null?'—':(n===0?'lista':(n===1?'1 día':`${n} días`));
+
+  // Caja del diagrama de flujo, con título y bajada.
+  const caja=(x,y,w,h,col,tit,sub,num)=>`
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10"
+          fill="var(--surface-2)" stroke="var(--${col})" stroke-width="1.5"/>
+    <rect x="${x}" y="${y}" width="4" height="${h}" rx="2" fill="var(--${col})"/>
+    <text x="${x+16}" y="${y+25}" font-size="13" font-weight="700"
+          fill="var(--ink)">${tit}</text>
+    <text x="${x+16}" y="${y+45}" font-size="11.5" fill="var(--muted)">${sub}</text>
+    ${num!=null?`<text x="${x+w-16}" y="${y+h-14}" text-anchor="end"
+          font-size="22" font-weight="700" fill="var(--${col})"
+          font-family="'IBM Plex Mono',monospace">${num}</text>`:''}`;
+  const flechaH=(x1,x2,y,txt)=>`
+    <line x1="${x1}" y1="${y}" x2="${x2-9}" y2="${y}" stroke="var(--faint)"
+          stroke-width="1.5" stroke-dasharray="4 3"/>
+    <path d="M${x2} ${y} l-9 -5 l0 10 z" fill="var(--faint)"/>
+    <text x="${(x1+x2)/2}" y="${y-10}" text-anchor="middle" font-size="11"
+          fill="var(--muted)" font-weight="600">${txt}</text>`;
+  const flechaV=(x,y1,y2,txt)=>`
+    <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2-9}" stroke="var(--faint)"
+          stroke-width="1.5" stroke-dasharray="4 3"/>
+    <path d="M${x} ${y2} l-5 -9 l10 0 z" fill="var(--faint)"/>
+    <text x="${x+12}" y="${(y1+y2)/2+4}" font-size="11" fill="var(--muted)"
+          font-weight="600">${txt}</text>`;
+
+  function flujo(){
+    const pend=CAMP.filter(c=>c.dias!==0).length;
+    return `<svg viewBox="0 0 900 270" style="width:100%;height:auto;display:block"
+       font-family="Inter,system-ui,sans-serif">
+      <text x="0" y="14" font-size="11" font-weight="700" letter-spacing=".1em"
+            fill="var(--crit)">CONTRATO MINA</text>
+      ${caja(0,26,250,80,'crit','Scania K410 fuera de servicio',
+             'Rotura de cárter · salen del contrato',KSCA.length)}
+      ${flechaH(250,330,66,'se repara')}
+      ${caja(330,26,250,80,'good','Ingresa a Sube y Baja',
+             'El K410 deja Mina definitivamente','→')}
+      ${flechaV(455,106,164,'libera un cupo en Mina')}
+      <text x="0" y="178" font-size="11" font-weight="700" letter-spacing=".1em"
+            fill="var(--info)">CONTRATO SUBE Y BAJA</text>
+      ${caja(330,164,250,80,'info','Siguiente bus de la cola',
+             `Orden definido · ${pend} en campaña`,CAMP.length)}
+      ${flechaH(580,690,204,`campaña ${CAMPDIAS} días`)}
+      ${caja(690,164,210,80,'accent','Entra a Mina',
+             'Kaufmann K1 · K6 · faena MEL','✓')}
+    </svg>`;
+  }
+
+  // Empareja cada Scania con el bus que toma su cupo, en orden.
+  function pasos(){
+    return KSCA.map((k,n)=>{
+      const c=CAMP[n];
+      if(!c) return null;
+      const fSca=fISO(k.f);
+      const finCamp=c.dias==null?null:new Date(HOY.getTime()+c.dias*DAY);
+      // El ingreso a Mina ocurre cuando se cumplen las dos condiciones.
+      let ingreso=null,manda='';
+      if(fSca&&finCamp){ingreso=fSca>finCamp?fSca:finCamp;
+        manda=fSca>finCamp?'lo limita la reparación del Scania':'lo limita la campaña';}
+      else if(fSca){ingreso=fSca;manda='sin avance de campaña cargado';}
+      return {n:n+1,k,c,fSca,finCamp,ingreso,manda};
+    }).filter(Boolean);
+  }
+
+  function render(){
+    document.getElementById('enrFlujo').innerHTML=flujo();
+    document.getElementById('enrDias').textContent=CAMPDIAS;
+
+    const listas=CAMP.filter(c=>c.dias===0).length;
+    const detHoy=CAMP.filter(c=>c.det).length;
+    const ex=CAMP.filter(c=>c.ex).length;
+    const kpi=(col,val,tit,sub)=>`<div class="dcard">
+      <div class="th"><span style="width:8px;height:8px;border-radius:50%;
+        background:var(--${col});display:inline-block"></span>${tit}</div>
+      <div class="mono" style="font-size:30px;font-weight:700;line-height:1;
+        color:var(--${col});margin:6px 0 8px">${val}</div>
+      <div style="font-size:12px;color:var(--muted)">${sub}</div></div>`;
+    document.getElementById('enrKpis').innerHTML=
+      kpi('crit',KSCA.length,'Scania K410 por recuperar',
+          `Salen de Mina a medida que se reparan · ${KSCA.filter(k=>k.f).length} con fecha comprometida`)+
+      kpi('info',CAMP.length,'Buses en cola hacia Mina',
+          `${ex} Ex Mina ya implementados · ${CAMP.length-ex} sin implementación`)+
+      kpi('good',listas,'Campañas terminadas',
+          listas?`Pueden entrar a Mina apenas se libere un cupo`
+                :`Ninguna al 100% · la más avanzada va en ${Math.round((CAMP[0]?.av||0)*100)}%`);
+
+    const P=pasos();
+    document.getElementById('enrPasos').innerHTML=P.length
+      ? `<div class="split3" style="grid-template-columns:repeat(auto-fit,minmax(195px,1fr))">`+
+        P.map(p=>`<div class="dcard">
+          <div class="th" style="justify-content:space-between">
+            <span>Paso ${p.n}</span>
+            <span class="pill p-info mono">${p.ingreso?fFecha(p.ingreso):'sin fecha'}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;
+               padding:8px 0;border-bottom:1px solid var(--line)">
+            <span class="mono" style="font-weight:700;color:var(--crit)">${p.k.i}</span>
+            <span style="color:var(--muted);font-size:12px">Mina → SyB</span>
+            <span class="mono" style="margin-left:auto;font-size:12px;color:var(--muted)">${fFecha(p.fSca)}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 0">
+            <span class="mono" style="font-weight:700;color:var(--info)">${p.c.i}</span>
+            <span style="color:var(--muted);font-size:12px">SyB → Mina</span>
+            <span class="mono" style="margin-left:auto;font-size:12px;color:var(--muted)">${dias(p.c.dias)}</span></div>
+          <div style="font-size:11.5px;color:var(--faint);margin-top:4px">${p.manda}</div>
+        </div>`).join('')+`</div>`
+      : `<div class="note">Sin pasos: no hay Scania K410 detenidos en Mina o la cola de campañas está vacía.</div>`;
+
+    const enCola=CAMP.length-P.length;
+    document.getElementById('enrPasosNota').innerHTML=
+      `Los pasos se emparejan <b>en orden</b>: el primer Scania que se entrega libera el cupo del bus con orden 1, y así sucesivamente. `+
+      (enCola>0?`Quedan <b>${enCola} buses</b> en la cola sin Scania asignado — entrarán cuando se detengan y reparen los K410 que hoy están operativos.`:'')+
+      (detHoy?` <b>Ojo:</b> ${detHoy} ${detHoy===1?'bus de la cola está detenido':'buses de la cola están detenidos'} hoy, así que su campaña no avanza hasta recuperarlo${detHoy===1?'':'s'}.`:'');
+
+    document.getElementById('enrTabla').innerHTML=CAMP.map(c=>{
+      const pct=c.av==null?null:Math.round(c.av*100);
+      const col=pct===100?'good':(pct>=80?'warn':'crit');
+      return `<tr>
+        <td class="mono" style="font-weight:700">${c.ord??'—'}</td>
+        <td class="mono" style="font-weight:700">${c.i}</td>
+        <td><span class="tag ${c.ex?'t-si':'t-cb'}">${c.ex?'Ex Mina':'Sin implementación'}</span></td>
+        <td style="min-width:150px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="flex:1;height:7px;border-radius:4px;background:var(--surface-2);
+                 border:1px solid var(--line);overflow:hidden">
+              <div style="width:${pct??0}%;height:100%;background:var(--${col})"></div></div>
+            <span class="mono" style="font-size:12px;min-width:34px;text-align:right">${pct==null?'—':pct+'%'}</span>
+          </div></td>
+        <td class="mono">${dias(c.dias)}</td>
+        <td style="white-space:normal;min-width:180px;font-size:12px;color:var(--muted)">${c.donde.join(' · ')||'sin trabajos pendientes'}</td>
+        <td>${c.det?'<span class="pill p-crit">Detenido hoy</span>':(c.dias===0?'<span class="pill p-good">Listo</span>':'<span class="pill p-info">En campaña</span>')}</td>
+      </tr>`;}).join('')
+      || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">La hoja «Campañas» no trae equipos</td></tr>`;
+  }
+  render();
+})();
 
 // Filtro global Viggo / BHP (cambia la flota objetivo)
 // Toda sección que dependa de 'det' se redibuja acá: el filtro debe mover el
