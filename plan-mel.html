@@ -381,17 +381,18 @@
   <section>
     <div class="sec-h"><span class="n">08</span><h2>Enroque Scania K410 — Mina <span style="color:var(--accent)">⇄</span> Sube y Baja</h2>
       <span class="hint">Plan paulatino: un ingreso a Mina por cada Scania recuperado</span></div>
-    <div class="note" style="border-left-color:var(--crit);margin-bottom:18px">Los <b>Scania K410 de Mina</b> están presentando roturas de cárter repetidas. La decisión es <b>sacarlos del contrato Mina de forma paulatina</b>: cada K410 que se repara ingresa a <b>Sube y Baja</b>, y su cupo en Mina lo toma un bus de Sube y Baja que haya terminado su <b>campaña de mejora mecánica</b>. El enroque es <b>uno a uno</b> y avanza al ritmo de las reparaciones, no de las campañas.</div>
+    <div class="note" style="border-left-color:var(--crit);margin-bottom:18px">Los <b>Scania K410 de Mina</b> están presentando roturas de cárter repetidas, así que <b>salen del contrato Mina de forma paulatina y pasan a Sube y Baja</b>. <b>La restricción no es el cupo en Mina</b> —ahí sobra, la disponibilidad está baja— sino <b>la disponibilidad de Sube y Baja, que no puede caer del nivel que tiene hoy</b>. Por eso cada Scania que ingresa a Sube y Baja actúa como <b>pulmón</b>: libera un bus de ese contrato para mandarlo a <b>campaña de mejora mecánica</b> sin perder disponibilidad, y ese bus es el que termina entrando a Mina.</div>
     <div class="scard" style="margin-bottom:16px"><div id="enrFlujo"></div></div>
     <div class="split3" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px" id="enrKpis"></div>
 
-    <div class="sec-h" style="margin-top:26px"><h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:19px;margin:0">Pasos comprometidos</h3>
-      <span class="hint">Cada paso empareja un Scania que sale con el bus que lo reemplaza</span></div>
-    <div id="enrPasos" style="margin-bottom:8px"></div>
-    <div class="note" id="enrPasosNota"></div>
+    <div class="sec-h" style="margin-top:26px"><h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:19px;margin:0">Pulmón — los Scania que pasan a Sube y Baja</h3>
+      <span class="hint">Cada uno que ingresa habilita liberar un bus a campaña</span></div>
+    <div id="enrPulmon" style="margin-bottom:8px"></div>
+    <div class="note" id="enrPulmonNota"></div>
 
     <div class="sec-h" style="margin-top:26px"><h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:19px;margin:0">Cola de campañas — Sube y Baja → Mina</h3>
       <span class="hint">Orden de ingreso definido en la hoja «Campañas»</span></div>
+    <div class="note" style="border-left-color:var(--warn);margin:0 0 12px">Los <b>Ex Mina</b> ya tienen la implementación del contrato: al terminar la campaña entran directo. Los que <b>no son Ex Mina</b> necesitan además la implementación, que <b>suma tiempo por sobre los <span id="enrDias2">10</span> días de campaña</b> y todavía no tiene plazo cargado.</div>
     <div class="tblwrap">
       <table>
         <thead><tr><th>Orden</th><th>Interno</th><th>Implementación</th><th>Avance campaña</th><th>Días restantes</th><th>Dónde se ejecuta</th><th>Estado</th></tr></thead>
@@ -432,8 +433,8 @@ const SVCMB=[{"key": "msyb", "name": "Sube y Baja", "loc": "FLOTA · MEL Sube y 
 // sync.py los genera desde las hojas Detenidas/FLOTA y "Campañas".
 const CORTEISO='2026-09-25';
 const CAMPDIAS=10;
-const KSCA=[{"i": "4472", "f": "2026-09-26", "taller": null, "est": null, "costo": null}, {"i": "5136", "f": "2026-10-16", "taller": "Taller Antofagasta", "est": "Esperando cama baja", "costo": 2500000}, {"i": "5138", "f": "2026-10-16", "taller": "Scania", "est": "Esperando cama baja", "costo": 2500000}, {"i": "4473", "f": "2026-10-30", "taller": "Scania", "est": "En reparacion", "costo": 20000000}, {"i": "6324", "f": "2026-10-30", "taller": "Taller Antofagasta", "est": "Esperando cama baja", "costo": 25000000}];
-const CAMP=[{"i": "6274", "ord": 1, "av": 1.0, "ex": true, "dias": 0, "donde": [], "det": false}, {"i": "6280", "ord": 2, "av": 0.95, "ex": true, "dias": 1, "donde": ["Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6268", "ord": 3, "av": 0.86, "ex": true, "dias": 2, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6270", "ord": 4, "av": 0.86, "ex": true, "dias": 2, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6273", "ord": 5, "av": 0.71, "ex": true, "dias": 3, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": true}, {"i": "6267", "ord": 6, "av": 0.57, "ex": true, "dias": 5, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6297", "ord": 7, "av": 0.9, "ex": false, "dias": 1, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6316", "ord": 8, "av": 0.81, "ex": false, "dias": 2, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6301", "ord": 9, "av": 0.71, "ex": false, "dias": 3, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6309", "ord": 10, "av": 0.52, "ex": false, "dias": 5, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6290", "ord": 11, "av": 0.9, "ex": true, "dias": 1, "donde": ["Kaufmann K1", "Kaufmann K6"], "det": false}];
+const KSCA=[{"i": "4476", "estado": "pulmon", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2", "contrato": "MEL Sube y Baja"}, {"i": "4477", "estado": "pulmon", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2", "contrato": "MEL Sube y Baja"}, {"i": "4478", "estado": "pulmon", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2", "contrato": "MEL Sube y Baja"}, {"i": "4472", "estado": "reparacion", "f": "2026-09-26", "taller": "", "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "5136", "estado": "reparacion", "f": "2026-10-16", "taller": "Taller Antofagasta", "est": "Esperando cama baja", "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "5138", "estado": "reparacion", "f": "2026-10-16", "taller": "Scania", "est": "Esperando cama baja", "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "4473", "estado": "reparacion", "f": "2026-10-30", "taller": "Scania", "est": "En reparacion", "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "6324", "estado": "reparacion", "f": "2026-10-30", "taller": "Taller Antofagasta", "est": "Esperando cama baja", "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "4471", "estado": "mina", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "4474", "estado": "mina", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "5137", "estado": "mina", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "6320", "estado": "mina", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "6321", "estado": "mina", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}, {"i": "6325", "estado": "mina", "f": null, "taller": null, "est": null, "modelo": "K410C B4X2NB", "contrato": "Mel Intermina"}];
+const CAMP=[{"i": "6274", "ord": 1, "av": 1.0, "ex": true, "dias": 0, "impl": false, "donde": [], "det": false}, {"i": "6280", "ord": 2, "av": 0.95, "ex": true, "dias": 1, "impl": false, "donde": ["Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6268", "ord": 3, "av": 0.86, "ex": true, "dias": 2, "impl": false, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6270", "ord": 4, "av": 0.86, "ex": true, "dias": 2, "impl": false, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6273", "ord": 5, "av": 0.71, "ex": true, "dias": 3, "impl": false, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": true}, {"i": "6267", "ord": 6, "av": 0.57, "ex": true, "dias": 5, "impl": false, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6297", "ord": 7, "av": 0.9, "ex": false, "dias": 1, "impl": true, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6316", "ord": 8, "av": 0.81, "ex": false, "dias": 2, "impl": true, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6301", "ord": 9, "av": 0.71, "ex": false, "dias": 3, "impl": true, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6309", "ord": 10, "av": 0.52, "ex": false, "dias": 5, "impl": true, "donde": ["Faena MEL (Viggo)", "Kaufmann K1", "Kaufmann K6"], "det": false}, {"i": "6290", "ord": 11, "av": 0.9, "ex": true, "dias": 1, "impl": false, "donde": ["Kaufmann K1", "Kaufmann K6"], "det": false}];
 // Caída histórica de minibuses, medida por CONTRATO. Cuando un contrato
 // tiene más de un grupo (Mina: Autonomía y Sprinter), la tasa se reparte
 // en proporción a la flota de cada uno para no duplicar la caída.
@@ -999,47 +1000,42 @@ renderDet();
     <text x="${x+12}" y="${(y1+y2)/2+4}" font-size="11" fill="var(--muted)"
           font-weight="600">${txt}</text>`;
 
+  const porEstado=e=>KSCA.filter(k=>k.estado===e);
+
   function flujo(){
-    const pend=CAMP.filter(c=>c.dias!==0).length;
-    return `<svg viewBox="0 0 900 270" style="width:100%;height:auto;display:block"
+    const pulmon=porEstado('pulmon').length;
+    const enCamp=CAMP.filter(c=>c.dias!==0).length;
+    const conImpl=CAMP.filter(c=>c.impl).length;
+    return `<svg viewBox="0 0 900 286" style="width:100%;height:auto;display:block"
        font-family="Inter,system-ui,sans-serif">
       <text x="0" y="14" font-size="11" font-weight="700" letter-spacing=".1em"
-            fill="var(--crit)">CONTRATO MINA</text>
-      ${caja(0,26,250,80,'crit','Scania K410 fuera de servicio',
-             'Rotura de cárter · salen del contrato',KSCA.length)}
-      ${flechaH(250,330,66,'se repara')}
-      ${caja(330,26,250,80,'good','Ingresa a Sube y Baja',
-             'El K410 deja Mina definitivamente','→')}
-      ${flechaV(455,106,164,'libera un cupo en Mina')}
-      <text x="0" y="178" font-size="11" font-weight="700" letter-spacing=".1em"
-            fill="var(--info)">CONTRATO SUBE Y BAJA</text>
-      ${caja(330,164,250,80,'info','Siguiente bus de la cola',
-             `Orden definido · ${pend} en campaña`,CAMP.length)}
-      ${flechaH(580,690,204,`campaña ${CAMPDIAS} días`)}
-      ${caja(690,164,210,80,'accent','Entra a Mina',
-             'Kaufmann K1 · K6 · faena MEL','✓')}
+            fill="var(--crit)">1 · SALEN DE MINA</text>
+      ${caja(0,26,258,80,'crit','Scania K410',
+             'Rotura de cárter · dejan Mina',KSCA.length)}
+      ${flechaH(258,338,66,'se reparan')}
+      <text x="338" y="14" font-size="11" font-weight="700" letter-spacing=".1em"
+            fill="var(--good)">2 · PULMÓN EN SUBE Y BAJA</text>
+      ${caja(338,26,258,80,'good','Ingresan a Sube y Baja',
+             'Sostienen la disponibilidad',pulmon)}
+      ${flechaV(467,106,172,'cada uno libera un bus sin bajar el %')}
+      <text x="0" y="146" font-size="11" font-weight="700" letter-spacing=".1em"
+            fill="var(--info)">3 · CAMPAÑA</text>
+      ${caja(338,172,258,80,'info','Bus liberado a campaña',
+             `${enCamp} en curso · ${conImpl} suman implementación`,CAMP.length)}
+      ${flechaH(596,700,212,`${CAMPDIAS} días`)}
+      <text x="700" y="146" font-size="11" font-weight="700" letter-spacing=".1em"
+            fill="var(--accent)">4 · ENTRA A MINA</text>
+      ${caja(700,172,200,80,'accent','Ingresa a Mina',
+             'Ahí sobra cupo hoy','✓')}
+      <text x="0" y="270" font-size="11.5" fill="var(--muted)">
+        El límite es el paso 2: Sube y Baja no puede bajar su disponibilidad actual.</text>
     </svg>`;
-  }
-
-  // Empareja cada Scania con el bus que toma su cupo, en orden.
-  function pasos(){
-    return KSCA.map((k,n)=>{
-      const c=CAMP[n];
-      if(!c) return null;
-      const fSca=fISO(k.f);
-      const finCamp=c.dias==null?null:new Date(HOY.getTime()+c.dias*DAY);
-      // El ingreso a Mina ocurre cuando se cumplen las dos condiciones.
-      let ingreso=null,manda='';
-      if(fSca&&finCamp){ingreso=fSca>finCamp?fSca:finCamp;
-        manda=fSca>finCamp?'lo limita la reparación del Scania':'lo limita la campaña';}
-      else if(fSca){ingreso=fSca;manda='sin avance de campaña cargado';}
-      return {n:n+1,k,c,fSca,finCamp,ingreso,manda};
-    }).filter(Boolean);
   }
 
   function render(){
     document.getElementById('enrFlujo').innerHTML=flujo();
     document.getElementById('enrDias').textContent=CAMPDIAS;
+    document.getElementById('enrDias2').textContent=CAMPDIAS;
 
     const listas=CAMP.filter(c=>c.dias===0).length;
     const detHoy=CAMP.filter(c=>c.det).length;
@@ -1050,40 +1046,44 @@ renderDet();
       <div class="mono" style="font-size:30px;font-weight:700;line-height:1;
         color:var(--${col});margin:6px 0 8px">${val}</div>
       <div style="font-size:12px;color:var(--muted)">${sub}</div></div>`;
+    const pulmon=porEstado('pulmon'), enRep=porEstado('reparacion'),
+          enMina=porEstado('mina');
+    // Próximos a entrar a Mina: campaña terminada, o en taller haciéndola ahora.
+    const proximos=CAMP.filter(c=>c.dias===0||c.det);
     document.getElementById('enrKpis').innerHTML=
-      kpi('crit',KSCA.length,'Scania K410 por recuperar',
-          `Salen de Mina a medida que se reparan · ${KSCA.filter(k=>k.f).length} con fecha comprometida`)+
-      kpi('info',CAMP.length,'Buses en cola hacia Mina',
-          `${ex} Ex Mina ya implementados · ${CAMP.length-ex} sin implementación`)+
-      kpi('good',listas,'Campañas terminadas',
-          listas?`Pueden entrar a Mina apenas se libere un cupo`
-                :`Ninguna al 100% · la más avanzada va en ${Math.round((CAMP[0]?.av||0)*100)}%`);
+      kpi('good',pulmon.length,'Pulmón disponible hoy',
+          `Scania ya en Sube y Baja: ${pulmon.map(k=>k.i).join(', ')||'ninguno'}. Habilitan liberar ${pulmon.length} ${pulmon.length===1?'bus':'buses'} a campaña`)+
+      kpi('crit',enRep.length+enMina.length,'Scania aún en Mina',
+          `${enRep.length} en reparación con fecha · ${enMina.length} operativos, saldrán más adelante`)+
+      kpi('accent',proximos.length,'Próximos a entrar a Mina',
+          proximos.length?`${proximos.map(c=>c.i).join(', ')} — ${proximos.filter(c=>c.dias===0).length} con campaña lista y ${proximos.filter(c=>c.det).length} en taller ahora`
+                         :'Ninguno con la campaña terminada');
 
-    const P=pasos();
-    document.getElementById('enrPasos').innerHTML=P.length
-      ? `<div class="split3" style="grid-template-columns:repeat(auto-fit,minmax(195px,1fr))">`+
-        P.map(p=>`<div class="dcard">
+    const EST={pulmon:{c:'good',t:'Ya en Sube y Baja',d:'Suma al pulmón'},
+               reparacion:{c:'warn',t:'En reparación',d:'Entra al recuperarse'},
+               mina:{c:'crit',t:'Operativo en Mina',d:'Sale más adelante'}};
+    document.getElementById('enrPulmon').innerHTML=
+      `<div class="split3" style="grid-template-columns:repeat(3,1fr)">`+
+      ['pulmon','reparacion','mina'].map(e=>{
+        const L=porEstado(e), E=EST[e];
+        return `<div class="dcard">
           <div class="th" style="justify-content:space-between">
-            <span>Paso ${p.n}</span>
-            <span class="pill p-info mono">${p.ingreso?fFecha(p.ingreso):'sin fecha'}</span></div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:13px;
-               padding:8px 0;border-bottom:1px solid var(--line)">
-            <span class="mono" style="font-weight:700;color:var(--crit)">${p.k.i}</span>
-            <span style="color:var(--muted);font-size:12px">Mina → SyB</span>
-            <span class="mono" style="margin-left:auto;font-size:12px;color:var(--muted)">${fFecha(p.fSca)}</span></div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 0">
-            <span class="mono" style="font-weight:700;color:var(--info)">${p.c.i}</span>
-            <span style="color:var(--muted);font-size:12px">SyB → Mina</span>
-            <span class="mono" style="margin-left:auto;font-size:12px;color:var(--muted)">${dias(p.c.dias)}</span></div>
-          <div style="font-size:11.5px;color:var(--faint);margin-top:4px">${p.manda}</div>
-        </div>`).join('')+`</div>`
-      : `<div class="note">Sin pasos: no hay Scania K410 detenidos en Mina o la cola de campañas está vacía.</div>`;
+            <span><span style="width:8px;height:8px;border-radius:50%;
+              background:var(--${E.c});display:inline-block;margin-right:6px"></span>${E.t}</span>
+            <span class="mono" style="font-weight:700;color:var(--${E.c})">${L.length}</span></div>
+          <div class="thc">${E.d}</div>
+          ${L.map(k=>`<div class="estrow">
+            <span class="mono" style="font-weight:700">${k.i}</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--muted)">${
+              k.f?fFecha(fISO(k.f)):(k.taller||'operativo')}</span>
+          </div>`).join('')||'<div style="font-size:12px;color:var(--faint);padding:6px 0">—</div>'}
+        </div>`;}).join('')+`</div>`;
 
-    const enCola=CAMP.length-P.length;
-    document.getElementById('enrPasosNota').innerHTML=
-      `Los pasos se emparejan <b>en orden</b>: el primer Scania que se entrega libera el cupo del bus con orden 1, y así sucesivamente. `+
-      (enCola>0?`Quedan <b>${enCola} buses</b> en la cola sin Scania asignado — entrarán cuando se detengan y reparen los K410 que hoy están operativos.`:'')+
-      (detHoy?` <b>Ojo:</b> ${detHoy} ${detHoy===1?'bus de la cola está detenido':'buses de la cola están detenidos'} hoy, así que su campaña no avanza hasta recuperarlo${detHoy===1?'':'s'}.`:'');
+    document.getElementById('enrPulmonNota').innerHTML=
+      `Los <b>${KSCA.length} Scania</b> terminan todos en Sube y Baja. Hoy hay <b>${pulmon.length} adentro</b>, que es el margen que permite mandar buses a campaña sin que la disponibilidad del contrato caiga. `+
+      (enRep.length?`Los <b>${enRep.length} en reparación</b> (${enRep.map(k=>k.i).join(', ')}) amplían ese margen a medida que se entregan. `:'')+
+      (proximos.length?`Entre los que ya terminaron la campaña y los que la están haciendo ahora en taller, hay <b>${proximos.length} ${proximos.length===1?'bus próximo':'buses próximos'} a entrar a Mina</b>: ${proximos.map(c=>c.i).join(', ')}.`:'')+
+      (ex<CAMP.length?` De la cola, <b>${CAMP.length-ex} no son Ex Mina</b> y necesitan implementación adicional antes de entrar.`:'');
 
     document.getElementById('enrTabla').innerHTML=CAMP.map(c=>{
       const pct=c.av==null?null:Math.round(c.av*100);
@@ -1099,9 +1099,9 @@ renderDet();
               <div style="width:${pct??0}%;height:100%;background:var(--${col})"></div></div>
             <span class="mono" style="font-size:12px;min-width:34px;text-align:right">${pct==null?'—':pct+'%'}</span>
           </div></td>
-        <td class="mono">${dias(c.dias)}</td>
+        <td class="mono">${dias(c.dias)}${c.impl?'<span style="color:var(--warn)"> + impl.</span>':''}</td>
         <td style="white-space:normal;min-width:180px;font-size:12px;color:var(--muted)">${c.donde.join(' · ')||'sin trabajos pendientes'}</td>
-        <td>${c.det?'<span class="pill p-crit">Detenido hoy</span>':(c.dias===0?'<span class="pill p-good">Listo</span>':'<span class="pill p-info">En campaña</span>')}</td>
+        <td>${c.det?'<span class="pill p-warn">En taller ahora</span>':(c.dias===0?'<span class="pill p-good">Listo</span>':'<span class="pill p-info">En campaña</span>')}</td>
       </tr>`;}).join('')
       || `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">La hoja «Campañas» no trae equipos</td></tr>`;
   }
