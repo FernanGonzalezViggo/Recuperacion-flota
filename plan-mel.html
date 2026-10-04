@@ -786,7 +786,11 @@ renderConcil();
     // --- gantt ---
     const endX=W-padR; let y=6,body='';
     gOrder().forEach(sk=>{
-      body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}</text>`; y+=18;
+      // Junto al contrato va su operativa de hoy: el Gantt muestra los
+      // detenidos, y sin ese dato no se ve sobre qué flota pesan.
+      const opHoy=Math.round(operAt(sk,START,units));
+      body+=`<text x="2" y="${y+11}" font-size="11" font-weight="700" fill="${col[sk]}">${svcName(sk)}`+
+            `<tspan font-weight="400" fill="var(--muted)"> / ${opHoy} ${uniN(opHoy)} ${opHoy===1?'operativo':'operativos'}</tspan></text>`; y+=18;
       units.filter(u=>u.s===sk).sort((a,b)=>{if(!a.rec)return 1;if(!b.rec)return -1;return a.rec-b.rec;}).forEach(u=>{
         const lv=u.leaves?new Date(u.leaves+'T00:00:00'):null;
         const beyond=u.rec&&u.rec>EN; let x2=u.rec?xOf(u.rec):(lv?xOf(lv):endX); if(x2>endX)x2=endX;
