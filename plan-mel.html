@@ -284,7 +284,7 @@
       <h3 style="font-family:'Barlow Semi Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Recuperación de equipos (Gantt)</h3>
       <div style="overflow-x:auto"><div id="ganttChart"></div></div>
     </div>
-    <div class="note">Corte <b id="corteCorto">4-oct</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,88 bus/día</b> · 4 días permanencia → ~3,5 siempre en taller; Planta <b>0,30</b> · 6 días → ~1,8; Sube y Baja <b>0,35</b> · 4 días → ~1,4. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. <span id="notaFechas"></span> El techo lo fija la caída histórica.</div>
+    <div class="note">Corte <b id="corteCorto">4-oct</b>. La proyección suma cada bus en su <b>fecha de entrega</b> y descuenta la <b>caída histórica de flota</b> (buses que seguirán cayendo y permaneciendo en taller): Mina <b>0,94 bus/día</b> · 8,0 días de MTTR → ~7,5 siempre en taller; Planta <b>0,32</b> · 16,5 días → ~5,3; Sube y Baja <b>0,47</b> · 8,1 días → ~3,8. Por eso el <b>techo</b> proyectado queda por debajo de la flota asignada aunque se recuperen los detenidos actuales. <span id="notaFechas"></span> El techo lo fija la caída histórica.</div>
     <div class="note" style="border-left-color:var(--warn)"><b>Alcance de la proyección.</b> Considera: (1) la <b>fecha de entrega comprometida</b> de cada equipo detenido, (2) la <b>tasa de falla histórica</b> de cada flota y (3) los <b>tiempos de recuperación</b> (permanencia en taller). <b>Quedan exentos los eventos exógenos</b>: cierre de taller por condición climática, y eventos operacionales como choques, rotura de cárter, u otras fallas mayores no previsibles. Ante uno de estos, el techo real puede caer por debajo de lo proyectado.</div>
   </section>
 
@@ -437,8 +437,8 @@ const CAMP=[{"i": "6274", "ord": 1, "av": 1.0, "ex": true, "impl": false, "donde
 // Caída histórica de minibuses, medida por CONTRATO. Cuando un contrato
 // tiene más de un grupo (Mina: Autonomía y Sprinter), la tasa se reparte
 // en proporción a la flota de cada uno para no duplicar la caída.
-const MBCAIDA={mina:{tasa:0.07,perm:2},plan:{tasa:0.01,perm:9},
-               syb:{tasa:0.01,perm:6}};
+const MBCAIDA={mina:{tasa:0.09,perm:4.5},plan:{tasa:0.02,perm:8.2},
+               syb:{tasa:0.01,perm:5.4}};
 const MBCONTRATO={msyb:'syb',mauto:'mina',msprin:'mina',psprin:'plan'};
 const mbTasa=sk=>{const c=MBCAIDA[MBCONTRATO[sk]]; if(!c) return {tasa:0,perm:0};
   const flotaC=Object.keys(MBCONTRATO).filter(k=>MBCONTRATO[k]===MBCONTRATO[sk])
@@ -722,7 +722,10 @@ renderConcil();
   const baseOper=sk=>baseAsig(sk)-fsDe(sk,MODE);
   // Los minibuses no tienen tasa de caída histórica medida: van en 0, así que
   // su curva solo refleja recuperaciones. Se avisa en la nota de la sección.
-  const caida={mina:0.88,plan:0.30,syb:0.35},perman={mina:4,plan:6,syb:4};
+  // Tasa de falla y MTTR medidos (actualizados el 2026-10-05). El producto
+  // tasa × MTTR es el número de equipos que queda siempre en taller, y por eso
+  // fija el techo de la proyección.
+  const caida={mina:0.94,plan:0.32,syb:0.47},perman={mina:8.0,plan:16.5,syb:8.1};
   Object.keys(MBCONTRATO).forEach(k=>{const c=mbTasa(k);
     caida[k]=c.tasa; perman[k]=c.perm;});
   const newFail=(sk,t)=>caida[sk]*Math.min(Math.max((t-START)/DAY,0),perman[sk]);
