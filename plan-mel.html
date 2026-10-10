@@ -519,11 +519,11 @@ const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{ob
 // Sube y Baja: 56 en el maestro Viggo, 52 en el Report.
 // Sube y Baja no está en la hoja Report (solo trae Mina y Planta), así que su
 // flota sale de FLOTA en los dos modos: 56. Su 52 es el objetivo, no la base.
-const MAESTRO={syb:59,mina:46,plan:37}, REPORTUS={syb:59,mina:38,plan:32};
+const MAESTRO={syb:57,mina:46,plan:39}, REPORTUS={syb:57,mina:38,plan:32};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // Conciliación de flota: de dónde sale la base de cada contrato y qué se le
 // descuenta. La genera sync.py; solo se muestra en la vista Viggo.
-const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 59, "ajustes": [], "final": 59, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 46, "ajustes": [], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy pero no son titulares de la extensión", "ids": ["4834", "4837", "4916"], "signo": 1}, {"motivo": "hoy son de Mina", "ids": ["4827", "4882"], "signo": -1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 37, "notas": [{"ids": ["4916"], "texto": "Cuentan en la base porque están asignados, pero no son titulares de la extensión: si salen, la base baja a 36."}]}];
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 57, "ajustes": [], "final": 57, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 46, "ajustes": [], "final": 46, "notas": [{"ids": ["4827", "4838", "4882"], "texto": "Son de Mina según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy pero no son titulares de la extensión", "ids": ["4834", "4837", "4916"], "signo": 1}, {"motivo": "trasladados a Interfaena, aún no cargados en la extensión", "ids": ["4915", "4920"], "signo": 1}, {"motivo": "hoy son de Mina", "ids": ["4827", "4882"], "signo": -1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 39, "notas": [{"ids": ["4916"], "texto": "Cuentan en la base porque están asignados, pero no son titulares de la extensión: si salen, la base baja a 38."}]}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
