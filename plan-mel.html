@@ -410,7 +410,7 @@
        flota" y quedan disponibles en la constante MOV para reponerla. -->
 
   <footer>
-    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Detenidas y Extensión planta), del <b>maestro de activos</b> <span id="fuenteMaestro">del 09-10-2026</span> (flota de la vista Viggo) y del <b>Report Viggo</b> <span id="fuenteReport">del 10-10-2026</span> (equipos de la vista BHP). Solo buses. Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
+    Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Detenidas y Extensión planta), del <b>maestro de activos</b> <span id="fuenteMaestro">del 09-10-2026</span> (flota de la vista Viggo) y del <b>Report Viggo</b> <span id="fuenteReport">del 13-10-2026</span> (equipos de la vista BHP). Solo buses. Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
   </footer>
 </div>
 
@@ -519,11 +519,11 @@ const OBJ={viggo:{syb:{obj:52,meta:56},mina:{obj:34},plan:{obj:34}},bhp:{syb:{ob
 // Sube y Baja: 56 en el maestro Viggo, 52 en el Report.
 // Sube y Baja no está en la hoja Report (solo trae Mina y Planta), así que su
 // flota sale de FLOTA en los dos modos: 56. Su 52 es el objetivo, no la base.
-const MAESTRO={syb:57,mina:43,plan:40}, REPORTUS={syb:55,mina:40,plan:34};
+const MAESTRO={syb:57,mina:43,plan:40}, REPORTUS={syb:57,mina:40,plan:29};
 const enReport={syb:false,mina:true,plan:true};   // ¿el Report declara su flota?
 // Conciliación de flota: de dónde sale la base de cada contrato y qué se le
 // descuenta. La genera sync.py; solo se muestra en la vista Viggo.
-const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 57, "ajustes": [], "final": 57, "notas": [{"ids": ["4874", "4886"], "texto": "Son de Sube y Baja según FLOTA, pero el Report los tiene operando en Planta. En la vista BHP se cuentan ahí."}]}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 43, "ajustes": [], "final": 43, "notas": []}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy pero no son titulares de la extensión", "ids": ["4838", "4915", "4916", "4920"], "signo": 1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 40, "notas": [{"ids": ["4842", "4869", "4879"], "texto": "Son titulares de la extensión pero el maestro no los ubica en Interfaena: se cuentan igual en la vista Viggo."}, {"ids": ["4838", "4915", "4916", "4920"], "texto": "Cuentan en la base porque están asignados, pero no son titulares de la extensión: si salen, la base baja a 36."}]}];
+const CONCIL=[{"svc": "Sube y Baja", "fuente": "flota según FLOTA", "bruto": 57, "ajustes": [], "final": 57, "notas": []}, {"svc": "Mina", "fuente": "flota según FLOTA", "bruto": 43, "ajustes": [], "final": 43, "notas": []}, {"svc": "Planta", "fuente": "meta según extensión planta", "bruto": 38, "ajustes": [{"motivo": "asignados hoy pero no son titulares de la extensión", "ids": ["4838", "4915", "4916", "4920"], "signo": 1}, {"motivo": "hoy son de Sube y Baja", "ids": ["4874", "4886"], "signo": -1}], "final": 40, "notas": [{"ids": ["4842", "4869", "4879"], "texto": "Son titulares de la extensión pero el maestro no los ubica en Interfaena: se cuentan igual en la vista Viggo."}, {"ids": ["4838", "4915", "4916", "4920"], "texto": "Cuentan en la base porque están asignados, pero no son titulares de la extensión: si salen, la base baja a 36."}]}];
 // F/S por contrato, derivado de 'det'. En BHP solo cuentan los buses del
 // Report: su flota base es la del Report, y descontarle los buses que solo
 // existen en el maestro Viggo subestimaria la disponibilidad.
