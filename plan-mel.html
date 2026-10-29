@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Programa de mantenimiento correctivo y recuperación de flota</title>
+<title>Programa de mantenimiento y recuperación de flota</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -203,6 +203,43 @@
     .sec-h .hint{display:none}
     header.top{break-after:avoid}
   }
+
+  .progbtn{margin-left:auto;background:var(--accent);border-color:var(--accent);color:#fff;font-size:13px;padding:7px 16px;font-weight:700}
+  .progbtn:hover{filter:brightness(1.08);color:#fff}
+  #prog{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;display:none}
+  #prog.open{display:block}
+  #prog .pwrap{max-width:1180px;margin:0 auto;padding:22px 24px 60px}
+  #prog .ptop{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+  #prog h2{font-family:"Barlow Semi Condensed",sans-serif;font-size:26px;margin:0 0 4px;font-weight:700}
+  #prog .psub{font-size:12.5px;color:var(--muted)}
+  #prog .pclose{margin-left:auto;white-space:nowrap}
+  #prog .pk{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+  #prog .pk div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;box-shadow:var(--shadow)}
+  #prog .pk b{display:block;font-size:24px;font-family:"Barlow Semi Condensed",sans-serif}
+  #prog .pk span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  #prog .pk .crit b{color:var(--crit)}
+  #prog .pf{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:6px 0}
+  #prog .pf label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin-right:2px}
+  #prog .chip{font-size:12px;padding:4px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;font-family:Inter}
+  #prog .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  #prog .chip small{opacity:.7;margin-left:3px}
+  #prog table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);margin-top:12px;font-size:12.5px}
+  #prog th{background:var(--surface-2);text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+  #prog td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  #prog tr.pday td{background:var(--surface-2);font-weight:700;font-family:"Barlow Semi Condensed",sans-serif;font-size:14px;padding:8px 10px}
+  #prog td.num{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+  #prog .eq{font-family:"IBM Plex Mono",monospace;font-weight:600}
+  #prog .tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:5px;white-space:nowrap}
+  #prog .t-crit{background:var(--crit-bg);color:var(--crit)}
+  #prog .t-warn{background:var(--warn-bg);color:var(--warn)}
+  #prog .t-good{background:var(--good-bg);color:var(--good)}
+  #prog .t-info{background:var(--info-bg);color:var(--info)}
+  #prog .t-mute{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+  #prog .dlink{cursor:pointer;color:var(--accent);font-weight:600;border:0;background:none;padding:0;font-family:Inter;font-size:12.5px;text-align:left}
+  #prog tr.pdet td{background:var(--surface-2);font-size:12px;padding:8px 14px 10px 28px}
+  #prog tr.pdet ul{margin:0;padding-left:18px}
+  #prog .pnota{font-size:11.5px;color:var(--muted);margin-top:10px}
+  @media (max-width:760px){#prog .pwrap{padding:16px 12px 50px}#prog table{display:block;overflow-x:auto}}
 </style>
 </head>
 <body>
@@ -210,7 +247,7 @@
   <header class="top">
     <div>
       <div class="eyebrow">Operación Buses · Minera Escondida</div>
-      <h1>Programa de mantenimiento correctivo y recuperación de flota</h1>
+      <h1>Programa de mantenimiento y recuperación de flota</h1>
       <div class="sub">Priorización de atención en taller de faena (3.5) vs. bajada a Antofagasta, disponibilidad de flota por servicio y control de costo de cama baja.</div>
     </div>
     <div class="meta">
@@ -226,6 +263,7 @@
     <button class="btn modebtn" data-m="bhp" onclick="__setMode('bhp')">BHP</button>
     <button class="btn modebtn" data-m="minibus" onclick="__setMode('minibus')">Minibuses</button>
     <span class="modehint" id="modeHint"></span>
+    <button class="btn progbtn" id="progBtn" onclick="__openProg()">Programa de mantenimiento</button>
   </div>
 
   <section>
@@ -412,6 +450,24 @@
   <footer>
     Reporte generado a partir de <b>Plan de acción MEL</b> (hojas Equipos MEL, Detenidas y Extensión planta), del <b>maestro de activos</b> <span id="fuenteMaestro">del 21-10-2026</span> (flota de la vista Viggo) y del <b>Report Viggo</b> <span id="fuenteReport">del 25-10-2026</span> (equipos de la vista BHP). Solo buses. Proyección con caída histórica de flota. Costo referencial cama baja: $1.500.000 + IVA por viaje.
   </footer>
+</div>
+
+<div id="prog" role="dialog" aria-modal="true" aria-labelledby="progT">
+  <div class="pwrap">
+    <div class="ptop">
+      <div>
+        <h2 id="progT">Programa de mantenimiento</h2>
+        <div class="psub" id="progSub"></div>
+      </div>
+      <button class="btn pclose" onclick="__closeProg()">Cerrar ✕</button>
+    </div>
+    <div class="pk" id="progK"></div>
+    <div class="pf" id="progF1"></div>
+    <div class="pf" id="progF2"></div>
+    <div class="pf" id="progF3"></div>
+    <div id="progTbl"></div>
+    <div class="pnota" id="progNota"></div>
+  </div>
 </div>
 
 <script>
@@ -1160,6 +1216,82 @@ renderDet();
 // Filtro global Viggo / BHP (cambia la flota objetivo)
 // Toda sección que dependa de 'det' se redibuja acá: el filtro debe mover el
 // reporte completo, no solo las tarjetas de arriba.
+
+// ==PROG-DATA==
+const PROG={"archivo": "Programa mantenimiento 28-10 al 03-11-2026.pdf", "semana": "28 al 03 Noviembre", "emitido": "28-10-2026 8:44", "remitente": "PCM Antofagasta", "filas": [{"f": "28-10-2026", "i": "6268", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "159.188", "dif": "812", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": "En Proceso"}, {"f": "28-10-2026", "i": "6269", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "109.197", "dif": "803", "ek": "POR VENCER", "t": "MP", "e": "En Proceso"}, {"f": "28-10-2026", "i": "6269", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "109.197", "dif": "-9.197", "ek": "VENCIDO", "t": "MP-CAR-IRI-2", "e": "En Proceso"}, {"f": "28-10-2026", "i": "6269", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Revisión Sist. Neumático INSP-MINA-01", "e": "En Proceso"}, {"f": "28-10-2026", "i": "6294", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "158.272", "dif": "1728", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": "En Proceso"}, {"f": "28-10-2026", "i": "9448", "c": "Ofi. Regional Antofagasta", "m": "Mercedes Benz", "km": "337.655", "dif": "2.345", "ek": "POR VENCER", "t": "MP", "e": "En Proceso"}, {"f": "28-10-2026", "i": "4862", "c": "C&G", "m": "Scania", "km": "1.205.608", "dif": "2.349", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "28-10-2026", "i": "4920", "c": "Mel Interfaena", "m": "Mercedes Benz", "km": "279.872", "dif": "128", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "28-10-2026", "i": "4920", "c": "Mel Interfaena", "m": "Mercedes Benz", "km": "279.872", "dif": "128", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "28-10-2026", "i": "6276", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "129.662", "dif": "338", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "28-10-2026", "i": "6276", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "129.662", "dif": "338", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "28-10-2026", "i": "6276", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Desviaciones SmartSheets", "e": ""}, {"f": "28-10-2026", "i": "6276", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "INSP-MINA-01", "e": ""}, {"f": "29-10-2026", "i": "6296", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "198.495", "dif": "1.505", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "29-10-2026", "i": "6296", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "198.111", "dif": "1889", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "29-10-2026", "i": "6296", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Campañas Kaufmann", "e": ""}, {"f": "29-10-2026", "i": "6300", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "198.281", "dif": "1.719", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "29-10-2026", "i": "6300", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "197.876", "dif": "2124", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "29-10-2026", "i": "6300", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Campañas Kaufmann", "e": ""}, {"f": "29-10-2026", "i": "4916", "c": "Mel Interfaena", "m": "Mercedes Benz", "km": "279.150", "dif": "850", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "29-10-2026", "i": "4916", "c": "Mel Interfaena", "m": "Mercedes Benz", "km": "279.150", "dif": "850", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "29-10-2026", "i": "4391", "c": "", "m": "", "km": "", "dif": "", "ek": "", "t": "MP", "e": ""}, {"f": "30-10-2026", "i": "6313", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "237.438", "dif": "2.562", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "30-10-2026", "i": "6313", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "236.841", "dif": "3159", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "30-10-2026", "i": "6313", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Campañas Kaufmann", "e": ""}, {"f": "30-10-2026", "i": "4928", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "277.218", "dif": "2.782", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "30-10-2026", "i": "4928", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "276.857", "dif": "3143", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "30-10-2026", "i": "6278", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "108.574", "dif": "1.426", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "30-10-2026", "i": "3024", "c": "Soquimich M.Elena", "m": "Scania", "km": "", "dif": "", "ek": "", "t": "Rechazo Asetran", "e": ""}, {"f": "30-10-2026", "i": "4470", "c": "SQM Pampa Blanca", "m": "Scania", "km": "", "dif": "", "ek": "", "t": "Rechazo Asetran", "e": ""}, {"f": "30-10-2026", "i": "5002", "c": "SQM Pampa Blanca", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Rechazo Asetran", "e": ""}, {"f": "30-10-2026", "i": "4917", "c": "", "m": "", "km": "", "dif": "", "ek": "", "t": "CERTIFICACIÓN", "e": ""}, {"f": "31-10-2026", "i": "6307", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "196.964", "dif": "3.036", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "31-10-2026", "i": "6307", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "196.392", "dif": "3608", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "31-10-2026", "i": "6307", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Campañas Kaufmann", "e": ""}, {"f": "31-10-2026", "i": "6318", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "236.638", "dif": "3.362", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "31-10-2026", "i": "6318", "c": "MEL Sube y Baja", "m": "Mercedes Benz", "km": "236.060", "dif": "3940", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "31-10-2026", "i": "5003", "c": "SQM Pampa Blanca", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Rechazo Asetran + MP", "e": ""}, {"f": "31-10-2026", "i": "5012", "c": "SQM Pampa Blanca", "m": "Scania", "km": "", "dif": "", "ek": "", "t": "Rechazo Asetran", "e": ""}, {"f": "31-10-2026", "i": "9548", "c": "Soquimich N. Victoria (Iq)", "m": "Iveco", "km": "", "dif": "", "ek": "", "t": "Rechazo Asetran", "e": ""}, {"f": "02-11-2026", "i": "7578", "c": "Adecco", "m": "Maxus", "km": "193.846", "dif": "1.154", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "02-11-2026", "i": "4863", "c": "Vertice", "m": "Scania", "km": "338.330", "dif": "1.540", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "02-11-2026", "i": "6278", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "108.574", "dif": "1.426", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "02-11-2026", "i": "6278", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Desviaciones SmartSheets", "e": ""}, {"f": "02-11-2026", "i": "5136", "c": "Mel Intermina", "m": "Scania", "km": "38.408", "dif": "1.592", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "02-11-2026", "i": "5136", "c": "Mel Intermina", "m": "Scania", "km": "38.408", "dif": "1.592", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "02-11-2026", "i": "5136", "c": "Mel Intermina", "m": "Scania", "km": "", "dif": "", "ek": "", "t": "Desviaciones SmartSheets", "e": ""}, {"f": "03-11-2026", "i": "5136", "c": "Mel Intermina", "m": "Scania", "km": "", "dif": "", "ek": "", "t": "INSP-MINA-01", "e": ""}, {"f": "03-11-2026", "i": "6283", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "107.696", "dif": "2.304", "ek": "POR VENCER", "t": "MP", "e": ""}, {"f": "03-11-2026", "i": "6283", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "107.696", "dif": "2.304", "ek": "POR VENCER", "t": "MP-CAR-IRI-2", "e": ""}, {"f": "03-11-2026", "i": "6283", "c": "Mel Intermina", "m": "Mercedes Benz", "km": "", "dif": "", "ek": "", "t": "Desviaciones SmartSheets", "e": ""}], "campanas": {"6296": ["Manguera refrigeracion superior Tiempo: 0,5", "Manguera refrigeracion inferior Tiempo:", "Manguera Sector bajo alternadores Tiempo: 0,5"], "6300": ["Manguera de admision resonador de compresor Tiempo: 2", "cambiar el punto de suministro de aire en el puerto 26 al puerto 23 de v/v EAPU Tiempo: 0,7", "MANGUERAS RETARDADOR (A) Tiempo: 0,5", "MANGUERAS RETARDADOR (B) Tiempo:", "Manguera Salida bomba de agua Tiempo: 0,5", "Manguera Salida block motor Tiempo:", "Manguera salida caja termostatica Tiempo: 0,3", "Manguera refrigeracion superior Tiempo: 0,5", "Manguera refrigeracion inferior Tiempo:", "Manguera Sector bajo alternadores Tiempo: 0,5"], "6313": ["Manguera de admision resonador de compresor Tiempo: 2"], "6307": ["Manguera de admision resonador de compresor Tiempo: 2", "cambiar el punto de suministro de aire en el puerto 26 al puerto 23 de v/v EAPU Tiempo: 0,7", "Manguera Salida bomba de agua Tiempo: 0,5", "Manguera Salida block motor Tiempo:", "Manguera salida caja termostatica Tiempo: 0,3", "Manguera refrigeracion superior Tiempo: 0,5", "Manguera refrigeracion inferior Tiempo:", "Manguera Sector bajo alternadores Tiempo: 0,5"]}, "asetran": {"3024": ["Asiento en mal estado (base, respaldo, apoya brazo)", "Luces de posición en mal estado"], "4470": ["Batería en mal estado, sin cargada, sin protector, fijación y con presencia de sulfato en bornes", "Fijación de extintor mal estado (abrazadera)", "Luces de posición en mal estado", "Pertiga con banderola en mal estado (Equipos Internos)"], "5002": ["Código de error activo en tablero de instrumentos", "Posee filtraciones de lubricantes"], "5003": ["Código de error activo en tablero de instrumentos", "Luces de posición en mal estado", "Luces interior pasillo no encienden", "Posee filtraciones de lubricantes", "Sistema de A/C no se encuentra operativo"], "5012": ["No cumple con programa de mantención fecha o kilometraje", "Sistema de A/C no se encuentra operativo"], "9548": ["No cumple con programa de mantención fecha o kilometraje", "Sistema de A/C no se encuentra operativo"]}, "smart": {"5136": ["puertas de inspeccion sin manillas"], "6276": ["certificado de mantenimiento y torque desactualizado", "falta manilla de inspección costado izquierdo y derecho", "Focos faeneros con problemas"], "6278": ["certificado de fys vencido", "certificado de torque desactualizado", "falta manillas en puertas de bateria", "falta rejillas de partes móviles", "falta tapa de panel electrico"], "6283": ["Faltan manillas en maletero", "Faltan manillas en puerta de inspeccion, falta tapa panel electrico", "Letrero indicativo no enciende", "Parachoque trasero trizado", "Pertiga con resorte", "Rejilla de motor en maletero"]}};
+// ==/PROG-DATA==
+// ---- Programa de mantenimiento (PDF semanal de PCM Antofagasta)
+(()=>{
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const cat=c=>/intermina/i.test(c)?'Mina':/interfaena/i.test(c)?'Planta':/sube/i.test(c)?'Sube y Baja':c?'Otros clientes':'Sin contrato';
+  const num=s=>{const n=parseInt(String(s||'').replace(/\./g,''),10);return isNaN(n)?null:n};
+  const miles=n=>n==null?'':n.toLocaleString('es-CL');
+  const fdia=f=>{const [d,m,a]=f.split('-');const dt=new Date(+a,+m-1,+d);
+    return ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][dt.getDay()]+' '+d+'-'+m+'-'+a};
+  const F={con:'Todos',trab:'Todos',est:'Todos'};
+  const base=()=>PROG.filas.map(r=>({...r,cat:cat(r.c),dif_n:num(r.dif)}));
+  const detenidos=()=>new Set((typeof det!=='undefined'?det:[]).map(d=>String(d.i)));
+  const tdet=()=>detenidos();
+  const trabCls=t=>/^MP$/.test(t)?'t-info':/MP-CAR/.test(t)?'t-info':/Campa/i.test(t)?'t-warn':/Rechazo|Desviac/i.test(t)?'t-crit':/INSP|Revis/i.test(t)?'t-mute':/CERTIF/i.test(t)?'t-good':'t-mute';
+  const estKm=r=>/VENCIDO/.test(r.ek)?['Vencido','t-crit']:/POR VENCER/.test(r.ek)?['Por vencer','t-warn']:r.ek?[r.ek,'t-mute']:null;
+  const chips=(id,key,vals)=>{
+    $(id).innerHTML='<label>'+({con:'Contrato',trab:'Trabajo',est:'Estado km'})[key]+'</label>'+
+      vals.map(([v,n])=>`<button class="chip${F[key]===v?' on':''}" data-k="${key}" data-v="${esc(v)}">${esc(v)}<small>${n}</small></button>`).join('');
+  };
+  const cuenta=(arr,f)=>{const m={};arr.forEach(r=>{const k=f(r);if(k)m[k]=(m[k]||0)+1});return m};
+  const pasa=(r,omit)=>(omit==='con'||F.con==='Todos'||r.cat===F.con)&&
+    (omit==='trab'||F.trab==='Todos'||r.t===F.trab)&&
+    (omit==='est'||F.est==='Todos'||(estKm(r)||[''])[0]===F.est);
+  const draw=()=>{
+    const all=base(),dets=tdet();
+    const vis=all.filter(r=>pasa(r));
+    const eqs=new Set(vis.map(r=>r.i)), eqAll=new Set(all.map(r=>r.i));
+    const venc=new Set(vis.filter(r=>/VENCIDO/.test(r.ek)).map(r=>r.i));
+    const dEq=[...eqs].filter(i=>dets.has(i));
+    $('progSub').innerHTML=esc(PROG.semana?'Semana '+PROG.semana:'')+
+      (PROG.emitido?' · enviado por '+esc(PROG.remitente||'PCM Antofagasta')+' el '+esc(PROG.emitido):'')+
+      '<br>Fuente: '+esc(PROG.archivo||'—');
+    $('progK').innerHTML=
+      `<div><b>${vis.length}</b><span>Actividades</span></div>`+
+      `<div><b>${eqs.size}</b><span>Equipos</span></div>`+
+      `<div class="${venc.size?'crit':''}"><b>${venc.size}</b><span>Con km vencido</span></div>`+
+      `<div class="${dEq.length?'crit':''}"><b>${dEq.length}</b><span>Detenidos hoy en el programa</span></div>`;
+    const cc=cuenta(all.filter(r=>pasa(r,'con')),r=>r.cat);
+    chips('progF1','con',[['Todos',all.filter(r=>pasa(r,'con')).length],...['Mina','Planta','Sube y Baja','Otros clientes','Sin contrato'].filter(k=>cc[k]).map(k=>[k,cc[k]])]);
+    const tc=cuenta(all.filter(r=>pasa(r,'trab')),r=>r.t);
+    chips('progF2','trab',[['Todos',all.filter(r=>pasa(r,'trab')).length],...Object.keys(tc).sort().map(k=>[k,tc[k]])]);
+    const ec=cuenta(all.filter(r=>pasa(r,'est')),r=>(estKm(r)||[''])[0]);
+    chips('progF3','est',[['Todos',all.filter(r=>pasa(r,'est')).length],...Object.keys(ec).sort().map(k=>[k,ec[k]])]);
+    if(!vis.length){$('progTbl').innerHTML='<p class="psub" style="margin-top:14px">Sin actividades con estos filtros.</p>';return}
+    let h='<table><thead><tr><th>Equipo</th><th>Contrato</th><th>Marca</th><th class="num">Km</th><th class="num">Dif. km</th><th>Estado km</th><th>Trabajo</th><th>Estado</th></tr></thead><tbody>';
+    let dia='';
+    vis.forEach((r,ix)=>{
+      if(r.f!==dia){dia=r.f;h+=`<tr class="pday"><td colspan="8">${esc(fdia(r.f))}</td></tr>`}
+      const ek=estKm(r), d=r.i, esDet=dets.has(d);
+      const detKey=/Campa/i.test(r.t)?'campanas':/Asetran/i.test(r.t)?'asetran':/SmartSheets/i.test(r.t)?'smart':null;
+      const items=detKey&&PROG[detKey][d];
+      const trabajo=items&&items.length?`<button class="dlink" data-det="${ix}">${esc(r.t)} ▸</button>`:`<span class="tag ${trabCls(r.t)}">${esc(r.t)}</span>`;
+      h+=`<tr><td><span class="eq">${esc(d)}</span>${esDet?' <span class="tag t-crit">Detenido</span>':''}</td>`+
+        `<td>${esc(r.c||'—')}</td><td>${esc(r.m||'—')}</td><td class="num">${esc(r.km)}</td>`+
+        `<td class="num"${r.dif_n!=null&&r.dif_n<0?' style="color:var(--crit)"':''}>${r.dif_n==null?'':miles(r.dif_n)}</td>`+
+        `<td>${ek?`<span class="tag ${ek[1]}">${ek[0]}</span>`:''}</td><td>${trabajo}</td><td>${esc(r.e)}</td></tr>`;
+      if(items&&items.length)h+=`<tr class="pdet" id="pdet${ix}" hidden><td colspan="8"><ul>${items.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></td></tr>`;
+    });
+    $('progTbl').innerHTML=h+'</tbody></table>';
+    $('progNota').textContent=`${eqAll.size} equipos en el programa completo. "Detenido" indica que el equipo figura hoy en la hoja Detenidas. Los trabajos con ▸ despliegan su detalle.`;
+  };
+  document.addEventListener('click',e=>{
+    const c=e.target.closest('#prog .chip');
+    if(c){F[c.dataset.k]=c.dataset.v;draw();return}
+    const l=e.target.closest('#prog .dlink');
+    if(l){const row=$('pdet'+l.dataset.det);if(row){row.hidden=!row.hidden;l.textContent=l.textContent.replace(/[▸▾]$/,row.hidden?'▸':'▾')}}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')window.__closeProg()});
+  window.__openProg=()=>{draw();$('prog').classList.add('open');document.body.style.overflow='hidden';$('prog').scrollTop=0};
+  window.__closeProg=()=>{$('prog').classList.remove('open');document.body.style.overflow=''};
+  if(!PROG.filas||!PROG.filas.length){const b=$('progBtn');if(b)b.style.display='none'}
+})();
 window.__setMode=(m)=>{
   MODE=m;
   document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
