@@ -30,11 +30,17 @@ select,input[type=text],.dd>button{font:inherit;color:var(--ink);background:var(
 .dd{position:relative}
 .dd>button{width:100%;text-align:left;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
 .dd>button.on{border-color:var(--brand);background:var(--sel)}
-.dd .panel{display:none;position:absolute;z-index:30;top:100%;left:0;margin-top:4px;width:260px;max-height:340px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:8px}
+.dd .panel{display:none;position:absolute;z-index:30;top:100%;left:0;margin-top:4px;width:290px;max-width:calc(100vw - 32px);max-height:380px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:8px}
 .dd.open .panel{display:block}
-.dd .panel input{width:100%;margin-bottom:6px}
-.dd .list{max-height:250px;overflow:auto}
-.dd .list label{display:flex;gap:6px;align-items:center;padding:3px 2px;font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.dd .panel input[type=text]{width:100%;margin-bottom:6px}
+.dd .panel input[type=checkbox]{width:15px;height:15px;margin:0;flex:none;accent-color:var(--brand2)}
+.dd .list{max-height:290px;overflow:auto}
+.dd .list label{display:flex;flex-direction:row;gap:8px;align-items:center;justify-content:flex-start;text-align:left;padding:5px 6px;border-radius:5px;font-size:13px;line-height:1.25;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.dd .list label:hover{background:var(--sel)}
+.dd .list label.chk-on{font-weight:600}
+.dd .panel.right{left:auto;right:0}
+.dd .row{display:flex;justify-content:space-between;align-items:center}
+.dd .row span{font-size:11.5px;color:var(--mut)}
 .dd .clear{font-size:12px;color:var(--brand);background:none;border:0;cursor:pointer;padding:4px 0}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .seg button{font:inherit;background:var(--card);color:var(--ink);border:0;padding:6px 14px;cursor:pointer}
@@ -120,7 +126,7 @@ const YEARS = [2025, 2026];
 const nf0 = new Intl.NumberFormat('es-CL',{maximumFractionDigits:0});
 const nf1 = new Intl.NumberFormat('es-CL',{maximumFractionDigits:1});
 const money = v => v==null||!isFinite(v) ? '–' : (v<0?'-$':'$')+nf0.format(Math.abs(Math.round(v)));
-const mm = v => v==null ? '–' : '$'+nf1.format(v/1e6)+' M';
+const mm = v => v==null ? '–' : (Math.abs(v)<1e6 ? (v<0?'-$':'$')+nf0.format(Math.abs(v)/1e3)+' mil' : (v<0?'-$':'$')+nf1.format(Math.abs(v)/1e6)+' M');
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // ---------- preparar columnas ----------
@@ -177,17 +183,17 @@ function syncMonths(){ selM1.value=S.m1; selM2.value=S.m2; }
 const ddRefs={};
 function mkDD(key){
   const d=DIMS[key], w=document.createElement('div'); w.className='f';
-  w.innerHTML=`<label>${d.label}<span class="tag">${d.fleet?'costo y km':'solo costo'}</span></label><div class="dd"><button type="button"><span class="t">Todos</span><span>▾</span></button><div class="panel"><input type="text" placeholder="Buscar…"><button class="clear" type="button">Limpiar selección</button><div class="list"></div></div></div>`;
+  w.innerHTML=`<label>${d.label}<span class="tag">${d.fleet?'costo y km':'solo costo'}</span></label><div class="dd"><button type="button"><span class="t">Todos</span><span>▾</span></button><div class="panel"><input type="text" placeholder="Buscar…"><div class="row"><button class="clear" type="button">Limpiar selección</button><span class="cnt"></span></div><div class="list"></div></div></div>`;
   if(key==='ctr') w.querySelector('.tag').textContent='costo y km';
   const dd=w.querySelector('.dd'), btn=dd.querySelector('button'), list=dd.querySelector('.list'), inp=dd.querySelector('input');
   const order=d.list.map((n,i)=>i).sort((a,b)=>String(d.list[a]).localeCompare(String(d.list[b]),'es'));
   list.innerHTML=order.map(i=>`<label data-n="${esc(String(d.list[i]).toLowerCase())}"><input type="checkbox" value="${i}"> ${esc(d.list[i])}</label>`).join('');
   list.onchange=e=>{const v=+e.target.value; e.target.checked?S.sets[key].add(v):S.sets[key].delete(v); refresh();};
   inp.oninput=()=>{const q=inp.value.toLowerCase(); list.querySelectorAll('label').forEach(l=>l.style.display=l.dataset.n.includes(q)?'':'none');};
-  btn.onclick=e=>{ document.querySelectorAll('.dd.open').forEach(x=>{if(x!==dd)x.classList.remove('open')}); dd.classList.toggle('open'); if(dd.classList.contains('open')) inp.focus(); e.stopPropagation(); };
+  btn.onclick=e=>{ const p=dd.querySelector('.panel'); p.classList.remove('right'); document.querySelectorAll('.dd.open').forEach(x=>{if(x!==dd)x.classList.remove('open')}); dd.classList.toggle('open'); if(dd.classList.contains('open')){ if(p.getBoundingClientRect().right>innerWidth-8) p.classList.add('right'); inp.focus(); } e.stopPropagation(); };
   dd.querySelector('.clear').onclick=()=>{S.sets[key].clear(); list.querySelectorAll('input').forEach(c=>c.checked=false); refresh();};
   dd.querySelector('.panel').onclick=e=>e.stopPropagation();
-  ddRefs[key]={btn,list};
+  ddRefs[key]={btn,list,cnt:dd.querySelector('.cnt')};
   fbox.appendChild(w);
 }
 document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(x=>x.classList.remove('open')));
@@ -205,7 +211,7 @@ mkSeg(); mkMonths(); ['ctr','tipo','marca','modelo','cl','pc','tip'].forEach(mkD
 function syncDD(){
   for(const k in ddRefs){ const s=S.sets[k], b=ddRefs[k].btn; b.classList.toggle('on',s.size>0);
     b.querySelector('.t').textContent = s.size===0?'Todos': s.size===1? String(DIMS[k].list[[...s][0]]) : s.size+' seleccionados';
-    ddRefs[k].list.querySelectorAll('input').forEach(c=>c.checked=s.has(+c.value)); }
+    ddRefs[k].list.querySelectorAll('input').forEach(c=>{c.checked=s.has(+c.value); c.parentNode.classList.toggle('chk-on',c.checked);}); ddRefs[k].cnt.textContent=DIMS[k].list.length+' opciones'+(s.size?' · '+s.size+' sel.':''); }
 }
 
 // ---------- mascaras ----------
@@ -310,7 +316,7 @@ function drawTip(){
 }
 
 const sortState={ctr:{k:'cpk',d:-1},eq:{k:'cost',d:-1}};
-function cmp(st){ return (a,b)=>{const x=a[st.k],y=b[st.k]; if(x==null&&y==null)return 0; if(x==null)return 1; if(y==null)return -1; if(typeof x==='string') return -st.d*x.localeCompare(y); return st.d*(y-x);}; }
+function cmp(st){ return (a,b)=>{const x=a[st.k],y=b[st.k]; if(x==null&&y==null)return 0; if(x==null)return 1; if(y==null)return -1; if(typeof x==='string') return st.d*x.localeCompare(y,'es'); return st.d*(x-y);}; }
 function drawCtr(){
   const n=D.ctr.length, c=new Float64Array(n), k=new Float64Array(n);
   for(let i=0;i<nC;i++) if(costRow(i,S.y,'ctr')&&cm[i]>=S.m1&&cm[i]<=S.m2) c[cc[i]]+=cv[i];
