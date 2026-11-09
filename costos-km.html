@@ -78,7 +78,7 @@ button.theme{font:inherit;background:var(--card);color:var(--ink);border:1px sol
   <div>
     <h1>Costos de mantenimiento · $/km por contrato</h1>
     <div class="sub">Ingeniería y Gestión de Activos · Costos 2025 y 2026 (a <span id="cutoff"></span>) · Kilómetros por contrato y mes</div>
-    <div class="sub" style="margin-top:4px"><b>Última actualización: 05-11-2026 13:53</b> · movimientos de costo hasta el 03-11-2026</div>
+    <div class="sub" style="margin-top:4px"><b>Última actualización: 09-11-2026 12:15</b> · movimientos de costo hasta el 03-11-2026</div>
   </div>
   <button class="theme" id="themeBtn" title="Cambiar tema">Tema</button>
 </header>
@@ -156,6 +156,8 @@ const eqCode = D.eq.map(r=>r[0]).concat(['']);
 const eqTipo = Int16Array.from(D.eq.map(r=>r[1]).concat([D.tipo.length]));
 const eqMarca = Int16Array.from(D.eq.map(r=>r[2]).concat([D.marca.length]));
 const eqModelo = Int16Array.from(D.eq.map(r=>r[3]).concat([D.modelo.length]));
+const anioU=[...new Set(D.eq.map(r=>r[4]||'').filter(Boolean))].sort(), anioL=[...anioU,'Sin año','Sin equipo'];
+const eqAnio = Int16Array.from(D.eq.map(r=>r[4]?anioU.indexOf(r[4]):anioU.length).concat([anioU.length+1]));
 const nC = D.cost.length, nK = D.km.length;
 const cy=new Uint8Array(nC), cm=new Uint8Array(nC), cc=new Int16Array(nC), ce=new Int32Array(nC), ccl=new Int16Array(nC), cpc=new Int16Array(nC), ctp=new Int16Array(nC), crc=new Int16Array(nC), crg=new Int16Array(nC), cpv=new Int32Array(nC), cv=new Float64Array(nC);
 D.cost.forEach((r,i)=>{cy[i]=r[0];cm[i]=r[1];cc[i]=r[2];ce[i]=r[3]<0?NE:r[3];ccl[i]=r[4];cpc[i]=r[5];ctp[i]=r[6];crc[i]=r[7];crg[i]=r[8];cpv[i]=r[9];cv[i]=r[10];});
@@ -170,12 +172,13 @@ const lastC=[0,0]; for(let i=0;i<nC;i++) if(cm[i]>lastC[cy[i]]) lastC[cy[i]]=cm[
 document.getElementById('cutoff').textContent = MES[lastM[1]]+' 2026'+(lastC[1]>lastM[1]?'; costos de '+MES[lastC[1]]+' excluidos por no tener km aún':'');
 
 // ---------- estado ----------
-const S = { y:1, m1:1, m2:lastM[1], onlyKm:true, eqText:'', sets:{ctr:new Set(),tipo:new Set(),marca:new Set(),modelo:new Set(),cl:new Set(),pc:new Set(),tip:new Set(),rc:new Set(),rg:new Set(),pv:new Set()} };
+const S = { y:1, m1:1, m2:lastM[1], onlyKm:true, eqText:'', sets:{ctr:new Set(),tipo:new Set(),marca:new Set(),modelo:new Set(),anio:new Set(),cl:new Set(),pc:new Set(),tip:new Set(),rc:new Set(),rg:new Set(),pv:new Set()} };
 const DIMS = {
   ctr:{label:'Contrato', list:D.ctr, fleet:false},
   tipo:{label:'Tipo de equipo', list:tipoL, fleet:true},
   marca:{label:'Marca', list:marcaL, fleet:true},
   modelo:{label:'Modelo', list:modeloL, fleet:true},
+  anio:{label:'Año del equipo', list:anioL, fleet:true},
   cl:{label:'Clasificación', list:D.cl, fleet:false},
   pc:{label:'Preventivo / Correctivo', list:D.pc, fleet:false},
   tip:{label:'Tipología', list:D.tip, fleet:false},
@@ -231,7 +234,7 @@ function mkOnlyKm(){
   w.innerHTML='<label class="chk" style="text-transform:none;letter-spacing:0;font-size:12.5px"><input type="checkbox" id="onlyKm" checked> Solo contratos con km</label>';
   fbox.appendChild(w); w.querySelector('input').onchange=e=>{S.onlyKm=e.target.checked; refresh();};
 }
-mkSeg(); mkMonths(); ['ctr','tipo','marca','modelo','cl','pc','tip','rc','rg','pv'].forEach(mkDD); mkEqText(); mkOnlyKm();
+mkSeg(); mkMonths(); ['ctr','tipo','marca','modelo','anio','cl','pc','tip','rc','rg','pv'].forEach(mkDD); mkEqText(); mkOnlyKm();
 function syncDD(){
   for(const k in ddRefs){ const s=S.sets[k], b=ddRefs[k].btn; b.classList.toggle('on',s.size>0);
     b.querySelector('.t').textContent = s.size===0?'Todos': s.size===1? String(DIMS[k].list[[...s][0]]) : s.size+' seleccionados';
@@ -246,7 +249,7 @@ function buildMasks(){
   const codes=S.eqText.split(/[\s,;]+/).filter(Boolean);
   const eqOk=new Uint8Array(NE+1);
   for(let e=0;e<=NE;e++){
-    let ok = M.tipo[eqTipo[e]] && M.marca[eqMarca[e]] && M.modelo[eqModelo[e]];
+    let ok = M.tipo[eqTipo[e]] && M.marca[eqMarca[e]] && M.modelo[eqModelo[e]] && M.anio[eqAnio[e]];
     if(ok && codes.length) ok = e<NE && codes.includes(eqCode[e]);
     eqOk[e]=ok?1:0;
   }
