@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reporte MEL</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: cabecera fija + navegacion por pestañas + grilla de tarjetas y graficos */
+:root{
+  --bg:#f3f6f3; --surface:#ffffff; --surface2:#f8faf8; --fg:#162019; --muted:#5f6d64;
+  --line:#e3e8e3; --accent:#009b48; --accent-ink:#00793a;
+  --good:#2e9e5b; --warn:#d99321; --crit:#d6483d;
+  --mina:#d6483d; --planta:#d99321; --syb:#009b48;
+  --fdisplay:'Barlow Semi Condensed',system-ui,sans-serif;
+  --fbody:'Barlow',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1410; --surface:#161d17; --surface2:#1b231c; --fg:#e9efe9; --muted:#95a499;
+  --line:#28322a; --accent:#2bb75f; --accent-ink:#36c56b;
+  --good:#38b369; --warn:#e3a736; --crit:#e2594d; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1410; --surface:#161d17; --surface2:#1b231c; --fg:#e9efe9; --muted:#95a499;
+  --line:#28322a; --accent:#2bb75f; --accent-ink:#36c56b;
+  --good:#38b369; --warn:#e3a736; --crit:#e2594d; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--fbody);font-size:14px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--fdisplay);margin:0;text-wrap:balance;letter-spacing:.2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:16px;justify-content:space-between;padding-block:12px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand .mark{font-family:var(--fdisplay);font-weight:700;font-size:22px;color:var(--accent);letter-spacing:1px}
+.brand h1{font-size:19px;font-weight:600}
+.brand .sub{color:var(--muted);font-size:12.5px}
+.top-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.corte{font-size:12.5px;color:var(--muted)}
+.corte b{color:var(--fg);font-weight:600}
+.tbtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:7px;padding:6px 10px;cursor:pointer;font-family:var(--fbody);font-size:13px}
+.tbtn:hover{color:var(--fg);border-color:var(--accent)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-top:2px}
+nav.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);
+  padding:10px 14px;cursor:pointer;font-family:var(--fdisplay);font-weight:600;font-size:15px;letter-spacing:.3px}
+nav.tabs button:hover{color:var(--fg)}
+nav.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+nav.tabs button.locked{color:var(--line);cursor:not-allowed}
+nav.tabs button.locked:hover{color:var(--muted)}
+main{padding-block:20px 40px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.kpi .val{font-family:var(--fdisplay);font-weight:700;font-size:34px;line-height:1.1;margin-top:4px}
+.kpi .foot{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi.accent .val{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card h2{font-size:16px;font-weight:600;margin-bottom:12px}
+.card .hint{color:var(--muted);font-size:12px;font-weight:400}
+.chart-box{position:relative;height:300px}
+.chart-box.tall{height:360px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right}
+.tbl-scroll{overflow-x:auto}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
+.pill.mina{background:color-mix(in srgb,var(--mina) 16%,transparent);color:var(--mina)}
+.pill.planta{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.pill.syb{background:color-mix(in srgb,var(--syb) 16%,transparent);color:var(--accent-ink)}
+.dbar{display:flex;align-items:center;gap:8px}
+.dbar .track{flex:1;height:8px;background:var(--line);border-radius:999px;overflow:hidden;min-width:60px}
+.dbar .fill{height:100%;border-radius:999px}
+.ctr-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.ctr{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.ctr .nm{font-family:var(--fdisplay);font-weight:600;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.ctr .big{font-family:var(--fdisplay);font-weight:700;font-size:30px;margin:6px 0 2px}
+.ctr .meta{font-size:12px;color:var(--muted)}
+.ctr .track{height:9px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:10px}
+.ctr .fill{height:100%;border-radius:999px}
+.sct{margin-bottom:18px}
+.sct h2{font-size:17px;margin-bottom:12px;font-weight:600}
+.note{background:var(--surface2);border:1px dashed var(--line);border-radius:12px;padding:20px;color:var(--muted);font-size:13.5px}
+.note b{color:var(--fg)}
+.days-chip{font-weight:600}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+footer{color:var(--muted);font-size:12px;padding-block:18px;border-top:1px solid var(--line);margin-top:10px}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.ctr-cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <span class="mark">VIGGO</span>
+      <div><h1>Reporte MEL</h1><div class="sub">Disponibilidad de flota &middot; Contrato BHP Escondida</div></div>
+    </div>
+    <div class="top-right">
+      <div class="corte">Corte&nbsp;<b id="corte"></b></div>
+      <button class="tbtn" id="theme" type="button">Tema</button>
+    </div>
+  </div>
+  <div class="wrap"><nav class="tabs" id="tabs"></nav></div>
+</header>
+<main class="wrap">
+  <div class="kpis" id="kpis"></div>
+  <section id="view"></section>
+  <footer>
+    Reconstruido desde <b>Dash MEL.xlsx</b> (Hoja1). Páginas disponibles: Disponibilidad, Planes, Detención por sistema.
+    Pendientes por requerir otros archivos base: Fallas en ruta, Mantenimiento Preventivo, Campañas Viggo y Kaufmann.
+  </footer>
+</main>
+<script>
+const D={"fecha_corte": "04-10-2026", "disp_fechas": ["07-07", "08-07", "09-07", "10-07", "11-07", "12-07", "13-07", "14-07", "15-07", "16-07", "17-07", "18-07", "19-07", "20-07", "21-07", "22-07", "23-07", "24-07", "25-07", "26-07", "27-07", "28-07", "29-07", "30-07", "31-07", "01-08", "02-08", "03-08", "04-08", "05-08", "06-08", "07-08", "08-08", "09-08", "10-08", "11-08", "12-08", "13-08", "14-08", "15-08", "16-08", "17-08", "18-08", "19-08", "20-08", "21-08", "22-08", "23-08", "24-08", "25-08", "26-08", "27-08", "28-08", "29-08", "30-08", "31-08", "01-09", "02-09", "03-09", "04-09", "05-09", "06-09", "07-09", "08-09", "09-09", "10-09", "11-09", "12-09", "13-09", "14-09", "15-09", "16-09", "17-09", "18-09", "19-09", "20-09", "21-09", "22-09", "23-09", "24-09", "25-09", "26-09", "27-09", "28-09", "29-09", "30-09", "01-10", "02-10", "03-10", "04-10"], "disp_series": {"Mina": [86.4, 86.4, 86.4, 86.4, 86.4, 86.7, 86.7, 84.4, 84.4, 77.8, 80.0, 86.7, 86.7, 86.7, 86.7, 82.2, 82.2, 82.2, 86.7, 88.9, 87.2, 87.2, 79.5, 74.4, 82.1, 70.0, 80.0, 82.5, 80.0, 80.0, 77.5, 70.0, 75.0, 75.0, 78.0, 75.6, 78.0, 76.2, 78.6, 83.3, 86.0, 79.1, 81.8, 77.3, 77.3, 79.5, 72.7, 70.5, 77.3, 77.3, 79.5, 72.7, 65.9, 70.5, 72.7, 72.7, 75.0, 70.5, 77.3, 72.7, 75.0, 77.3, 77.3, 77.3, 75.0, 79.5, 77.3, 87.2, 92.3, 92.5, 90.0, 77.5, 80.0, 85.0, 85.0, 80.5, 80.5, 82.9, 83.3, 76.7, 69.8, 67.4, 69.8, 74.4, 77.3, 75.0, 70.5, 69.6, 73.9, 73.9], "Planta": [83.8, 83.8, 83.8, 83.8, 88.9, 88.9, 88.9, 86.1, 86.1, 86.5, 86.5, 89.2, 89.5, 89.5, 89.5, 89.5, 86.8, 86.8, 86.8, 81.6, 82.4, 82.4, 82.4, 79.4, 79.4, 82.4, 82.4, 85.3, 82.4, 76.5, 76.5, 76.5, 76.5, 76.5, 70.6, 73.5, 73.5, 76.5, 79.4, 82.4, 82.4, 82.4, 82.4, 82.4, 82.4, 85.3, 91.2, 85.3, 85.3, 88.2, 88.2, 79.4, 79.4, 76.5, 85.3, 85.3, 87.5, 87.5, 87.5, 87.9, 87.9, 84.8, 84.8, 87.9, 84.8, 87.9, 87.9, 86.7, 90.0, 90.0, 86.7, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 86.7, 90.0, 86.7, 83.3, 83.3, 83.3, 83.3, 80.0, 83.3, 76.7, 80.0, 80.0, 73.3], "Sube y baja": [91.7, 91.7, 86.7, 86.7, 86.7, 86.7, 93.3, 93.3, 95.0, 95.0, 95.0, 95.0, 96.7, 96.7, 98.3, 98.3, 96.7, 98.3, 98.3, 98.3, 98.3, 93.3, 98.3, 93.3, 93.3, 93.3, 93.3, 95.0, 96.7, 96.7, 95.0, 91.7, 91.7, 91.7, 95.0, 95.0, 95.0, 93.3, 98.3, 96.7, 96.7, 98.3, 98.3, 91.7, 88.3, 88.3, 88.3, 88.3, 88.3, 90.0, 93.3, 91.7, 93.3, 93.3, 93.3, 93.3, 96.7, 98.3, 98.3, 98.3, 91.7, 91.7, 91.7, 96.7, 98.3, 98.3, 98.3, 96.7, 85.0, 85.0, 96.7, 96.7, 95.0, 100.0, 100.0, 100.0, 91.7, 91.7, 93.3, 93.3, 90.0, 100.0, 100.0, 91.7, 95.0, 96.7, 95.0, 91.7, 100.0, 100.0]}, "snapshot": [{"Por contrato": "Mina", "Tipo": "Bus", "total": 40, "oper": 29, "detenidos": 11, "disp": 72.5}, {"Por contrato": "Mina", "Tipo": "Minibus", "total": 6, "oper": 5, "detenidos": 1, "disp": 83.3}, {"Por contrato": "Planta", "Tipo": "Bus", "total": 26, "oper": 19, "detenidos": 7, "disp": 73.1}, {"Por contrato": "Planta", "Tipo": "Minibus", "total": 4, "oper": 3, "detenidos": 1, "disp": 75.0}, {"Por contrato": "Sube y baja", "Tipo": "Bus", "total": 58, "oper": 58, "detenidos": 0, "disp": 100.0}, {"Por contrato": "Sube y baja", "Tipo": "Minibus", "total": 2, "oper": 2, "detenidos": 0, "disp": 100.0}], "resumen": [{"Por contrato": "Mina", "total": 46, "oper": 34, "detenidos": 12, "disp": 73.9}, {"Por contrato": "Planta", "total": 30, "oper": 22, "detenidos": 8, "disp": 73.3}, {"Por contrato": "Sube y baja", "total": 60, "oper": 60, "detenidos": 0, "disp": 100.0}], "kpi": {"flota": 136, "operativos": 116, "detenidos": 20, "disp_global": 85.3}, "detenidos": [{"Equipo": 4870, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "F/S Cambios", "Fecha detencion": "23-08-2026", "dias": 43}, {"Equipo": 6271, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "Fecha detencion": "15-09-2026", "dias": 20}, {"Equipo": 9601, "Tipo": "Minibus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "Fecha detencion": "16-09-2026", "dias": 19}, {"Equipo": 6279, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Motor", "Fecha detencion": "16-09-2026", "dias": 19}, {"Equipo": 4822, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "F/S Embrague", "Fecha detencion": "22-09-2026", "dias": 13}, {"Equipo": 6266, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "Fecha detencion": "24-09-2026", "dias": 11}, {"Equipo": 6295, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "F/S Amago Inc.", "Fecha detencion": "24-09-2026", "dias": 11}, {"Equipo": 4830, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Transmision", "Fecha detencion": "24-09-2026", "dias": 11}, {"Equipo": 4438, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Motor", "Fecha detencion": "25-09-2026", "dias": 10}, {"Equipo": 5137, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Motor", "Fecha detencion": "25-09-2026", "dias": 10}, {"Equipo": 4903, "Tipo": "Minibus", "Por contrato": "Planta", "Motivo": "F/S Pasadores Caliper", "Fecha detencion": "27-09-2026", "dias": 8}, {"Equipo": 4865, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "F/S Evaluar", "Fecha detencion": "29-09-2026", "dias": 6}, {"Equipo": 4825, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Transmision", "Fecha detencion": "30-09-2026", "dias": 5}, {"Equipo": 4883, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Direccion", "Fecha detencion": "01-10-2026", "dias": 4}, {"Equipo": 6289, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Frenos", "Fecha detencion": "01-10-2026", "dias": 4}, {"Equipo": 4435, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "F/S Discos Y Pastillas", "Fecha detencion": "02-10-2026", "dias": 3}, {"Equipo": 6281, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Sistema refrigeracion", "Fecha detencion": "03-10-2026", "dias": 2}, {"Equipo": 6288, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "Fecha detencion": "03-10-2026", "dias": 2}, {"Equipo": 4876, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Motor", "Fecha detencion": "04-10-2026", "dias": 1}, {"Equipo": 4846, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Transmision", "Fecha detencion": "04-10-2026", "dias": 1}], "planes": [{"Equipo": 4870, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "F/S Cambios", "dias": 43, "Plan de accion": "Bajar en cama baja y reparar en Antofagasta", "Responsable": "Subgerente de Ingenieria", "Fecha compromiso": "30-09-2026"}, {"Equipo": 6271, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "dias": 20, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 9601, "Tipo": "Minibus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "dias": 19, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 6279, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Motor", "dias": 19, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4822, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "F/S Embrague", "dias": 13, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 6266, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "dias": 11, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 6295, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "F/S Amago Inc.", "dias": 11, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4830, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Transmision", "dias": 11, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4438, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Motor", "dias": 10, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 5137, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Motor", "dias": 10, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4903, "Tipo": "Minibus", "Por contrato": "Planta", "Motivo": "F/S Pasadores Caliper", "dias": 8, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4865, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "F/S Evaluar", "dias": 6, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4825, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Transmision", "dias": 5, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4883, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Direccion", "dias": 4, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 6289, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Frenos", "dias": 4, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4435, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "F/S Discos Y Pastillas", "dias": 3, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 6281, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Sistema refrigeracion", "dias": 2, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 6288, "Tipo": "Bus", "Por contrato": "Mina", "Motivo": "Mantenimiento preventivo", "dias": 2, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4876, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Motor", "dias": 1, "Plan de accion": "", "Responsable": "", "Fecha compromiso": ""}, {"Equipo": 4846, "Tipo": "Bus", "Por contrato": "Planta", "Motivo": "Transmision", "dias": 1, "Plan de accion": "Bajar en cama baja y reparar en Antofagasta", "Responsable": "Subgerente de Ingenieria", "Fecha compromiso": "21-09-2026"}], "sistema": [{"Motivo": "Mantenimiento preventivo", "dias": 52, "equipos": 4}, {"Motivo": "F/S Cambios", "dias": 43, "equipos": 1}, {"Motivo": "Motor", "dias": 40, "equipos": 4}, {"Motivo": "Transmision", "dias": 17, "equipos": 3}, {"Motivo": "F/S Embrague", "dias": 13, "equipos": 1}, {"Motivo": "F/S Amago Inc.", "dias": 11, "equipos": 1}, {"Motivo": "F/S Pasadores Caliper", "dias": 8, "equipos": 1}, {"Motivo": "F/S Evaluar", "dias": 6, "equipos": 1}, {"Motivo": "Frenos", "dias": 4, "equipos": 1}, {"Motivo": "Direccion", "dias": 4, "equipos": 1}, {"Motivo": "F/S Discos Y Pastillas", "dias": 3, "equipos": 1}, {"Motivo": "Sistema refrigeracion", "dias": 2, "equipos": 1}], "sistema_anual": [{"Motivo": "Mantenimiento Preventivo", "fallas": 103}, {"Motivo": "Motor", "fallas": 46}, {"Motivo": "Transmision", "fallas": 44}, {"Motivo": "Carroceria", "fallas": 43}, {"Motivo": "Sistema Electrico", "fallas": 35}, {"Motivo": "Neumaticos", "fallas": 29}, {"Motivo": "Sistema Neumatico", "fallas": 21}, {"Motivo": "Embrague", "fallas": 15}, {"Motivo": "Frenos", "fallas": 15}, {"Motivo": "Mantenimiento", "fallas": 13}, {"Motivo": "Aire Acondicionado", "fallas": 12}, {"Motivo": "Suspension", "fallas": 11}, {"Motivo": "Sistema De Refrigeracion", "fallas": 10}, {"Motivo": "Alternador", "fallas": 9}, {"Motivo": "Direccion", "fallas": 9}, {"Motivo": "Retardador", "fallas": 7}, {"Motivo": "Certificado Operatividad", "fallas": 7}, {"Motivo": "Sistema Scr", "fallas": 5}]};
+const F=n=>new Intl.NumberFormat('es-CL').format(n);
+const cc={'Mina':'mina','Planta':'planta','Sube y baja':'syb'};
+const col=k=>({mina:getCss('--mina'),planta:getCss('--warn'),syb:getCss('--syb')}[cc[k]]||getCss('--accent'));
+function getCss(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function dispColor(p){return p>=90?getCss('--good'):p>=80?getCss('--warn'):getCss('--crit')}
+let charts=[];
+function clearCharts(){charts.forEach(c=>c.destroy());charts=[]}
+
+document.getElementById('corte').textContent=D.fecha_corte;
+
+// KPIs
+const k=D.kpi;
+document.getElementById('kpis').innerHTML=`
+  <div class="kpi"><div class="lbl">Flota total</div><div class="val">${k.flota}</div><div class="foot">equipos activos</div></div>
+  <div class="kpi"><div class="lbl">Operativos</div><div class="val" style="color:var(--good)">${k.operativos}</div><div class="foot">al corte</div></div>
+  <div class="kpi"><div class="lbl">Detenidos</div><div class="val" style="color:var(--crit)">${k.detenidos}</div><div class="foot">fuera de servicio</div></div>
+  <div class="kpi accent"><div class="lbl">Disponibilidad</div><div class="val">${k.disp_global}%</div><div class="foot">flota global</div></div>`;
+
+const TABS=[
+ {id:'disp',name:'Disponibilidad',on:1},
+ {id:'planes',name:'Planes',on:1},
+ {id:'sistema',name:'Detención por sistema',on:1},
+ {id:'ruta',name:'Fallas en ruta',on:0},
+ {id:'mp',name:'Mant. Preventivo',on:0},
+ {id:'camp',name:'Campañas',on:0},
+];
+const nav=document.getElementById('tabs');
+TABS.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t.name;b.setAttribute('role','tab');
+ if(!t.on)b.className='locked';b.onclick=()=>{if(t.on)show(t.id)};nav.appendChild(b);t._el=b});
+function markTab(id){TABS.forEach(t=>t._el.setAttribute('aria-selected',t.id===id?'true':'false'))}
+
+function pill(c){return `<span class="pill ${cc[c]||''}">${c}</span>`}
+
+function viewDisp(){
+ const v=document.getElementById('view');
+ let ctr=D.resumen.map(r=>`<div class="ctr"><div class="nm">${pill(r['Por contrato'])}<span>${r.disp}%</span></div>
+   <div class="big" style="color:${dispColor(r.disp)}">${r.oper}/${r.total}</div>
+   <div class="meta">${r.detenidos} detenidos</div>
+   <div class="track"><div class="fill" style="width:${r.disp}%;background:${dispColor(r.disp)}"></div></div></div>`).join('');
+ let det=D.detenidos.map(d=>`<tr><td><b>${d.Equipo}</b></td><td>${d.Tipo}</td><td>${pill(d['Por contrato'])}</td>
+   <td>${d.Motivo||'—'}</td><td>${d['Fecha detencion']||'—'}</td><td class="num days-chip" style="color:${d.dias>=15?'var(--crit)':d.dias>=7?'var(--warn)':'var(--fg)'}">${d.dias}</td></tr>`).join('');
+ v.innerHTML=`
+  <div class="ctr-cards">${ctr}</div>
+  <div class="card sct"><h2>Disponibilidad diaria por contrato <span class="hint">· últimos 90 días (%)</span></h2>
+    <div class="legend"><span><i style="background:var(--mina)"></i>Mina</span><span><i style="background:var(--warn)"></i>Planta</span><span><i style="background:var(--syb)"></i>Sube y Baja</span></div>
+    <div class="chart-box tall"><canvas id="cDisp"></canvas></div></div>
+  <div class="grid2">
+   <div class="card"><h2>Resumen por contrato y tipo</h2><div class="tbl-scroll"><table>
+     <thead><tr><th>Contrato</th><th>Tipo</th><th class="num">Flota</th><th class="num">Oper.</th><th class="num">Det.</th><th>Disponibilidad</th></tr></thead>
+     <tbody>${D.snapshot.map(s=>`<tr><td>${pill(s['Por contrato'])}</td><td>${s.Tipo}</td><td class="num">${s.total}</td><td class="num">${s.oper}</td><td class="num">${s.detenidos}</td>
+       <td><div class="dbar"><div class="track"><div class="fill" style="width:${s.disp}%;background:${dispColor(s.disp)}"></div></div><span>${s.disp}%</span></div></td></tr>`).join('')}</tbody>
+     </table></div></div>
+   <div class="card"><h2>Equipos detenidos <span class="hint">· ${D.detenidos.length} al corte</span></h2><div class="tbl-scroll" style="max-height:360px;overflow-y:auto"><table>
+     <thead><tr><th>Equipo</th><th>Tipo</th><th>Contrato</th><th>Motivo</th><th>F. detención</th><th class="num">Días</th></tr></thead>
+     <tbody>${det}</tbody></table></div></div>
+  </div>`;
+ clearCharts();
+ const ctx=document.getElementById('cDisp');
+ charts.push(new Chart(ctx,{type:'line',data:{labels:D.disp_fechas,datasets:[
+   {label:'Mina',data:D.disp_series['Mina'],borderColor:getCss('--mina'),backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2},
+   {label:'Planta',data:D.disp_series['Planta'],borderColor:getCss('--warn'),backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2},
+   {label:'Sube y Baja',data:D.disp_series['Sube y baja'],borderColor:getCss('--syb'),backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2},
+  ]},options:chartOpts({ymin:50,ymax:100,suffix:'%',ticks:10})}));
+}
+
+function viewPlanes(){
+ const v=document.getElementById('view');
+ const rows=D.planes.map(p=>{const hasPlan=(p['Plan de accion']||'').trim().length>0;
+   return `<tr><td><b>${p.Equipo}</b></td><td>${pill(p['Por contrato'])}</td><td>${p.Motivo||'—'}</td>
+   <td class="num">${p.dias}</td><td style="white-space:normal;min-width:220px;${hasPlan?'':'color:var(--muted)'}">${hasPlan?p['Plan de accion']:'— sin plan —'}</td>
+   <td>${p.Responsable||'—'}</td><td>${p['Fecha compromiso']||'—'}</td></tr>`}).join('');
+ v.innerHTML=`<div class="card"><h2>Planes de acción de equipos detenidos <span class="hint">· ${D.planes.length} equipos</span></h2>
+   <div class="tbl-scroll"><table><thead><tr><th>Equipo</th><th>Contrato</th><th>Motivo</th><th class="num">Días</th><th>Plan de acción</th><th>Responsable</th><th>F. compromiso</th></tr></thead>
+   <tbody>${rows}</tbody></table></div></div>`;
+ clearCharts();
+}
+
+function viewSistema(){
+ const v=document.getElementById('view');
+ v.innerHTML=`<div class="grid2">
+   <div class="card"><h2>Días de detención por sistema <span class="hint">· detenidos actuales</span></h2><div class="chart-box tall"><canvas id="cSisDias"></canvas></div></div>
+   <div class="card"><h2>Fallas acumuladas por sistema <span class="hint">· año 2026</span></h2><div class="chart-box tall"><canvas id="cSisAnual"></canvas></div></div>
+ </div>`;
+ clearCharts();
+ const s=D.sistema;
+ charts.push(new Chart(document.getElementById('cSisDias'),{type:'bar',
+   data:{labels:s.map(x=>x.Motivo),datasets:[{label:'Días',data:s.map(x=>x.dias),backgroundColor:getCss('--accent'),borderRadius:4}]},
+   options:chartOpts({horiz:true})}));
+ const a=D.sistema_anual;
+ charts.push(new Chart(document.getElementById('cSisAnual'),{type:'bar',
+   data:{labels:a.map(x=>x.Motivo),datasets:[{label:'Fallas',data:a.map(x=>x.fallas),backgroundColor:getCss('--accent-ink'),borderRadius:4}]},
+   options:chartOpts({horiz:true})}));
+}
+
+function chartOpts(o){o=o||{};const grid=getCss('--line'),fg=getCss('--muted');
+ const base={responsive:true,maintainAspectRatio:false,
+   plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed[o.horiz?'x':'y']}${o.suffix||''}`}}},
+   scales:{}};
+ if(o.horiz){base.indexAxis='y';
+   base.scales.x={grid:{color:grid},ticks:{color:fg},beginAtZero:true};
+   base.scales.y={grid:{display:false},ticks:{color:fg,font:{size:11}}};
+ }else{
+   base.scales.y={grid:{color:grid},ticks:{color:fg,callback:v=>v+(o.suffix||'')},min:o.ymin,max:o.ymax};
+   base.scales.x={grid:{display:false},ticks:{color:fg,maxTicksLimit:o.ticks||12,autoSkip:true}};
+ }
+ return base}
+
+function show(id){markTab(id);
+ if(id==='disp')viewDisp();else if(id==='planes')viewPlanes();else if(id==='sistema')viewSistema()}
+
+// tema
+const root=document.documentElement;
+function setTheme(t){try{if(t){root.setAttribute('data-theme',t);localStorage.setItem('mel-theme',t)}}catch(e){}
+ const cur=show._cur;if(cur)show(cur)}
+document.getElementById('theme').onclick=()=>{
+ const now=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+ setTheme(now==='dark'?'light':'dark')};
+try{const sv=localStorage.getItem('mel-theme');if(sv)root.setAttribute('data-theme',sv)}catch(e){}
+const _show=show;show=function(id){_show.show_cur;show._cur=id;_show(id)};
+show('disp');
+</script>
+</body>
+</html>
