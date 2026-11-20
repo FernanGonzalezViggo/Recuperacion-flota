@@ -327,7 +327,7 @@
 
 <tr class="tot"><td>Total</td><td colspan="4">37 equipos en Custodia Venta</td></tr>
 </tbody></table></div><p class="foot">Fuente: maestro de flota 18-11-2026, contrato “Custodia Venta”. Equipos ya decididos para venta; se excluyen de los planes de recuperación y del Plan 3.</p></section>
-<script>function toggleVenta(){var s=document.querySelectorAll(".venta-sec");s.forEach(function(x){x.classList.toggle("show");});var b=document.querySelector(".vbtn");var sh=document.querySelector(".venta-sec.show");b.textContent=(sh?"↕ Ocultar equipos destinados a Venta":"↕ Ver equipos destinados a Venta");}</script>
+<script>function toggleVenta(){var s=document.querySelectorAll(".venta-sec");var show=!document.querySelector(".venta-sec.show");s.forEach(function(x){x.classList.toggle("show");});var b=document.querySelector(".vbtn");b.textContent=(show?"↕ Ocultar equipos destinados a Venta":"↕ Ver equipos destinados a Venta");if(show){var f=document.querySelector(".venta-sec.show");if(f)f.scrollIntoView({behavior:"smooth",block:"start"});}else{window.scrollTo({top:0,behavior:"smooth"});}}</script>
 </div>
 </body>
 </html>
