@@ -102,6 +102,8 @@
   table.rec .tag{font-size:9px;background:var(--amber-bg);color:var(--amber);padding:.05rem .35rem;border-radius:4px;font-family:'Inter';letter-spacing:.03em;text-transform:uppercase;vertical-align:middle}
   table.rec tr.tot td{border-top:2px solid var(--line);border-bottom:none;font-weight:600;padding:.6rem .7rem;background:var(--soft)}
   .kpi-row.tight{margin-bottom:.2rem}
+  .fullbleed{width:min(1500px,96vw);margin-left:50%;transform:translateX(-50%)}
+  @media(max-width:900px){.fullbleed{width:96vw}}
   table.rec.compact{font-size:11.5px}
   table.rec.compact th,table.rec.compact td{padding:.35rem .45rem}
 
@@ -140,8 +142,8 @@
 <p class="lead">Plan formal de recuperación en dos etapas (Plan 1 y Plan 2). El <b>Plan 2 se cerró con los equipos ya recuperados</b>; los que faltaban por recuperar <b>pasaron al Plan 3</b> (presupuesto de recuperación 2027).</p>
 <div class="plan-grid">
 <div class="plan-card p1"><div class="plan-top"><span class="plan-name">Plan 1</span><span class="pill done">100% ejecutado</span></div><div class="plan-cost">$142 MM</div><div class="plan-stats"><div><b>17</b><span>equipos</span></div><div><b>16</b><span>propios</span></div></div><p class="plan-note">Recuperación ejecutada y cerrada (ene–jul 2026). Incluye el 6327, que era arrendado y fue devuelto (16 propios).</p></div>
-<div class="plan-card p2"><div class="plan-top"><span class="plan-name">Plan 2</span><span class="pill done">Cerrado</span></div><div class="plan-cost">$132 MM</div><div class="plan-stats"><div><b>4</b><span>equipos recuperados</span></div></div><p class="plan-note">El Plan 2 se cierra con los 4 equipos recuperados. Los que faltaban por recuperar pasaron al Plan 3 (presupuesto 2027).</p></div>
-</div><div class="total-band"><span>Inversión total del plan de recuperación (Plan 1 + Plan 2)</span><b>$274 MM</b></div></section>
+<div class="plan-card p2"><div class="plan-top"><span class="plan-name">Plan 2</span><span class="pill done">Cerrado</span></div><div class="plan-cost">$81,3 MM</div><div class="plan-stats"><div><b>4</b><span>equipos recuperados</span></div><div><b>$132 MM</b><span>presupuesto</span></div></div><p class="plan-note">Presupuesto $132 MM, pero se ejecutaron solo <b>$81,3 MM</b>: el Plan 2 se cierra con los 4 equipos recuperados y los que faltaban pasaron al Plan 3 (presupuesto 2027).</p></div>
+</div><div class="total-band"><span>Plan de recuperación — presupuesto $274 MM · <b>ejecutado $223,3 MM</b> (Plan 1 $142 MM + Plan 2 $81,3 MM)</span><b>&lt; $274 MM</b></div></section>
 <section class="recup-sec"><div class="s-head"><span class="s-num">2</span><h2>Equipos Recuperados</h2></div>
 <p class="lead">24 equipos restituidos al servicio: <b>17 del Plan 1</b>, <b>3 de larga data</b> sin plan formal y <b>4 del Plan 2</b> ya recuperados. El costo de recuperación acumula el gasto hasta 30 días posteriores a la entrega operativa.</p>
 <div class="tbl-wrap"><table class="rec"><thead><tr><th>Equipo</th><th>Contrato actual</th><th class="c">Fecha detención</th><th class="c">Fecha entrega</th><th class="r">Costo recuperación</th><th class="r">Km desde entrega</th></tr></thead><tbody>
@@ -186,7 +188,7 @@
 <tr class="tot"><td colspan="7">Totales</td><td class="mono r">$81,3 MM</td><td class="mono r strong">$1,0 MM</td></tr>
 </tbody></table></div>
 <p class="foot"><b>Costo de reparación:</b> corresponde a lo que se gastará de los $132 MM restantes del Plan 2 (columna «Costo de reparación» del archivo de recuperables). Los equipos operativos ya no lo requieren. <b>Faltan por definir</b> el costo de reparación de: 4821, 4866. Costo acumulado: histórico (Costo Neto) por equipo.</p></section>
-<section class="recup-sec"><div class="s-head"><span class="s-num">4</span><h2>Plan 3 — Recuperables para Operación (presupuesto 2027) · Reparar vs Vender</h2></div>
+<section class="recup-sec fullbleed"><div class="s-head"><span class="s-num">4</span><h2>Plan 3 — Recuperables para Operación (presupuesto 2027) · Reparar vs Vender</h2></div>
 <p class="lead">Los <b>15 equipos</b> del <b>presupuesto de recuperación 2027</b> (Recuperable Operación). Cada fila combina el estado operativo (detención, días, costo ya invertido) con el balance <b>reparar vs vender</b>: valor libro, valor de venta, resultado contable y el <b>payback</b> — meses para recuperar el costo de reparación con la utilidad de operar (margen 15%). Supuesto de ingreso: más de 5 años → contrato de menor ingreso; 5 años o menos → mayor ingreso.</p>
 <div class="kpi-row tight"><div class="kpi sm"><div class="kpi-v">15</div><div class="kpi-l">Equipos (presupuesto 2027)</div></div><div class="kpi sm accent"><div class="kpi-v">$337,0 MM</div><div class="kpi-l">Monto necesario de reparación</div></div><div class="kpi sm"><div class="kpi-v">$76,0 MM</div><div class="kpi-l">Ingreso mensual potencial</div></div></div>
 <div class="tbl-wrap"><table class="rec compact"><thead><tr><th>Equipo</th><th class="c">Año</th><th>Modelo</th><th class="r">Días det.</th><th class="r">Costo reparación</th><th class="r">Valor libro</th><th class="r">Valor venta</th><th class="r">Resultado contable</th><th class="r">Ingreso/mes</th><th class="r">Payback 15%</th><th>Decisión</th></tr></thead><tbody>
