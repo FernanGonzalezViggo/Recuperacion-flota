@@ -71,7 +71,7 @@ details.note summary{cursor:pointer;color:var(--brand);font-weight:600}
 details.note p,details.note li{color:var(--mut);font-size:13px;max-width:980px}
 .warn{background:var(--sel);border-radius:8px;padding:6px 10px;font-size:12.5px;color:var(--mut);margin-bottom:12px}
 #tDet td,#tDet th{text-align:left}#tDet td.n,#tDet th.n{text-align:right}#tDet td{white-space:normal;vertical-align:top;font-size:12.5px}#tDet td.nw{white-space:nowrap}
-.dtools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.dtools input{flex:1;min-width:220px}.cntx{font-size:12.5px;color:var(--mut)}
+.dtools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.dtools input{flex:1;min-width:220px}.cntx{font-size:12.5px;color:var(--mut)}.dcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:6px}.dcols .f{min-width:0}.dcols input{width:100%}mark{background:#ffe08a;color:#1a1d29;border-radius:2px;padding:0 1px}
 .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:8px;font-size:12.5px;color:var(--mut)}
 button.theme{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:5px 10px;cursor:pointer}
 </style>
@@ -81,7 +81,7 @@ button.theme{font:inherit;background:var(--card);color:var(--ink);border:1px sol
   <div>
     <h1>Costos de mantenimiento · $/km por contrato</h1>
     <div class="sub">Ingeniería y Gestión de Activos · Costos 2025 y 2026 (a <span id="cutoff"></span>) · Kilómetros por contrato y mes</div>
-    <div class="sub" style="margin-top:4px"><b>Última actualización: 10-11-2026 09:17</b> · movimientos de costo hasta el 03-11-2026</div>
+    <div class="sub" style="margin-top:4px"><b>Última actualización: 25-11-2026 14:54</b> · movimientos de costo hasta el 03-11-2026</div>
   </div>
   <button class="theme" id="themeBtn" title="Cambiar tema">Tema</button>
 </header>
@@ -131,10 +131,13 @@ button.theme{font:inherit;background:var(--card);color:var(--ink);border:1px sol
   <div class="card" style="margin-bottom:12px" id="detail">
     <h2>Detalle de costos <small id="detSub">respeta todos los filtros de arriba (año, meses, contrato, equipo, clasificación, proveedor…)</small></h2>
     <div class="dtools">
-      <input type="text" id="detQ" placeholder="Buscar en descripción, proveedor, OC/OT, equipo, contrato…">
+      <input type="text" id="detQ" placeholder="Buscar en todo el detalle: palabras clave (ej: neumatico delantero)">
+      <button type="button" class="theme" id="detClr">Limpiar búsquedas</button>
       <span id="detCnt" class="cntx"></span>
       <button type="button" class="theme" id="detCsv">Descargar CSV</button>
     </div>
+    <div class="dcols" id="detCols"></div>
+    <div class="cntx" style="margin:2px 0 8px">Se ignoran mayúsculas y tildes. Varias palabras = todas deben aparecer. Con comillas se busca la frase exacta ("cambio de aceite"). Con un guion se excluye (-lavado).</div>
     <div class="tw" style="max-height:560px"><table id="tDet"></table></div>
     <div class="pager"><button type="button" class="theme" id="detPrev">‹ Anterior</button><span id="detPg"></span><button type="button" class="theme" id="detNext">Siguiente ›</button></div>
   </div>
@@ -288,18 +291,34 @@ const sumR=(a,m1,m2)=>{let s=0;for(let m=m1;m<=m2;m++)s+=a[m];return s;};
 const DT=D.det, nD=DT.length;
 const dy=new Uint8Array(nD),dm=new Uint8Array(nD),dc=new Int16Array(nD),de=new Int32Array(nD),dcl=new Int16Array(nD),dpc=new Int16Array(nD),dtp=new Int16Array(nD),drc=new Int16Array(nD),drg=new Int16Array(nD),dpv=new Int32Array(nD),dv=new Float64Array(nD);
 DT.forEach((r,i)=>{dy[i]=r[0];dm[i]=r[1];dc[i]=r[2];de[i]=r[3]<0?NE:r[3];dcl[i]=r[4];dpc[i]=r[5];dtp[i]=r[6];drc[i]=r[7];drg[i]=r[8];dpv[i]=r[9];dv[i]=r[10];});
-const detSearch=DT.map(r=>(r[11]+' '+D.dds[r[12]]+' '+D.doc[r[13]]+' '+D.dbd[r[14]]+' '+D.pv[r[9]]+' '+D.ctr[r[2]]+' '+(r[3]>=0?D.eq[r[3]][0]:'')+' '+D.cl[r[4]]+' '+D.rc[r[7]]).toLowerCase());
+const detSearch=DT.map(r=>(r[11]+' '+D.dds[r[12]]+' '+D.doc[r[13]]+' '+D.dbd[r[14]]+' '+D.pv[r[9]]+' '+D.ctr[r[2]]+' '+(r[3]>=0?D.eq[r[3]][0]:'')+' '+D.cl[r[4]]+' '+D.rc[r[7]]).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase());
 const detDate=i=>{const r=DT[i]; return r[11]||(YEARS[r[0]]+'-'+String(r[1]).padStart(2,'0')+'-00');};
 const detDateTxt=i=>{const r=DT[i]; return r[11]?r[11].slice(8,10)+'-'+r[11].slice(5,7)+'-'+r[11].slice(0,4):MES[r[1]]+' '+YEARS[r[0]]+' (sin día)';};
 const DCOL={date:i=>detDate(i),ctr:i=>D.ctr[DT[i][2]],eq:i=>de[i]<NE?eqCode[de[i]]:'',tipo:i=>de[i]<NE?tipoL[eqTipo[de[i]]]:'',cl:i=>D.cl[DT[i][4]],pc:i=>D.pc[DT[i][5]],pv:i=>D.pv[DT[i][9]],ds:i=>D.dds[DT[i][12]],oc:i=>D.doc[DT[i][13]],rc:i=>D.rc[DT[i][7]],v:i=>dv[i]};
 const detSort={k:'v',d:-1}; let detPage=0, detQtxt='', detIdx=[];
+const nrmS=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function parseQ(q){ const pos=[], neg=[]; const re=/(-?)"([^"]+)"|(-?)(\S+)/g; let m;
+  while((m=re.exec(q))){ const neg_=(m[1]||m[3])==='-', w=nrmS(m[2]||m[4]).trim(); if(!w||w==='-') continue; (neg_?neg:pos).push(w); }
+  return {pos,neg}; }
+const COLQ={ds:'Descripción',pv:'Proveedor',ctr:'Contrato',eq:'Equipo',cl:'Clasificación',oc:'OC/OT',rc:'Resp. costos',tipo:'Tipo'};
+const colQ={}, colLow={};
+const colText=(k,i)=>{ const c=colLow[k]||(colLow[k]=new Array(nD)); return c[i]!==undefined?c[i]:(c[i]=nrmS(DCOL[k](i))); };
+(function(){ const box=document.getElementById('detCols');
+  box.innerHTML=Object.keys(COLQ).map(k=>`<div class="f"><label>${COLQ[k]}</label><input type="text" data-k="${k}" placeholder="Buscar en ${COLQ[k].toLowerCase()}…"></div>`).join('');
+  box.querySelectorAll('input').forEach(inp=>inp.oninput=()=>{ colQ[inp.dataset.k]=inp.value; clearTimeout(window._dq); window._dq=setTimeout(()=>drawDetail(true),250); }); })();
+const hl=(txt,terms)=>{ txt=String(txt); if(!terms.length) return esc(txt);
+  let nt=''; for(const ch of txt) nt+=nrmS(ch).slice(0,1)||ch; if(nt.length!==txt.length) return esc(txt);
+  const marks=new Uint8Array(txt.length); for(const w of terms){ let p=0; while((p=nt.indexOf(w,p))>=0){ marks.fill(1,p,p+w.length); p+=w.length; } }
+  let o='',on=false,buf=''; for(let j=0;j<txt.length;j++){ const m=marks[j]===1; if(m!==on){ o+=on?'<mark>'+esc(buf)+'</mark>':esc(buf); buf=''; on=m; } buf+=txt[j]; } o+=on?'<mark>'+esc(buf)+'</mark>':esc(buf); return o; };
 const PGSZ=100;
 function detRow(i){ return dy[i]===S.y && dm[i]>=S.m1 && dm[i]<=S.m2 && M.ctr[dc[i]] && M.eq[de[i]] && M.cl[dcl[i]] && M.pc[dpc[i]] && M.tip[dtp[i]] && M.rc[drc[i]] && M.rg[drg[i]] && M.pv[dpv[i]] && (!S.onlyKm||hasKm[S.y][dc[i]]); }
 function drawDetail(resetPage){
   if(resetPage) detPage=0;
-  const q=detQtxt.trim().toLowerCase(), terms=q?q.split(/\s+/):[];
+  const G=parseQ(detQtxt), CQ={}; let anyCol=false; for(const k in colQ){ const p=parseQ(colQ[k]); if(p.pos.length||p.neg.length){ CQ[k]=p; anyCol=true; } }
+  const hasG=G.pos.length||G.neg.length;
   const idx=[]; let tot=0;
-  for(let i=0;i<nD;i++){ if(!detRow(i)) continue; if(terms.length){ const s=detSearch[i]; let ok=true; for(const w of terms) if(!s.includes(w)){ok=false;break;} if(!ok) continue; } idx.push(i); tot+=dv[i]; }
+  for(let i=0;i<nD;i++){ if(!detRow(i)) continue; if(hasG){ const s=detSearch[i]; let ok=true; for(const w of G.pos) if(!s.includes(w)){ok=false;break;} if(ok) for(const w of G.neg) if(s.includes(w)){ok=false;break;} if(!ok) continue; }
+    if(anyCol){ let ok=true; for(const k in CQ){ const s=colText(k,i), p=CQ[k]; for(const w of p.pos) if(!s.includes(w)){ok=false;break;} if(ok) for(const w of p.neg) if(s.includes(w)){ok=false;break;} if(!ok) break; } if(!ok) continue; } idx.push(i); tot+=dv[i]; }
   const f=DCOL[detSort.k], d=detSort.d;
   idx.sort((a,b)=>{const x=f(a),y=f(b); return (typeof x==='number'? x-y : String(x).localeCompare(String(y),'es'))*d;});
   detIdx=idx;
@@ -307,13 +326,14 @@ function drawDetail(resetPage){
   const sl=idx.slice(detPage*PGSZ,(detPage+1)*PGSZ);
   const hd=(k,l,c)=>`<th data-k="${k}" class="${c||''}">${l}${detSort.k===k?(detSort.d<0?' ↓':' ↑'):''}</th>`;
   document.getElementById('tDet').innerHTML=`<thead><tr>${hd('date','Fecha')}${hd('ctr','Contrato')}${hd('eq','Equipo')}${hd('tipo','Tipo')}${hd('cl','Clasificación')}${hd('pc','P/C')}${hd('pv','Proveedor')}${hd('ds','Descripción')}${hd('oc','OC/OT')}${hd('rc','Resp. costos')}${hd('v','Costo','n')}</tr></thead><tbody>`+
-   sl.map(i=>{const r=DT[i]; return `<tr><td class="nw">${esc(detDateTxt(i))}</td><td>${esc(D.ctr[r[2]])}</td><td class="nw">${esc(DCOL.eq(i)||'Sin equipo')}</td><td>${esc(DCOL.tipo(i))}</td><td>${esc(D.cl[r[4]])}</td><td>${esc(D.pc[r[5]])}</td><td>${esc(D.pv[r[9]])}</td><td>${esc(D.dds[r[12]])}</td><td class="nw">${esc(D.doc[r[13]])}</td><td>${esc(D.rc[r[7]])}</td><td class="n nw">${money(dv[i])}${r[15]>1?' <small title="línea compartida entre '+r[15]+' equipos; se muestra la parte de este equipo">÷'+r[15]+'</small>':''}</td></tr>`;}).join('')+'</tbody>';
+   sl.map(i=>{const r=DT[i]; return `<tr><td class="nw">${esc(detDateTxt(i))}</td><td>${esc(D.ctr[r[2]])}</td><td class="nw">${esc(DCOL.eq(i)||'Sin equipo')}</td><td>${esc(DCOL.tipo(i))}</td><td>${esc(D.cl[r[4]])}</td><td>${esc(D.pc[r[5]])}</td><td>${hl(D.pv[r[9]],[...G.pos,...(CQ.pv?CQ.pv.pos:[])])}</td><td>${hl(D.dds[r[12]],[...G.pos,...(CQ.ds?CQ.ds.pos:[])])}</td><td class="nw">${hl(D.doc[r[13]],[...G.pos,...(CQ.oc?CQ.oc.pos:[])])}</td><td>${esc(D.rc[r[7]])}</td><td class="n nw">${money(dv[i])}${r[15]>1?' <small title="línea compartida entre '+r[15]+' equipos; se muestra la parte de este equipo">÷'+r[15]+'</small>':''}</td></tr>`;}).join('')+'</tbody>';
   document.querySelectorAll('#tDet th').forEach(h=>h.onclick=()=>{const k=h.dataset.k; detSort.d=detSort.k===k?-detSort.d:(k==='v'||k==='date'?-1:1); detSort.k=k; drawDetail(true);});
   document.getElementById('detCnt').textContent=nf0.format(idx.length)+' movimientos · '+money(tot)+' · '+MES[S.m1]+'–'+MES[S.m2]+' '+YEARS[S.y];
   document.getElementById('detPg').textContent='Página '+(detPage+1)+' de '+pages;
   document.getElementById('detPrev').disabled=detPage===0; document.getElementById('detNext').disabled=detPage>=pages-1;
 }
 document.getElementById('detQ').oninput=e=>{detQtxt=e.target.value; clearTimeout(window._dq); window._dq=setTimeout(()=>drawDetail(true),250);};
+document.getElementById('detClr').onclick=()=>{ detQtxt=''; document.getElementById('detQ').value=''; for(const k in colQ) colQ[k]=''; document.querySelectorAll('#detCols input').forEach(x=>x.value=''); drawDetail(true); };
 document.getElementById('detPrev').onclick=()=>{detPage--;drawDetail();};
 document.getElementById('detNext').onclick=()=>{detPage++;drawDetail();};
 document.getElementById('detCsv').onclick=()=>{
